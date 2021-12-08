@@ -10,7 +10,7 @@ import scale from '../constants/scale';
 import { Music, Track } from '../types';
 
 import Player from '../containers/Player';
-
+import { RootTabScreenProps } from '../types';
 
 const { width, height } = Dimensions.get("screen");
 const listHeight = width * 0.149;
@@ -24,9 +24,19 @@ if (Platform.OS === 'ios') {
   blurIntensity = 200;
 }
 
-export default function LibraryScreen({ navigation }: { navigation: any }) {
+export default function LibraryScreen({ navigation }: RootTabScreenProps<'Library'>) {
   const [isBusy, setIsBusy] = React.useState(false);
   const colorScheme = useColorScheme();
+
+  const RenderHeader = () => {
+    return (
+      <View style={{ height: scale.ratio * 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.015, }}>
+          Songs
+        </Text>
+      </View>
+    )
+  }
 
   const RenderSong = ({ item }: { item: Music }) => {
     return (
@@ -56,8 +66,8 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
   const RenderSongForBottomBar = ({ item }: { item: Track }) => {
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('MusicPlayerUI')}
-        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.045 }}>
+        onPress={() => { }}
+        style={{ height: statusBarHeight, width: width, flexDirection: 'row', alignItems: 'center', paddingHorizontal: width * 0.045 }}>
         <View style={{
           width: listHeight,
           shadowColor: 'black',
@@ -98,25 +108,20 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
     <View style={styles.container}>
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
-      <View style={{ height: scale.ratio * 8, flexDirection: 'row', paddingTop: '5%', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginHorizontal: width * 0.06, }}>
-          Songs
-        </Text>
-      </View>
-
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Animated.FlatList
           style={{}}
           data={Player.musicList}
+          ListHeaderComponent={RenderHeader}
           ItemSeparatorComponent={RenderSeparator}
-          ListFooterComponent={<View style={{ height: statusBarHeight }}></View>}
+          ListFooterComponent={<View style={{ height: statusBarHeight * 1.05 }}></View>}
           renderItem={RenderSong}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id}
         />
       </View>
 
-      <BlurView intensity={blurIntensity} tint={'light'} style={styles.bottomBarContainer}>
+      <BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
         <View style={{ flex: 13, backgroundColor: 'transparent' }}>
           <RenderSongForBottomBar item={Player.playlist == null ? Player.musicList[0] : Player.playlist[Player.currentIndex]} />
         </View>

@@ -32,7 +32,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
     return (
       <TouchableOpacity
         onPress={() => { }}
-        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.045 }}>
+        style={{ height: statusBarHeight, width: width, flexDirection: 'row', alignItems: 'center', paddingHorizontal: width * 0.045 }}>
         <View style={{
           width: listHeight,
           shadowColor: 'black',
@@ -67,7 +67,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
         </Text>
       </View>
 
-      <BlurView intensity={blurIntensity} tint={'light'} style={styles.bottomBarContainer}>
+      <BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
         <View style={{ flex: 13, backgroundColor: 'transparent' }}>
           <RenderSongForBottomBar item={Player.playlist == null ? Player.musicList[0] : Player.playlist[Player.currentIndex]} />
         </View>

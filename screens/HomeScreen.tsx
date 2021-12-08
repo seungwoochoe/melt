@@ -13,8 +13,8 @@ import Player from '../containers/Player';
 import { RootTabScreenProps } from '../types';
 
 const { width, height } = Dimensions.get("screen");
-const listHeight = width * 0.15;
-const marginBetweenAlbumartAndText = width * 0.027;
+const listHeight = width * 0.149;
+const marginBetweenAlbumartAndText = width * 0.029;
 const statusBarHeight = listHeight * 1.2;
 
 let blurIntensity: number;
@@ -32,7 +32,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
     return (
       <TouchableOpacity
         onPress={() => { }}
-        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.05 }}>
+        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.045 }}>
         <View style={{
           width: listHeight,
           shadowColor: 'black',

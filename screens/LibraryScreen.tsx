@@ -13,8 +13,8 @@ import Player from '../containers/Player';
 
 
 const { width, height } = Dimensions.get("screen");
-const listHeight = width * 0.15;
-const marginBetweenAlbumartAndText = width * 0.027;
+const listHeight = width * 0.149;
+const marginBetweenAlbumartAndText = width * 0.029;
 const statusBarHeight = listHeight * 1.2;
 
 let blurIntensity: number;
@@ -33,7 +33,7 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
       <TouchableOpacity
         disabled={isBusy}
         onPress={() => { }}
-        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.05 }}
+        style={{ height: listHeight, width: width * 0.91, flexDirection: 'row', alignItems: 'center' }}
       >
         <View>
           <Image
@@ -57,7 +57,7 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
     return (
       <TouchableOpacity
         onPress={() => navigation.navigate('MusicPlayerUI')}
-        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.05 }}>
+        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.045 }}>
         <View style={{
           width: listHeight,
           shadowColor: 'black',
@@ -84,8 +84,8 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
       <View
         style={{
           height: 1,
-          marginLeft: width * 0.05 + listHeight + marginBetweenAlbumartAndText,
-          marginRight: width * 0.05,
+          marginLeft: listHeight + marginBetweenAlbumartAndText,
+          marginRight: width * 0.04,
         }}
         lightColor='#dfdfdf'
         darkColor='#343434'

@@ -31,7 +31,7 @@ export default function LibraryScreen({ navigation }: RootTabScreenProps<'Librar
   const RenderHeader = () => {
     return (
       <View style={{ height: scale.ratio * 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.015, }}>
+        <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, }}>
           Songs
         </Text>
       </View>
@@ -43,7 +43,7 @@ export default function LibraryScreen({ navigation }: RootTabScreenProps<'Librar
       <TouchableOpacity
         disabled={isBusy}
         onPress={() => { }}
-        style={{ height: listHeight, width: width * 0.91, flexDirection: 'row', alignItems: 'center' }}
+        style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
       >
         <View>
           <Image

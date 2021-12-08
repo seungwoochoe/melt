@@ -39,7 +39,6 @@ export type Music = {
   url: string,
   title: string,
   artist: string,
-  duration: number,
   artwork: number,
   weight?: number,
   id: string, // Will be title + artist.
@@ -49,7 +48,7 @@ export type Track = {
   url: string,
   title: string,
   artist: string,
-  duration: number,
+  duration?: number,
   artwork: number,
 }
 

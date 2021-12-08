@@ -1,32 +1,184 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { Ionicons } from '@expo/vector-icons';
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+import { View, Text } from '../components/Themed';
+import useColorScheme from '../hooks/useColorScheme';
+import Colors from '../constants/Colors';
+import scale from '../constants/scale';
+import { Music, Track } from '../types';
 
-export default function LibraryScreen() {
+import Player from '../containers/Player';
+
+
+const { width, height } = Dimensions.get("screen");
+const listHeight = width * 0.15;
+const marginBetweenAlbumartAndText = width * 0.027;
+const statusBarHeight = listHeight * 1.2;
+
+// let blurIntensity: number;
+// if (Platform.OS === 'ios') {
+//   blurIntensity = 96;
+// } else {
+//   blurIntensity = 200;
+// }
+
+export default function LibraryScreen({ navigation }: { navigation: any }) {
+  const [isBusy, setIsBusy] = React.useState(false);
+  const colorScheme = useColorScheme();
+
+  const RenderSong = ({ item }: { item: Music }) => {
+    return (
+      <TouchableOpacity
+        disabled={isBusy}
+        onPress={() => { }}
+        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.05 }}
+      >
+        <View>
+          <Image
+            source={item.artwork}
+            style={{ width: listHeight * 0.9, height: listHeight * 0.9, margin: listHeight * 0.05, borderRadius: 4.5, }}
+          />
+        </View>
+        <View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
+          <View style={{ height: listHeight / 2.4, width: width - listHeight * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontSize: scale.width * 0.965 }} numberOfLines={1}>{item.title}</Text>
+          </View>
+          <View style={{ height: listHeight / 3.2, width: width - listHeight * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontSize: scale.width * 0.82, color: colorScheme === "light" ? Colors.light.dullText : Colors.dark.dullText, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
+  const RenderSongForBottomBar = ({ item }: { item: Track }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('MusicPlayerUI')}
+        style={{ height: listHeight, width: width * 0.9, flexDirection: 'row', alignItems: 'center', marginHorizontal: width * 0.05 }}>
+        <View style={{
+          width: listHeight,
+          shadowColor: 'black',
+          shadowRadius: width * 0.02,
+          // shadowOpacity: 0.15,
+        }}>
+          <Image
+            source={item.artwork}
+            style={{ width: listHeight * 0.9, height: listHeight * 0.9, margin: listHeight * 0.05, borderRadius: 4.5, }}
+          />
+        </View>
+        <View style={{ width: width - listHeight * 2 - width * 0.22, marginLeft: marginBetweenAlbumartAndText }}>
+          <Text style={{ fontSize: scale.width, }} numberOfLines={1}>
+            {item.title}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  const RenderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          marginLeft: width * 0.05 + listHeight + marginBetweenAlbumartAndText,
+          marginRight: width * 0.05,
+        }}
+        lightColor='#dfdfdf'
+        darkColor='#343434'
+      />
+    )
+  }
+
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/LibraryScreen.tsx" />
+      <StatusBar barStyle="dark-content" animated={true} />
+
+      <View style={{ height: scale.ratio * 8, flexDirection: 'row', paddingTop: '5%', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginHorizontal: width * 0.06, }}>
+          Songs
+        </Text>
+      </View>
+
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        <Animated.FlatList
+          style={{}}
+          data={Player.musicList}
+          ItemSeparatorComponent={RenderSeparator}
+          ListFooterComponent={<View style={{ height: statusBarHeight }}></View>}
+          renderItem={RenderSong}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
+
+      {/* <BlurView intensity={blurIntensity} tint={'light'} style={styles.bottomBarContainer}> */}
+      <View style={styles.bottomBarContainer}>
+        <View style={{ flex: 13 }}>
+          <RenderSongForBottomBar item={Player.playlist == null ? Player.musicList[0] : Player.playlist[Player.currentIndex]} />
+        </View>
+        <View style={{ flex: 6, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+          <TouchableOpacity
+            disabled={isBusy}
+            onPress={async () => {
+              // if (Player.isPlaying) {
+              //   await Player.pause();
+              //   setCount(c => c + 1);
+              // } else {
+              //   await Player.play();
+              //   setCount(c => c + 1);
+              // }
+            }}
+            style={{ padding: Player.isPlaying ? scale.width * 0.6 : scale.width * 0.775 }}
+          >
+            <Ionicons name={Player.isPlaying ? "pause" : "play"} size={Player.isPlaying ? scale.width * 2 : scale.width * 1.65} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text }></Ionicons>
+          </TouchableOpacity>
+          <TouchableOpacity
+            disabled={!isBusy}
+            onPress={async () => {
+              // setIsAvailable(false);
+              // await Player.skipToNext();
+              // setIsAvailable(true);
+            }}
+            style={{ padding: scale.width * 0.53, marginRight: width * 0.05 }}
+          >
+            <Ionicons name="play-forward" size={scale.width * 1.75} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* </BlurView> */}
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    width: width,
+    backgroundColor: 'white',
   },
   separator: {
     marginVertical: 30,
     height: 1,
     width: '80%',
   },
+  bottomBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: statusBarHeight,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  bottomMusic: {
+    alignItems: 'center',
+    height: listHeight,
+    flexDirection: 'row',
+    paddingLeft: width * 0.05,
+  }
 });

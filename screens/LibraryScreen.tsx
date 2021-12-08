@@ -17,12 +17,12 @@ const listHeight = width * 0.15;
 const marginBetweenAlbumartAndText = width * 0.027;
 const statusBarHeight = listHeight * 1.2;
 
-// let blurIntensity: number;
-// if (Platform.OS === 'ios') {
-//   blurIntensity = 96;
-// } else {
-//   blurIntensity = 200;
-// }
+let blurIntensity: number;
+if (Platform.OS === 'ios') {
+  blurIntensity = 96;
+} else {
+  blurIntensity = 200;
+}
 
 export default function LibraryScreen({ navigation }: { navigation: any }) {
   const [isBusy, setIsBusy] = React.useState(false);
@@ -63,13 +63,14 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
           shadowColor: 'black',
           shadowRadius: width * 0.02,
           // shadowOpacity: 0.15,
+          backgroundColor: 'transparent',
         }}>
           <Image
             source={item.artwork}
             style={{ width: listHeight * 0.9, height: listHeight * 0.9, margin: listHeight * 0.05, borderRadius: 4.5, }}
           />
         </View>
-        <View style={{ width: width - listHeight * 2 - width * 0.22, marginLeft: marginBetweenAlbumartAndText }}>
+        <View style={{ width: width - listHeight * 2 - width * 0.22, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
           <Text style={{ fontSize: scale.width, }} numberOfLines={1}>
             {item.title}
           </Text>
@@ -95,7 +96,7 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" animated={true} />
+      <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
       <View style={{ height: scale.ratio * 8, flexDirection: 'row', paddingTop: '5%', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginHorizontal: width * 0.06, }}>
@@ -115,12 +116,11 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
         />
       </View>
 
-      {/* <BlurView intensity={blurIntensity} tint={'light'} style={styles.bottomBarContainer}> */}
-      <View style={styles.bottomBarContainer}>
-        <View style={{ flex: 13 }}>
+      <BlurView intensity={blurIntensity} tint={'light'} style={styles.bottomBarContainer}>
+        <View style={{ flex: 13, backgroundColor: 'transparent' }}>
           <RenderSongForBottomBar item={Player.playlist == null ? Player.musicList[0] : Player.playlist[Player.currentIndex]} />
         </View>
-        <View style={{ flex: 6, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flex: 6, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
           <TouchableOpacity
             disabled={isBusy}
             onPress={async () => {
@@ -134,7 +134,7 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
             }}
             style={{ padding: Player.isPlaying ? scale.width * 0.6 : scale.width * 0.775 }}
           >
-            <Ionicons name={Player.isPlaying ? "pause" : "play"} size={Player.isPlaying ? scale.width * 2 : scale.width * 1.65} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text }></Ionicons>
+            <Ionicons name={Player.isPlaying ? "pause" : "play"} size={Player.isPlaying ? scale.width * 2 : scale.width * 1.65} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
           </TouchableOpacity>
           <TouchableOpacity
             disabled={!isBusy}
@@ -148,8 +148,7 @@ export default function LibraryScreen({ navigation }: { navigation: any }) {
             <Ionicons name="play-forward" size={scale.width * 1.75} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
           </TouchableOpacity>
         </View>
-      </View>
-      {/* </BlurView> */}
+      </BlurView>
     </View>
 
   );
@@ -159,7 +158,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: width,
-    backgroundColor: 'white',
   },
   separator: {
     marginVertical: 30,

@@ -9,7 +9,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    interface RootParamList extends RootStackParamList { }
   }
 }
 
@@ -34,3 +34,39 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> = Composit
   BottomTabScreenProps<RootTabParamList, Screen>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+export type Music = {
+  url: string,
+  title: string,
+  artist: string,
+  duration: number,
+  artwork: number,
+  weight?: number,
+  id: string, // Will be title + artist.
+}
+
+export type Track = {
+  url: string,
+  title: string,
+  artist: string,
+  duration: number,
+  artwork: number,
+}
+
+export type Action = {
+  time: number,
+  title: string,
+  artist: string,
+  id: string,
+  action: string,
+}
+
+export type History = {
+  endTime: number,
+  title: string,
+  artist: string,
+  duration: number,
+  artwork: number,
+  id: string,
+  secPlayed: number,
+}

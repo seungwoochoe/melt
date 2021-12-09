@@ -15,7 +15,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import HomeScreen from '../screens/HomeScreen';
-import LibraryScreen from '../screens/LibraryScreen';
+import SongsScreen from '../screens/SongsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -73,11 +73,16 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="Library"
-        component={LibraryScreen}
+        name="Songs"
+        component={SongsScreen}
         options={{
-          title: 'Library',
-          tabBarIcon: ({ color }) => <TabBarIcon name="library-outline" color={color} />,
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: colorScheme === 'light' ? '#f8f8f8' : '#181818',
+          },
+          headerTitleStyle: {color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text},
+          title: 'Songs',
+          tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
         }}
       />
       <BottomTab.Screen

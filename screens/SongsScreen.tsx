@@ -24,13 +24,13 @@ if (Platform.OS === 'ios') {
   blurIntensity = 200;
 }
 
-export default function LibraryScreen({ navigation }: RootTabScreenProps<'Library'>) {
+export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
   const [isBusy, setIsBusy] = React.useState(false);
   const colorScheme = useColorScheme();
 
   const RenderHeader = () => {
     return (
-      <View style={{ height: scale.ratio * 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <View style={{ height: scale.ratio * 5, justifyContent: 'space-between', paddingTop: scale.ratio * 0.3 }}>
         <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, }}>
           Songs
         </Text>
@@ -48,15 +48,15 @@ export default function LibraryScreen({ navigation }: RootTabScreenProps<'Librar
         <View>
           <Image
             source={item.artwork}
-            style={{ width: listHeight * 0.9, height: listHeight * 0.9, margin: listHeight * 0.05, borderRadius: 4.5, }}
+            style={styles.artwork}
           />
         </View>
         <View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
           <View style={{ height: listHeight / 2.4, width: width - listHeight * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ fontSize: scale.width * 0.965 }} numberOfLines={1}>{item.title}</Text>
+            <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
           </View>
           <View style={{ height: listHeight / 3.2, width: width - listHeight * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ fontSize: scale.width * 0.82, color: colorScheme === "light" ? Colors.light.dullText : Colors.dark.dullText, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
+            <Text style={{ fontSize: scale.width * 0.8, color: colorScheme === "light" ? Colors.light.dullText : Colors.dark.dullText, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -67,17 +67,18 @@ export default function LibraryScreen({ navigation }: RootTabScreenProps<'Librar
     return (
       <TouchableOpacity
         onPress={() => { }}
-        style={{ height: statusBarHeight, width: width, flexDirection: 'row', alignItems: 'center', paddingHorizontal: width * 0.045 }}>
+        style={{ height: statusBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
         <View style={{
           width: listHeight,
           shadowColor: 'black',
           shadowRadius: width * 0.02,
-          // shadowOpacity: 0.15,
+          shadowOpacity: 0.25,
+          shadowOffset: { width: -statusBarHeight * 0.02, height: statusBarHeight * 0.003 },
           backgroundColor: 'transparent',
         }}>
           <Image
             source={item.artwork}
-            style={{ width: listHeight * 0.9, height: listHeight * 0.9, margin: listHeight * 0.05, borderRadius: 4.5, }}
+            style={styles.artwork}
           />
         </View>
         <View style={{ width: width - listHeight * 2 - width * 0.22, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
@@ -94,12 +95,22 @@ export default function LibraryScreen({ navigation }: RootTabScreenProps<'Librar
       <View
         style={{
           height: 1,
-          marginLeft: listHeight + marginBetweenAlbumartAndText,
-          marginRight: width * 0.04,
+          marginLeft: listHeight + marginBetweenAlbumartAndText + width * 0.045,
+          marginRight: width * 0.06,
         }}
         lightColor='#dfdfdf'
         darkColor='#343434'
       />
+    )
+  }
+
+  const RenderMusicCount = () => {
+    return (
+      <View style={{ height: statusBarHeight * 1.04, alignItems: 'center', paddingTop: statusBarHeight * 0.1 }}>
+        <Text style={{ fontSize: scale.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
+          - {Player.musicList.length} songs -
+        </Text>
+      </View>
     )
   }
 
@@ -114,7 +125,7 @@ export default function LibraryScreen({ navigation }: RootTabScreenProps<'Librar
           data={Player.musicList}
           ListHeaderComponent={RenderHeader}
           ItemSeparatorComponent={RenderSeparator}
-          ListFooterComponent={<View style={{ height: statusBarHeight * 1.05 }}></View>}
+          ListFooterComponent={RenderMusicCount}
           renderItem={RenderSong}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id}
@@ -163,6 +174,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: width,
+  },
+  artwork: {
+    width: listHeight * 0.9,
+    height: listHeight * 0.9,
+    margin: listHeight * 0.05,
+    borderRadius: 4.5,
   },
   separator: {
     marginVertical: 30,

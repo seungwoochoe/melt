@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -16,6 +17,7 @@ const { width, height } = Dimensions.get("screen");
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
 const statusBarHeight = listHeight * 1.2;
+const headerHeight = 44 + getStatusBarHeight();
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -26,33 +28,13 @@ if (Platform.OS === 'ios') {
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
   const [isBusy, setIsBusy] = React.useState(false);
-  const isScrolled = React.useRef(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
   const colorScheme = useColorScheme();
-
-  React.useEffect(() => {
-    if (!isScrolled.current) {
-      navigation.setOptions({
-        headerStyle: {
-          backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
-        },
-        headerShadowVisible: false,
-        headerTitle: "",
-      });
-    } else {
-      navigation.setOptions({
-        headerStyle: {
-          backgroundColor: colorScheme === 'light' ? Colors.light.headerBackground : Colors.dark.headerBackground,
-        },
-        headerShadowVisible: true,
-        headerTitle: "Songs",
-      });
-    }
-  });
 
   const RenderHeader = () => {
     return (
-      <View style={{ height: scale.ratio * 5, justifyContent: 'space-between', paddingTop: scale.ratio * 0.3 }}>
-        <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, }}>
+      <View style={{ height: scale.ratio * 5, marginTop: headerHeight }}>
+        <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
           Songs
         </Text>
       </View>
@@ -140,6 +122,29 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     <View style={styles.container}>
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
+      <View style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        zIndex: isScrolled === false ? 1 : -1,
+        height: headerHeight,
+        backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
+      }} />
+
+      <View style={{
+        position: 'absolute',
+        top: headerHeight,
+        left: 0,
+        right: 0,
+        height: 1,
+        zIndex: isScrolled === false ? -1 : 1,
+      }}
+        lightColor='#dfdfdf'
+        darkColor='#343434'
+      />
+
+
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Animated.FlatList
           style={{}}
@@ -151,26 +156,20 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           onScroll={(event) => {
             const scrollOffset = event.nativeEvent.contentOffset.y;
             if (scrollOffset < scale.width * 2.05) {
-              if (isScrolled.current === true) {
+              if (isScrolled === true) {
                 navigation.setOptions({
-                  headerStyle: {
-                    backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
-                  },
-                  headerShadowVisible: false,
                   headerTitle: "",
+                  headerShown: false,
                 });
-                isScrolled.current = false;
+                setIsScrolled(false);
               }
             } else {
-              if (isScrolled.current === false) {
+              if (isScrolled === false) {
                 navigation.setOptions({
-                  headerStyle: {
-                    backgroundColor: colorScheme === 'light' ? Colors.light.headerBackground : Colors.dark.headerBackground,
-                  },
-                  headerShadowVisible: true,
                   headerTitle: "Songs",
+                  headerShown: true,
                 });
-                isScrolled.current = true;
+                setIsScrolled(true);
               }
             }
           }}

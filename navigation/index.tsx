@@ -8,7 +8,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName } from 'react-native';
+import { ColorSchemeName, Platform } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -19,6 +21,13 @@ import SongsScreen from '../screens/SongsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+
+let blurIntensity: number;
+if (Platform.OS === 'ios') {
+  blurIntensity = 96;
+} else {
+  blurIntensity = 200;
+}
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -76,13 +85,15 @@ function BottomTabNavigator() {
         name="Songs"
         component={SongsScreen}
         options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
-          },
-          headerShadowVisible: false,
+          headerTransparent: true,
+          headerBackground: () => (
+            <BlurView 
+            intensity={blurIntensity} 
+            tint={colorScheme === 'light' ? 'light' : 'dark'}
+            style={{height: 44 + getStatusBarHeight() }} />
+          ),
           headerTitleStyle: {color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text},
-          title: '',
+          title: 'Songs',
           tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
         }}
       />

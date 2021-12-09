@@ -28,7 +28,7 @@ if (Platform.OS === 'ios') {
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
   const [isBusy, setIsBusy] = React.useState(false);
-  const [isScrolled, setIsScrolled] = React.useState(false);
+  const isScrolled = React.useRef(false);
   const colorScheme = useColorScheme();
 
   const RenderHeader = () => {
@@ -122,28 +122,17 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     <View style={styles.container}>
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
-      <View style={{
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        zIndex: isScrolled === false ? 1 : -1,
-        height: headerHeight,
-        backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
-      }} />
-
-      <View style={{
-        position: 'absolute',
-        top: headerHeight,
-        left: 0,
-        right: 0,
-        height: 1,
-        zIndex: isScrolled === false ? -1 : 1,
-      }}
-        lightColor='#dfdfdf'
-        darkColor='#343434'
-      />
-
+      {isScrolled.current === false &&
+        <View style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          zIndex: 1,
+          height: headerHeight,
+          backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
+        }} />
+      }
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Animated.FlatList
@@ -156,20 +145,20 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           onScroll={(event) => {
             const scrollOffset = event.nativeEvent.contentOffset.y;
             if (scrollOffset < scale.width * 2.05) {
-              if (isScrolled === true) {
+              if (isScrolled.current === true) {
                 navigation.setOptions({
                   headerTitle: "",
                   headerShown: false,
                 });
-                setIsScrolled(false);
+                isScrolled.current = false;
               }
             } else {
-              if (isScrolled === false) {
+              if (isScrolled.current === false) {
                 navigation.setOptions({
                   headerTitle: "Songs",
                   headerShown: true,
                 });
-                setIsScrolled(true);
+                isScrolled.current = true;
               }
             }
           }}

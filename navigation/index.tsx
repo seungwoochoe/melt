@@ -90,7 +90,11 @@ function BottomTabNavigator() {
             <BlurView 
             intensity={blurIntensity} 
             tint={colorScheme === 'light' ? 'light' : 'dark'}
-            style={{height: 44 + getStatusBarHeight() }} />
+            style={{
+              height: 44 + getStatusBarHeight(),
+              borderBottomWidth: 1,
+              borderBottomColor: colorScheme === 'light' ? '#dfdfdf' : '#252525',
+            }} />
           ),
           headerTitleStyle: {color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text},
           title: 'Songs',

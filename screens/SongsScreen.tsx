@@ -26,7 +26,28 @@ if (Platform.OS === 'ios') {
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
   const [isBusy, setIsBusy] = React.useState(false);
+  const isScrolled = React.useRef(false);
   const colorScheme = useColorScheme();
+
+  React.useEffect(() => {
+    if (!isScrolled.current) {
+      navigation.setOptions({
+        headerStyle: {
+          backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
+        },
+        headerShadowVisible: false,
+        headerTitle: "",
+      });
+    } else {
+      navigation.setOptions({
+        headerStyle: {
+          backgroundColor: colorScheme === 'light' ? Colors.light.headerBackground : Colors.dark.headerBackground,
+        },
+        headerShadowVisible: true,
+        headerTitle: "Songs",
+      });
+    }
+  });
 
   const RenderHeader = () => {
     return (
@@ -127,8 +148,35 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderMusicCount}
           renderItem={RenderSong}
+          onScroll={(event) => {
+            const scrollOffset = event.nativeEvent.contentOffset.y;
+            if (scrollOffset < scale.width * 2.05) {
+              if (isScrolled.current === true) {
+                navigation.setOptions({
+                  headerStyle: {
+                    backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
+                  },
+                  headerShadowVisible: false,
+                  headerTitle: "",
+                });
+                isScrolled.current = false;
+              }
+            } else {
+              if (isScrolled.current === false) {
+                navigation.setOptions({
+                  headerStyle: {
+                    backgroundColor: colorScheme === 'light' ? Colors.light.headerBackground : Colors.dark.headerBackground,
+                  },
+                  headerShadowVisible: true,
+                  headerTitle: "Songs",
+                });
+                isScrolled.current = true;
+              }
+            }
+          }}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id}
+
         />
       </View>
 

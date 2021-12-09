@@ -78,10 +78,11 @@ function BottomTabNavigator() {
         options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: colorScheme === 'light' ? '#f8f8f8' : '#181818',
+            backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
           },
+          headerShadowVisible: false,
           headerTitleStyle: {color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text},
-          title: 'Songs',
+          title: '',
           tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
         }}
       />

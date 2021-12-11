@@ -15,7 +15,7 @@ import Player from '../containers/Player';
 import { RootTabScreenProps } from '../types';
 import musicList from '../assets/data';
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = Dimensions.get('screen');
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
 const statusBarHeight = listHeight * 1.2;
@@ -193,12 +193,13 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
             <View>
               <RenderTitle />
               <View style={{
+                alignSelf: 'center',
                 flexDirection: 'row',
                 alignItems: 'center',
                 height: scale.width * 2.2,
-                width: width * 0.9,
+                width: width * 0.88,
                 marginHorizontal: width * 0.05,
-                paddingHorizontal: width * 0.03,
+                paddingLeft: width * 0.03,
                 marginBottom: scale.width,
                 borderRadius: 10,
                 backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
@@ -216,7 +217,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
                     marginLeft: width * 0.02,
                     height: scale.width * 3,
                     fontSize: scale.width * 1.1,
-                    width: width * 0.78,
+                    width: width * 0.76,
                     // backgroundColor: 'pink',
                   }}
                 />

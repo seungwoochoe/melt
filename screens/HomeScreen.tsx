@@ -32,17 +32,18 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
     return (
       <TouchableOpacity
         onPress={() => { }}
-        style={{ height: statusBarHeight, width: width, flexDirection: 'row', alignItems: 'center', paddingHorizontal: width * 0.045 }}>
+        style={{ height: statusBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
         <View style={{
           width: listHeight,
           shadowColor: 'black',
           shadowRadius: width * 0.02,
-          // shadowOpacity: 0.15,
+          shadowOpacity: 0.25,
+          shadowOffset: { width: -statusBarHeight * 0.02, height: statusBarHeight * 0.003 },
           backgroundColor: 'transparent',
         }}>
           <Image
             source={item.artwork}
-            style={{ width: listHeight * 0.9, height: listHeight * 0.9, margin: listHeight * 0.05, borderRadius: 4.5, }}
+            style={styles.artwork}
           />
         </View>
         <View style={{ width: width - listHeight * 2 - width * 0.22, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
@@ -117,5 +118,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  artwork: {
+    width: listHeight * 0.9,
+    height: listHeight * 0.9,
+    margin: listHeight * 0.05,
+    borderRadius: 4.5,
   },
 });

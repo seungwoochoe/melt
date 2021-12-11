@@ -2,6 +2,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
+import { Asset } from 'expo-asset';
+import musicList from '../assets/data';
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -17,6 +19,11 @@ export default function useCachedResources() {
           ...FontAwesome.font,
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         });
+
+        // Load artworks
+        musicList.forEach(element => {
+          Asset.loadAsync(element.artwork);
+        })
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);

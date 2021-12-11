@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, FlatList, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import filter from 'lodash.filter';
@@ -10,6 +9,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import scale from '../constants/scale';
 import { Music, Track } from '../types';
+import RenderBottomBar from '../components/BottomBar';
 
 import Player from '../containers/Player';
 import { RootTabScreenProps } from '../types';
@@ -21,42 +21,57 @@ const marginBetweenAlbumartAndText = width * 0.029;
 const statusBarHeight = listHeight * 1.2;
 const headerHeight = 44 + getStatusBarHeight();
 
-let blurIntensity: number;
-if (Platform.OS === 'ios') {
-  blurIntensity = 97;
-} else {
-  blurIntensity = 200;
-}
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
   const [isBusy, setIsBusy] = React.useState(false);
-  const isScrolled = React.useRef(false);
-  const [count, setCount] = React.useState(0);
   const [query, setQuery] = React.useState('');
-  const [filteredMusicList, setFilteredMusicList] = React.useState([]);
+  const [filteredMusicList, setFilteredMusicList] = React.useState<Music[]>([]);
+  const [isKeyboardShown, setIsKeyboardShown] = React.useState(false);
+  const [count, setCount] = React.useState(0);
+  const isScrolled = React.useRef(false);
   const colorScheme = useColorScheme();
 
-  function handleSearch(query: string) {
-    const formattedQuery = query.toLowerCase();
-    const filteredData = filter(musicList, music => {
-      return search(music, formattedQuery);
-    })
 
+  React.useEffect(() => {
+    const keyboardShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      navigation.setOptions({
+        headerShown: false,
+      })
+      setIsKeyboardShown(true);
+    });
+    const keyboardHideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      navigation.setOptions({
+        headerShown: true,
+      })
+      setIsKeyboardShown(false);
+    });
+
+    return () => {
+      keyboardShowSubscription.remove();
+      keyboardHideSubscription.remove();
+    }
+  }, []);
+
+
+  function handleSearch(query: string) {
+    const filteredData = filter(musicList, music => {
+      return search(music, query.toLowerCase());
+    })
     setFilteredMusicList(filteredData);
     setQuery(query);
   }
 
   function search({ title, artist }: { title: string, artist: string }, query: string) {
-    const regex = new RegExp(`^${query}| ${query}`);
-    if (title.toLowerCase().match(regex) || artist.toLowerCase().match(regex)) {
+    const condition = new RegExp(`^${query}| ${query}`);
+    if (title.toLowerCase().match(condition) || artist.toLowerCase().match(condition)) {
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
+
   const RenderHeaderBarPlaceholderConditionally = () => {
-    if (!isScrolled.current) {
+    if (!isKeyboardShown && !isScrolled.current) {
       return (
         <View style={{
           position: 'absolute',
@@ -73,21 +88,17 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     }
   }
 
-  const RenderTitle = () => {
+  const RenderTopMargin = () => {
     return (
-      <View style={{ height: scale.ratio * 5, width: width, marginTop: headerHeight }}>
-        <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
-          Songs
-        </Text>
-      </View>
+      <View style={{ height: headerHeight, width: width }} />
     )
   }
 
-  const RenderSearchBar = () => {
+  const RenderTitle = () => {
     return (
-      <View>
-
-      </View>
+      <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
+        Songs
+      </Text>
     )
   }
 
@@ -119,38 +130,11 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   const RenderNoResult = () => {
     return (
       <View style={{ height: height * 0.35, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
-        <Text style={{ fontSize: scale.width * 1.2 }}>
+        <Text style={{ fontSize: scale.width * 1.2, color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
           No results
         </Text>
       </View>
     )
-  }
-
-  const RenderSongForBottomBar = ({ item }: { item: Track }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => { }}
-        style={{ height: statusBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
-        <View style={{
-          width: listHeight,
-          shadowColor: 'black',
-          shadowRadius: width * 0.02,
-          shadowOpacity: 0.25,
-          shadowOffset: { width: -statusBarHeight * 0.02, height: statusBarHeight * 0.003 },
-          backgroundColor: 'transparent',
-        }}>
-          <Image
-            source={item.artwork}
-            style={styles.artwork}
-          />
-        </View>
-        <View style={{ width: width - listHeight * 2 - width * 0.22, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
-          <Text style={{ fontSize: scale.width, }} numberOfLines={1}>
-            {item.title}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
   }
 
   const RenderSeparator = () => {
@@ -169,7 +153,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
   const RenderMusicCount = () => {
     return (
-      <View style={{ height: statusBarHeight * 1.04, alignItems: 'center', paddingTop: statusBarHeight * 0.1 }}>
+      <View style={{ height: isKeyboardShown ? 0 : statusBarHeight * 1.04, alignItems: 'center', paddingTop: statusBarHeight * 0.1 }}>
         <Text style={{ fontSize: scale.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
           {/* - {Player.musicList.length} songs - */}
         </Text>
@@ -179,19 +163,20 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
+
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
       <RenderHeaderBarPlaceholderConditionally />
 
       <View style={{ flex: 1, alignItems: 'center' }}>
-        <Animated.FlatList
-          style={{}}
+        <FlatList
           data={query.length === 0 ? Player.musicList : filteredMusicList}
           ListEmptyComponent={<RenderNoResult />}
           ListHeaderComponent={
             <View>
-              <RenderTitle />
+              <RenderTopMargin />
+              {!isKeyboardShown && <RenderTitle />}
               <View style={{
                 alignSelf: 'center',
                 flexDirection: 'row',
@@ -200,7 +185,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
                 width: width * 0.88,
                 marginHorizontal: width * 0.05,
                 paddingLeft: width * 0.03,
-                marginBottom: scale.width,
+                marginVertical: scale.width,
                 borderRadius: 10,
                 backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
               }}>
@@ -211,14 +196,15 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
                   placeholder={'Search'}
                   placeholderTextColor={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3}
                   clearButtonMode='always'
+                  underlineColorAndroid='transparent'
                   value={query}
                   onChangeText={queryText => handleSearch(queryText)}
-                  style={{ 
+                  style={{
                     marginLeft: width * 0.02,
                     height: scale.width * 3,
                     fontSize: scale.width * 1.1,
                     width: width * 0.76,
-                    // backgroundColor: 'pink',
+                    color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
                   }}
                 />
               </View>
@@ -234,6 +220,9 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
                 navigation.setOptions({
                   headerTitle: "",
                   headerShown: false,
+                  headerTitleStyle: {
+
+                  }
                 });
                 isScrolled.current = false;
                 setCount(c => c + 1);
@@ -249,47 +238,16 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
               }
             }
           }}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={isKeyboardShown ? true : false}
+          keyboardShouldPersistTaps='always'
+          scrollEnabled={query.length !== 0 && filteredMusicList.length === 0 ? false : true}
           keyExtractor={(item) => item.id}
-
         />
       </View>
 
-      <BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
-        <View style={{ flex: 13, backgroundColor: 'transparent' }}>
-          <RenderSongForBottomBar item={Player.playlist == null ? Player.musicList[0] : Player.playlist[Player.currentIndex]} />
-        </View>
-        <View style={{ flex: 6, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
-          <TouchableOpacity
-            disabled={isBusy}
-            onPress={async () => {
-              // if (Player.isPlaying) {
-              //   await Player.pause();
-              //   setCount(c => c + 1);
-              // } else {
-              //   await Player.play();
-              //   setCount(c => c + 1);
-              // }
-            }}
-            style={{ padding: Player.isPlaying ? scale.width * 0.6 : scale.width * 0.775 }}
-          >
-            <Ionicons name={Player.isPlaying ? "pause" : "play"} size={Player.isPlaying ? scale.width * 2 : scale.width * 1.65} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
-          </TouchableOpacity>
-          <TouchableOpacity
-            disabled={!isBusy}
-            onPress={async () => {
-              // setIsAvailable(false);
-              // await Player.skipToNext();
-              // setIsAvailable(true);
-            }}
-            style={{ padding: scale.width * 0.53, marginRight: width * 0.05 }}
-          >
-            <Ionicons name="play-forward" size={scale.width * 1.75} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
-          </TouchableOpacity>
-        </View>
-      </BlurView>
-    </View>
+      <RenderBottomBar />
 
+    </KeyboardAvoidingView>
   );
 }
 
@@ -309,19 +267,4 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
-  bottomBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: statusBarHeight,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  bottomMusic: {
-    alignItems: 'center',
-    height: listHeight,
-    flexDirection: 'row',
-    paddingLeft: width * 0.05,
-  }
 });

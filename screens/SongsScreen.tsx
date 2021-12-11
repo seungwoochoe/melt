@@ -21,7 +21,7 @@ const headerHeight = 44 + getStatusBarHeight();
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
-  blurIntensity = 96;
+  blurIntensity = 97;
 } else {
   blurIntensity = 200;
 }
@@ -29,9 +29,28 @@ if (Platform.OS === 'ios') {
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
   const [isBusy, setIsBusy] = React.useState(false);
   const isScrolled = React.useRef(false);
+  const [count, setCount] = React.useState(0);
   const colorScheme = useColorScheme();
 
-  const RenderHeader = () => {
+  const RenderHeaderPlaceholderConditionally = () => {
+    if (!isScrolled.current) {
+      return (
+        <View style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          zIndex: 1,
+          height: headerHeight,
+          backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
+        }} />
+      );
+    } else {
+      return null;
+    }
+  }
+
+  const RenderTitle = () => {
     return (
       <View style={{ height: scale.ratio * 5, marginTop: headerHeight }}>
         <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
@@ -59,7 +78,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
             <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
           </View>
           <View style={{ height: listHeight / 3.2, width: width - listHeight * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ fontSize: scale.width * 0.8, color: colorScheme === "light" ? Colors.light.dullText : Colors.dark.dullText, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
+            <Text style={{ fontSize: scale.width * 0.78, color: colorScheme === "light" ? Colors.light.dullText : Colors.dark.dullText, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -122,23 +141,13 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     <View style={styles.container}>
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
-      {isScrolled.current === false &&
-        <View style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          zIndex: 1,
-          height: headerHeight,
-          backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
-        }} />
-      }
+      <RenderHeaderPlaceholderConditionally />
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Animated.FlatList
           style={{}}
           data={Player.musicList}
-          ListHeaderComponent={RenderHeader}
+          ListHeaderComponent={RenderTitle}
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderMusicCount}
           renderItem={RenderSong}
@@ -151,6 +160,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
                   headerShown: false,
                 });
                 isScrolled.current = false;
+                setCount(c => c + 1);
               }
             } else {
               if (isScrolled.current === false) {
@@ -159,6 +169,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
                   headerShown: true,
                 });
                 isScrolled.current = true;
+                setCount(c => c + 1);
               }
             }
           }}

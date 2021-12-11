@@ -3,8 +3,10 @@ const tintColorDark = '#a06d96';
 
 export default {
   light: {
-    text: '#2b2b2b',
-    dullText: '#555',
+    text: 'rgba(0, 0, 0, 0.77)',
+    text2: 'rgba(0, 0, 0, 0.5)',
+    text3: 'rgba(0, 0, 0, 0.35)',
+    text4: 'rgba(0, 0, 0, 0.05)',
     background: '#fff',
     tint: tintColorLight,
     tabIconDefault: '#ccc',
@@ -12,9 +14,11 @@ export default {
     headerBackground: '#f8f8f8',
   },
   dark: {
-    text: 'rgba(255, 255, 255, 0.8)',
-    dullText: '#888',
-    background: '#121212',
+    text: 'rgba(255, 255, 255, 0.77)',
+    text2: 'rgba(255, 255, 255, 0.5)',
+    text3: 'rgba(255, 255, 255, 0.35)',
+    text4: 'rgba(255, 255, 255, 0.08)',
+    background: '#0c0c0c',
     tint: tintColorDark,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,

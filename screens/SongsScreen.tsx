@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import filter from 'lodash.filter';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -12,6 +13,7 @@ import { Music, Track } from '../types';
 
 import Player from '../containers/Player';
 import { RootTabScreenProps } from '../types';
+import musicList from '../assets/data';
 
 const { width, height } = Dimensions.get("screen");
 const listHeight = width * 0.149;
@@ -30,9 +32,29 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   const [isBusy, setIsBusy] = React.useState(false);
   const isScrolled = React.useRef(false);
   const [count, setCount] = React.useState(0);
+  const [query, setQuery] = React.useState('');
+  const [filteredMusicList, setFilteredMusicList] = React.useState([]);
   const colorScheme = useColorScheme();
 
-  const RenderHeaderPlaceholderConditionally = () => {
+  function handleSearch(query: string) {
+    const formattedQuery = query.toLowerCase();
+    const filteredData = filter(musicList, music => {
+      return search(music, formattedQuery);
+    })
+
+    setFilteredMusicList(filteredData);
+    setQuery(query);
+  }
+
+  function search({ title, artist }: { title: string, artist: string }, query: string) {
+    if (title.toLowerCase().includes(query) || artist.toLowerCase().includes(query)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const RenderHeaderBarPlaceholderConditionally = () => {
     if (!isScrolled.current) {
       return (
         <View style={{
@@ -52,10 +74,18 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
   const RenderTitle = () => {
     return (
-      <View style={{ height: scale.ratio * 5, marginTop: headerHeight }}>
+      <View style={{ height: scale.ratio * 5, width: width, marginTop: headerHeight }}>
         <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
           Songs
         </Text>
+      </View>
+    )
+  }
+
+  const RenderSearchBar = () => {
+    return (
+      <View>
+
       </View>
     )
   }
@@ -78,10 +108,20 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
             <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
           </View>
           <View style={{ height: listHeight / 3.2, width: width - listHeight * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ fontSize: scale.width * 0.78, color: colorScheme === "light" ? Colors.light.dullText : Colors.dark.dullText, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
+            <Text style={{ fontSize: scale.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
           </View>
         </View>
       </TouchableOpacity>
+    )
+  }
+
+  const RenderNoResult = () => {
+    return (
+      <View style={{ height: height * 0.35, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
+        <Text style={{ fontSize: scale.width * 1.2 }}>
+          No results
+        </Text>
+      </View>
     )
   }
 
@@ -130,7 +170,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     return (
       <View style={{ height: statusBarHeight * 1.04, alignItems: 'center', paddingTop: statusBarHeight * 0.1 }}>
         <Text style={{ fontSize: scale.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
-          - {Player.musicList.length} songs -
+          {/* - {Player.musicList.length} songs - */}
         </Text>
       </View>
     )
@@ -141,13 +181,47 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     <View style={styles.container}>
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
-      <RenderHeaderPlaceholderConditionally />
+      <RenderHeaderBarPlaceholderConditionally />
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Animated.FlatList
           style={{}}
-          data={Player.musicList}
-          ListHeaderComponent={RenderTitle}
+          data={query.length === 0 ? Player.musicList : filteredMusicList}
+          ListEmptyComponent={<RenderNoResult />}
+          ListHeaderComponent={
+            <View>
+              <RenderTitle />
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                height: scale.width * 2.2,
+                width: width * 0.9,
+                marginHorizontal: width * 0.05,
+                paddingHorizontal: width * 0.03,
+                marginBottom: scale.width,
+                borderRadius: 10,
+                backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
+              }}>
+                <Ionicons name="search-outline" size={scale.width * 1.1} color={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3} />
+                <TextInput
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                  placeholder={'Search'}
+                  placeholderTextColor={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3}
+                  clearButtonMode='always'
+                  value={query}
+                  onChangeText={queryText => handleSearch(queryText)}
+                  style={{ 
+                    marginLeft: width * 0.02,
+                    height: scale.width * 3,
+                    fontSize: scale.width * 1.1,
+                    width: width * 0.78,
+                    // backgroundColor: 'pink',
+                  }}
+                />
+              </View>
+            </View>
+          }
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderMusicCount}
           renderItem={RenderSong}

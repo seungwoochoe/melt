@@ -14,7 +14,7 @@ import Player from '../containers/Player';
 const { width } = Dimensions.get('screen');
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
-const statusBarHeight = listHeight * 1.2;
+const bottomBarHeight = listHeight * 1.2;
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -32,13 +32,13 @@ export default function RenderBottomBar() {
 		return (
 			<TouchableOpacity
 				onPress={() => { }}
-				style={{ height: statusBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
+				style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
 				<View style={{
 					width: listHeight,
 					shadowColor: 'black',
 					shadowRadius: width * 0.02,
 					shadowOpacity: 0.25,
-					shadowOffset: { width: -statusBarHeight * 0.02, height: statusBarHeight * 0.003 },
+					shadowOffset: { width: -bottomBarHeight * 0.02, height: bottomBarHeight * 0.003 },
 					backgroundColor: 'transparent',
 				}}>
 					<Image
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
 	bottomBarContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		height: statusBarHeight,
+		height: bottomBarHeight,
 		position: 'absolute',
 		left: 0,
 		right: 0,

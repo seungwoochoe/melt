@@ -73,7 +73,7 @@ function BottomTabNavigator() {
           title: 'Home',
           tabBarLabelStyle: {
             fontSize: scale.width * 0.6,
-            fontWeight: '600',
+            fontWeight: '700',
           },
           tabBarIcon: ({ color }) => <TabBarIcon name="home-outline" color={color} />,
         })}
@@ -85,7 +85,7 @@ function BottomTabNavigator() {
           title: 'Songs',
           tabBarLabelStyle: {
             fontSize: scale.width * 0.6,
-            fontWeight: '600',
+            fontWeight: '700',
           },
           tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
         }}
@@ -97,7 +97,7 @@ function BottomTabNavigator() {
           title: 'Settings',
           tabBarLabelStyle: {
             fontSize: scale.width * 0.6,
-            fontWeight: '600',
+            fontWeight: '700',
           },
           tabBarIcon: ({ color }) => <TabBarIcon name="settings-outline" color={color} />,
         }}
@@ -114,5 +114,5 @@ function TabBarIcon(props: {
   color: string;
 }) {
   
-  return <Ionicons size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <Ionicons size={scale.width * 1.58} style={{ marginBottom: -3 }} {...props} />;
 }

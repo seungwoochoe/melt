@@ -1,15 +1,34 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, FlatList } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+import { View, Text } from '../components/Themed';
+import useColorScheme from '../hooks/useColorScheme';
+import Colors from '../constants/Colors';
+import scale from '../constants/scale';
+import RenderDarkHeader from '../components/DarkHeader';
+import RenderTitle from '../components/Title';
 
-export default function SettingsScreen() {
+import { RootTabScreenProps } from '../types';
+
+const { width, height } = Dimensions.get("screen");
+
+export default function SettingsScreen({ navigation }: RootTabScreenProps<'Settings'>) {
+
+  const colorScheme = useColorScheme();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/SettingsScreen.tsx" />
+    <View style={{flex: 1, width: width, backgroundColor: colorScheme === 'light' ? '#f2f2f7' : '#000'}}>
+
+      <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
+
+      <RenderTitle title='Settings'/>
+
+
+
+
+      <RenderDarkHeader title='Settings' blur={false} />
+      
     </View>
   );
 }
@@ -17,16 +36,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+    width: width,
+    // backgroundColor: 'green'
   },
 });

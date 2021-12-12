@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, SectionList, KeyboardAvoidingView, Keyboard, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 import filter from 'lodash.filter';
 
 import { View, Text } from '../components/Themed';
@@ -15,13 +14,12 @@ import RenderBottomBar from '../components/BottomBar';
 import Player from '../containers/Player';
 import { RootTabScreenProps } from '../types';
 import musicList from '../assets/data';
+import RenderTitle from '../components/Title';
 
 const { width, height } = Dimensions.get('screen');
-const titleHeight = scale.ratio * 3.2;
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.2;
-const headerHeight = 44 + getStatusBarHeight();
 
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
@@ -66,20 +64,6 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     return false;
   }
 
-
-  const RenderTopMargin = () => {
-    return (
-      <View style={{ height: headerHeight, width: width }} />
-    )
-  }
-
-  const RenderTitle = () => {
-    return (
-      <Text style={{ height: titleHeight, fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
-        Songs
-      </Text>
-    )
-  }
 
   const RenderSong = ({ item }: { item: Music }) => {
     return (
@@ -160,9 +144,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           // stickyHeaderIndices={[0]}
           ListHeaderComponent={
             <View>
-              <RenderTopMargin />
-
-              <RenderTitle />
+              <RenderTitle title='Songs' />
 
               <View style={{
                 alignSelf: 'center',

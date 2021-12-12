@@ -133,15 +133,10 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   const RenderBottomMargin = () => {
     return (
       <>
-        <View
-          style={{
-            height: 1,
-            marginLeft: listHeight + marginBetweenAlbumartAndText + width * 0.045,
-            marginRight: width * 0.06,
-          }}
-          lightColor='#dfdfdf'
-          darkColor='#343434'
-        />
+        {(query.length === 0 || filteredMusicList.length !== 0) &&
+          <RenderSeparator />
+        }
+
         <View style={{ height: isKeyboardShown ? 0 : bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }}>
           <Text style={{ fontSize: scale.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
             {/* - {Player.musicList.length} songs - */}

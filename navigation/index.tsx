@@ -8,8 +8,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Platform } from 'react-native';
+import { ColorSchemeName } from 'react-native';
 
+import scale from '../constants/scale';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
@@ -70,6 +71,10 @@ function BottomTabNavigator() {
         component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
           title: 'Home',
+          tabBarLabelStyle: {
+            fontSize: scale.width * 0.6,
+            fontWeight: '600',
+          },
           tabBarIcon: ({ color }) => <TabBarIcon name="home-outline" color={color} />,
         })}
       />
@@ -78,6 +83,10 @@ function BottomTabNavigator() {
         component={SongsScreen}
         options={{
           title: 'Songs',
+          tabBarLabelStyle: {
+            fontSize: scale.width * 0.6,
+            fontWeight: '600',
+          },
           tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
         }}
       />
@@ -86,6 +95,10 @@ function BottomTabNavigator() {
         component={SettingsScreen}
         options={{
           title: 'Settings',
+          tabBarLabelStyle: {
+            fontSize: scale.width * 0.6,
+            fontWeight: '600',
+          },
           tabBarIcon: ({ color }) => <TabBarIcon name="settings-outline" color={color} />,
         }}
       />

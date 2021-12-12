@@ -20,7 +20,7 @@ export default function RenderTitle({ title }: { title: string }) {
 	const RenderTitle = () => {
 		return (
 			<Text
-				style={{ height: titleHeight * useWindowDimensions().fontScale, fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}
+				style={{ height: titleHeight * useWindowDimensions().fontScale, fontSize: scale.width * 1.95, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}
 			>
 				{title}
 			</Text>

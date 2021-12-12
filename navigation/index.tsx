@@ -78,7 +78,6 @@ function BottomTabNavigator() {
         component={SongsScreen}
         options={{
           title: 'Songs',
-          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
         }}
       />

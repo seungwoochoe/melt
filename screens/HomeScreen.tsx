@@ -14,7 +14,6 @@ import { RootTabScreenProps } from '../types';
 
 const { width, height } = Dimensions.get("screen");
 const listHeight = width * 0.149;
-const statusBarHeight = listHeight * 1.2;
 
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, FlatList, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, SectionList, KeyboardAvoidingView, Keyboard, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import filter from 'lodash.filter';
@@ -9,6 +9,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import scale from '../constants/scale';
 import { Music, Track } from '../types';
+import RenderHeader from '../components/Header';
 import RenderBottomBar from '../components/BottomBar';
 
 import Player from '../containers/Player';
@@ -16,9 +17,10 @@ import { RootTabScreenProps } from '../types';
 import musicList from '../assets/data';
 
 const { width, height } = Dimensions.get('screen');
+const titleHeight = scale.ratio * 3.2;
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
-const statusBarHeight = listHeight * 1.2;
+const bottomBarHeight = listHeight * 1.2;
 const headerHeight = 44 + getStatusBarHeight();
 
 
@@ -28,21 +30,16 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   const [filteredMusicList, setFilteredMusicList] = React.useState<Music[]>([]);
   const [isKeyboardShown, setIsKeyboardShown] = React.useState(false);
   const [count, setCount] = React.useState(0);
+
   const isScrolled = React.useRef(false);
   const colorScheme = useColorScheme();
 
-
   React.useEffect(() => {
     const keyboardShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      navigation.setOptions({
-        headerShown: false,
-      })
       setIsKeyboardShown(true);
     });
+
     const keyboardHideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      navigation.setOptions({
-        headerShown: true,
-      })
       setIsKeyboardShown(false);
     });
 
@@ -70,24 +67,6 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   }
 
 
-  const RenderHeaderBarPlaceholderConditionally = () => {
-    if (!isKeyboardShown && !isScrolled.current) {
-      return (
-        <View style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          zIndex: 1,
-          height: headerHeight,
-          backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
-        }} />
-      );
-    } else {
-      return null;
-    }
-  }
-
   const RenderTopMargin = () => {
     return (
       <View style={{ height: headerHeight, width: width }} />
@@ -96,7 +75,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
   const RenderTitle = () => {
     return (
-      <Text style={{ fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
+      <Text style={{ height: titleHeight, fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
         Songs
       </Text>
     )
@@ -151,9 +130,9 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     )
   }
 
-  const RenderMusicCount = () => {
+  const RenderBottomMargin = () => {
     return (
-      <View style={{ height: isKeyboardShown ? 0 : statusBarHeight * 1.04, alignItems: 'center', paddingTop: statusBarHeight * 0.1 }}>
+      <View style={{ height: isKeyboardShown ? 0 : bottomBarHeight * 1.04, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }}>
         <Text style={{ fontSize: scale.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
           {/* - {Player.musicList.length} songs - */}
         </Text>
@@ -167,29 +146,31 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
-      <RenderHeaderBarPlaceholderConditionally />
-
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
           data={query.length === 0 ? Player.musicList : filteredMusicList}
           ListEmptyComponent={<RenderNoResult />}
+          // stickyHeaderIndices={[0]}
           ListHeaderComponent={
             <View>
               <RenderTopMargin />
-              {!isKeyboardShown && <RenderTitle />}
+
+              <RenderTitle />
+
               <View style={{
                 alignSelf: 'center',
                 flexDirection: 'row',
                 alignItems: 'center',
-                height: scale.width * 2.2,
-                width: width * 0.88,
+                height: scale.width * 2.15,
+                width: width * 0.89,
                 marginHorizontal: width * 0.05,
                 paddingLeft: width * 0.03,
-                marginVertical: scale.width,
-                borderRadius: 10,
+                marginTop: scale.width * 0.5,
+                marginBottom: scale.width,
+                borderRadius: 11,
                 backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
               }}>
-                <Ionicons name="search-outline" size={scale.width * 1.1} color={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3} />
+                <Ionicons name="search-outline" size={scale.width * 1.15} color={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3} />
                 <TextInput
                   autoCapitalize='none'
                   autoCorrect={false}
@@ -202,7 +183,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
                   style={{
                     marginLeft: width * 0.02,
                     height: scale.width * 3,
-                    fontSize: scale.width * 1.1,
+                    fontSize: scale.width * 1.03,
                     width: width * 0.76,
                     color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
                   }}
@@ -211,39 +192,34 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
             </View>
           }
           ItemSeparatorComponent={RenderSeparator}
-          ListFooterComponent={RenderMusicCount}
+          ListFooterComponent={RenderBottomMargin}
           renderItem={RenderSong}
           onScroll={(event) => {
             const scrollOffset = event.nativeEvent.contentOffset.y;
-            if (scrollOffset < scale.width * 2.05) {
-              if (isScrolled.current === true) {
-                navigation.setOptions({
-                  headerTitle: "",
-                  headerShown: false,
-                  headerTitleStyle: {
+            // if (scrollOffset < 0) {
+            //   const scaler = Math.max(scrollOffset, -80);
+            // }
 
-                  }
-                });
+            if (!isKeyboardShown && scrollOffset < scale.width * 2.05) {
+              if (isScrolled.current === true) {
                 isScrolled.current = false;
                 setCount(c => c + 1);
               }
-            } else {
+            } else if (!isKeyboardShown) {
               if (isScrolled.current === false) {
-                navigation.setOptions({
-                  headerTitle: "Songs",
-                  headerShown: true,
-                });
                 isScrolled.current = true;
                 setCount(c => c + 1);
               }
             }
           }}
-          showsVerticalScrollIndicator={isKeyboardShown ? true : false}
+          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps='always'
           scrollEnabled={query.length !== 0 && filteredMusicList.length === 0 ? false : true}
           keyExtractor={(item) => item.id}
         />
       </View>
+
+      <RenderHeader title='Songs' blur={isScrolled.current} />
 
       <RenderBottomBar />
 

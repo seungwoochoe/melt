@@ -22,6 +22,14 @@ export default function RenderHeader({ title, blur }: { title: string, blur: boo
 
 	const colorScheme = useColorScheme();
 
+	let blurIntensity: number;
+	if (Platform.OS === 'ios') {
+		blurIntensity = colorScheme === 'light' ? 97 : 100;
+	} else {
+		blurIntensity = 200;
+	}
+
+
 	const RenderTitle = () => {
 		return (
 			<View style={{ flex: 1, alignSelf: 'center', flexDirection: 'row', alignItems: 'flex-end', backgroundColor: 'transparent' }}>

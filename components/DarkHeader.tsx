@@ -9,17 +9,17 @@ import scale from '../constants/scale';
 
 const headerHeight = 44 + getStatusBarHeight();
 
-let blurIntensity: number;
-if (Platform.OS === 'ios') {
-	blurIntensity = 97;
-} else {
-	blurIntensity = 200;
-}
-
 
 export default function RenderDarkHeader({ title, blur }: { title: string, blur: boolean }) {
 
 	const colorScheme = useColorScheme();
+
+	let blurIntensity: number;
+	if (Platform.OS === 'ios') {
+		blurIntensity = colorScheme === 'light' ? 97 : 100;
+	} else {
+		blurIntensity = 200;
+	}
 
 	const RenderTitle = () => {
 		return (
@@ -47,7 +47,7 @@ export default function RenderDarkHeader({ title, blur }: { title: string, blur:
 			}
 
 			{!blur &&
-				<View style={{...styles.header, backgroundColor: colorScheme === 'light' ? '#f2f2f7' : '#000'}}>
+				<View style={{ ...styles.header, backgroundColor: colorScheme === 'light' ? '#f2f2f7' : '#000' }}>
 				</View>
 			}
 		</>

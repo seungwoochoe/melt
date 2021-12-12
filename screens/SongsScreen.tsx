@@ -9,12 +9,12 @@ import Colors from '../constants/Colors';
 import scale from '../constants/scale';
 import { Music, Track } from '../types';
 import RenderHeader from '../components/Header';
+import RenderTitle from '../components/Title';
 import RenderBottomBar from '../components/BottomBar';
 
 import Player from '../containers/Player';
 import { RootTabScreenProps } from '../types';
 import musicList from '../assets/data';
-import RenderTitle from '../components/Title';
 
 const { width, height } = Dimensions.get('screen');
 const listHeight = width * 0.149;

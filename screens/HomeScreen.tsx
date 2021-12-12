@@ -6,8 +6,8 @@ import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import scale from '../constants/scale';
-import RenderBottomBar from '../components/BottomBar';
 import RenderTitle from '../components/Title';
+import RenderBottomBar from '../components/BottomBar';
 
 import { RootTabScreenProps } from '../types';
 

@@ -13,8 +13,8 @@ import { RootTabScreenProps } from '../types';
 import RenderBottomBar from '../components/BottomBar';
 
 const { width, height } = Dimensions.get("screen");
-const itemHeightWithoutScale = width * 0.125;
-const marginBetweenIconAndText = itemHeightWithoutScale * 0.28;
+const itemHeightWithoutScale = width * 0.12;
+const marginBetweenIconAndText = itemHeightWithoutScale * 0.3;
 const marginHorizontal = width * 0.05;
 const borderRadius = 12;
 
@@ -73,11 +73,42 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
   ];
 
 
-  // const RenderSubscriptionStatus = () => {
-  //   return (
-
-  //   )
-  // }
+  const RenderSubscriptionStatus = () => {
+    return (
+      <View
+        style={{ width: width, height: itemHeight * 1.2, marginTop: itemHeight / 2, marginBottom: itemHeight / 3, backgroundColor: 'transparent' }}
+      >
+        <TouchableOpacity style={{
+          flex: 1,
+          flexDirection: 'row',
+          marginHorizontal: marginHorizontal,
+          alignItems: 'center',
+          backgroundColor: colorScheme === 'light' ? '#fff' : '#1e1e22',
+          borderRadius: borderRadius,
+        }}
+        >
+          <View style={{
+            width: itemHeightWithoutScale * 0.65,
+            marginVertical: itemHeightWithoutScale * 0.3,
+            height: itemHeightWithoutScale * 0.65,
+            marginLeft: itemHeightWithoutScale * 0.35,
+            marginRight: marginBetweenIconAndText,
+            borderRadius: itemHeightWithoutScale * 0.15,
+            backgroundColor: 'orange',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+            <View style={{ flex: 1, alignItems: 'center', backgroundColor: 'transparent', marginLeft: itemHeightWithoutScale * 0.016 }}>
+              <Ionicons name='star' size={scale.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
+            </View>
+          </View>
+          <Text style={{ fontSize: scale.width * 1.05,}}>
+            You're a subscriber!
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
 
   const RenderItem = ({ item }: { item: { title: string, iconName: string, iconBackgroundColor: string, position: string } }) => {
     return (
@@ -107,14 +138,14 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-            <View style={{ flex: 1, alignItems: 'center', backgroundColor: 'transparent', marginLeft: itemHeightWithoutScale * 0.016 }}>
+            <View style={{ flex: 1, alignItems: 'center', backgroundColor: 'transparent', marginLeft: item.iconName === 'albums' ? itemHeightWithoutScale * 0.03 : itemHeightWithoutScale * 0.016 }}>
               <Ionicons name={item.iconName} size={scale.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
             </View>
           </View>
-          <Text style={{ fontSize: scale.width * 1.05, }}>
+          <Text style={{ fontSize: scale.width * 1.01, }}>
             {item.title}
           </Text>
-          <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight: width * 0.03 }}>
+          <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight:  width * 0.03 }}>
             <Ionicons name='chevron-forward-outline' size={scale.width * 1.35} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
           </View>
         </TouchableOpacity>
@@ -128,7 +159,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
         <View style={{
           height: .55,
           marginLeft: marginHorizontal,
-          width: itemHeightWithoutScale * 0.95 + marginBetweenIconAndText * 0.9,
+          width: itemHeightWithoutScale * 0.95 + marginBetweenIconAndText,
           backgroundColor: colorScheme === 'light' ? '#fff' : '#1e1e22',
         }} />
         <View
@@ -145,7 +176,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
 
   const RenderBottomMargin = () => {
     return (
-      <View style={{ height: width * 0.2, alignItems: 'center', backgroundColor: 'transaprent' }} />
+      <View style={{ height: width * 0.2, alignItems: 'center', backgroundColor: 'transparent' }} />
     )
   }
 
@@ -158,13 +189,19 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
         sections={settings}
         keyExtractor={item => item.title}
         renderItem={RenderItem}
-        ListHeaderComponent={<RenderTitle title='Settings' />}
+        ListHeaderComponent={() => {
+          return (
+            <>
+              <RenderTitle title='Settings' />
+              <RenderSubscriptionStatus />
+            </>
+          )
+        }}
+        ListFooterComponent={RenderBottomMargin}
         ItemSeparatorComponent={RenderSeparator}
-        SectionSeparatorComponent={() => { return (<View style={{ height: itemHeightWithoutScale / 2.5, backgroundColor: 'transparent' }} />) }}
+        SectionSeparatorComponent={() => { return (<View style={{ height: itemHeightWithoutScale / 2.7, backgroundColor: 'transparent' }} />) }}
         showsVerticalScrollIndicator={false}
       />
-
-      <RenderBottomMargin />
 
       <RenderDarkHeader title='Settings' blur={false} />
 

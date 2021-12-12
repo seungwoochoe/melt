@@ -30,13 +30,13 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
         {
           title: 'Statistics',
           iconName: 'stats-chart',
-          iconBackgroundColor: '#3475f8',
+          iconBackgroundColor: '#ea4e3d',
           position: 'top',
         },
         {
           title: 'History',
           iconName: 'albums',
-          iconBackgroundColor: '#ea4e3d',
+          iconBackgroundColor: '#3475f8',
           position: 'bottom',
         },
       ]

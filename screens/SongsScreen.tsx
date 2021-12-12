@@ -71,7 +71,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     return (
       <TouchableOpacity
         disabled={isBusy}
-        onPress={() => { }}
+        onPress={() => {Keyboard.dismiss() }}
         style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
       >
         <View>
@@ -198,7 +198,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
             }
           }}
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps='always'
+          keyboardShouldPersistTaps='handled'
           scrollEnabled={query.length !== 0 && filteredMusicList.length === 0 ? false : true}
           keyExtractor={(item) => item.id}
         />

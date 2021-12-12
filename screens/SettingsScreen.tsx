@@ -13,7 +13,7 @@ import { RootTabScreenProps } from '../types';
 import RenderBottomBar from '../components/BottomBar';
 
 const { width, height } = Dimensions.get("screen");
-const itemHeightWithoutScale = width * 0.12;
+const itemHeightWithoutScale = width * 0.1224;
 const marginBetweenIconAndText = itemHeightWithoutScale * 0.3;
 const marginHorizontal = width * 0.05;
 const borderRadius = 12;
@@ -28,22 +28,10 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
       section: '1',
       data: [
         {
-          title: 'Appearance',
-          iconName: 'contrast',
-          iconBackgroundColor: '#a952b3',
-          position: 'top',
-        },
-        {
-          title: 'Language',
-          iconName: 'language',
-          iconBackgroundColor: '#5555ce',
-          position: '',
-        },
-        {
           title: 'Statistics',
           iconName: 'stats-chart',
           iconBackgroundColor: '#3475f8',
-          position: '',
+          position: 'top',
         },
         {
           title: 'History',
@@ -56,16 +44,40 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
     {
       section: '2',
       data: [
+        // {
+        //   title: 'Appearance',
+        //   iconName: 'contrast',
+        //   iconBackgroundColor: '#a952b3',
+        //   position: 'top',
+        // },
+        // {
+        //   title: 'Language',
+        //   iconName: 'language',
+        //   iconBackgroundColor: '#5555ce',
+        //   position: '',
+        // },
         {
           title: 'Feedback',
           iconName: 'chatbubble-ellipses',
-          iconBackgroundColor: '#63c065',
+          iconBackgroundColor: '#5555ce',
           position: 'top',
         },
         {
           title: 'About',
           iconName: 'information',
           iconBackgroundColor: '#ff9b36',
+          position: '',
+        },
+        {
+          title: 'Privacy',
+          iconName: 'lock-closed',
+          iconBackgroundColor: '#63c065',
+          position: '',
+        },
+        {
+          title: 'Export',
+          iconName: 'download',
+          iconBackgroundColor: 'grey',
           position: 'bottom',
         },
       ]
@@ -102,8 +114,8 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
               <Ionicons name='star' size={scale.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
             </View>
           </View>
-          <Text style={{ fontSize: scale.width * 1.05,}}>
-            You're a subscriber!
+          <Text style={{ fontSize: scale.width * 1.02, }}>
+            You're a star!
           </Text>
         </TouchableOpacity>
       </View>
@@ -120,7 +132,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
           flexDirection: 'row',
           marginHorizontal: marginHorizontal,
           alignItems: 'center',
-          backgroundColor: colorScheme === 'light' ? '#fff' : '#1e1e22',
+          backgroundColor: colorScheme === 'light' ? '#fff' : '#1a1a1c',
           borderTopLeftRadius: item.position === 'top' ? borderRadius : 0,
           borderTopRightRadius: item.position === 'top' ? borderRadius : 0,
           borderBottomLeftRadius: item.position === 'bottom' ? borderRadius : 0,
@@ -138,15 +150,26 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-            <View style={{ flex: 1, alignItems: 'center', backgroundColor: 'transparent', marginLeft: item.iconName === 'albums' ? itemHeightWithoutScale * 0.03 : itemHeightWithoutScale * 0.016 }}>
+            <View style={{
+              flex: 1,
+              alignItems: 'center',
+              backgroundColor: 'transparent',
+              marginLeft:
+                item.iconName === 'albums' ||
+                  item.iconName === 'stats-chart' ||
+                  item.iconName === 'download' ||
+                  item.iconName === 'lock-closed'
+                  ? itemHeightWithoutScale * 0.03 : itemHeightWithoutScale * 0.016,
+            }}
+            >
               <Ionicons name={item.iconName} size={scale.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
             </View>
           </View>
-          <Text style={{ fontSize: scale.width * 1.01, }}>
+          <Text style={{ fontSize: scale.width * .95, }}>
             {item.title}
           </Text>
-          <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight:  width * 0.03 }}>
-            <Ionicons name='chevron-forward-outline' size={scale.width * 1.35} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
+          <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight: width * 0.03 }}>
+            <Ionicons name='chevron-forward-outline' size={scale.width * 1.25} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
           </View>
         </TouchableOpacity>
       </View>

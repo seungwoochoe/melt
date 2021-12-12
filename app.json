@@ -1,11 +1,12 @@
 {
   "expo": {
     "name": "melt",
+    "description": "Weighted shuffle music player",
     "slug": "melt",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "melt",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -19,13 +20,21 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.melted.melt",
+      "supportsTablet": false,
+      "requireFullScreen": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

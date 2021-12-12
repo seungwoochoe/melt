@@ -218,9 +218,9 @@ const styles = StyleSheet.create({
     width: width,
   },
   artwork: {
-    width: listHeightWithoutScale * 0.9,
-    height: listHeightWithoutScale * 0.9,
-    margin: listHeightWithoutScale * 0.05,
+    width: listHeightWithoutScale * 0.88,
+    height: listHeightWithoutScale * 0.88,
+    margin: listHeightWithoutScale * 0.06,
     borderRadius: 4.5,
   },
   separator: {

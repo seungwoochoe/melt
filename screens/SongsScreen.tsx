@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, SectionList, KeyboardAvoidingView, Keyboard, FlatList } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, SectionList, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import filter from 'lodash.filter';
 
@@ -17,9 +17,8 @@ import { RootTabScreenProps } from '../types';
 import musicList from '../assets/data';
 
 const { width, height } = Dimensions.get('screen');
-const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
-const bottomBarHeight = listHeight * 1.2;
+const listHeightWithoutScale = width * 0.149;
 
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
@@ -31,6 +30,9 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
   const isScrolled = React.useRef(false);
   const colorScheme = useColorScheme();
+  const listHeight = width * 0.149 * useWindowDimensions().fontScale;
+  const bottomBarHeight = listHeight * 1.2;
+
 
   React.useEffect(() => {
     const keyboardShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -79,10 +81,10 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           />
         </View>
         <View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
-          <View style={{ height: listHeight / 2.4, width: width - listHeight * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ height: listHeight / 2.4, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
             <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
           </View>
-          <View style={{ height: listHeight / 3.2, width: width - listHeight * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ height: listHeight / 3.2, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
             <Text style={{ fontSize: scale.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
           </View>
         </View>
@@ -105,7 +107,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
       <View
         style={{
           height: 1,
-          marginLeft: listHeight + marginBetweenAlbumartAndText + width * 0.045,
+          marginLeft: listHeightWithoutScale + marginBetweenAlbumartAndText + width * 0.045,
           marginRight: width * 0.06,
         }}
         lightColor='#dfdfdf'
@@ -222,9 +224,9 @@ const styles = StyleSheet.create({
     width: width,
   },
   artwork: {
-    width: listHeight * 0.9,
-    height: listHeight * 0.9,
-    margin: listHeight * 0.05,
+    width: listHeightWithoutScale * 0.9,
+    height: listHeightWithoutScale * 0.9,
+    margin: listHeightWithoutScale * 0.05,
     borderRadius: 4.5,
   },
   separator: {

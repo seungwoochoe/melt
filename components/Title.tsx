@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, useWindowDimensions } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import { View, Text } from '../components/Themed';
@@ -19,12 +19,14 @@ export default function RenderTitle({ title }: { title: string }) {
 
 	const RenderTitle = () => {
 		return (
-			<Text style={{ height: titleHeight, fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}>
+			<Text
+				style={{ height: titleHeight * useWindowDimensions().fontScale, fontSize: scale.width * 1.9, fontWeight: 'bold', marginLeft: width * 0.06, paddingTop: scale.ratio * 0.3 }}
+			>
 				{title}
 			</Text>
 		)
 	};
-	
+
 
 	return (
 		<>

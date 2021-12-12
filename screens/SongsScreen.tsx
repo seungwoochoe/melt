@@ -26,9 +26,9 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   const [query, setQuery] = React.useState('');
   const [filteredMusicList, setFilteredMusicList] = React.useState<Music[]>([]);
   const [isKeyboardShown, setIsKeyboardShown] = React.useState(false);
+  const [isScrolled, setIsScrelled] = React.useState(false);
   const [count, setCount] = React.useState(0);
 
-  const isScrolled = React.useRef(false);
   const colorScheme = useColorScheme();
   const listHeight = width * 0.149 * useWindowDimensions().fontScale;
   const bottomBarHeight = listHeight * 1.2;
@@ -187,19 +187,14 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           renderItem={RenderSong}
           onScroll={(event) => {
             const scrollOffset = event.nativeEvent.contentOffset.y;
-            // if (scrollOffset < 0) {
-            //   const scaler = Math.max(scrollOffset, -80);
-            // }
 
-            if (!isKeyboardShown && scrollOffset < scale.width * 2.05) {
-              if (isScrolled.current === true) {
-                isScrolled.current = false;
-                setCount(c => c + 1);
+            if (scrollOffset < scale.width * 2.05) {
+              if (isScrolled === true) {
+                setIsScrelled(false);
               }
-            } else if (!isKeyboardShown) {
-              if (isScrolled.current === false) {
-                isScrolled.current = true;
-                setCount(c => c + 1);
+            } else {
+              if (isScrolled === false) {
+                setIsScrelled(true);
               }
             }
           }}
@@ -210,7 +205,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
         />
       </View>
 
-      <RenderHeader title='Songs' blur={isScrolled.current} />
+      <RenderHeader title='Songs' blur={isScrolled} />
 
       <RenderBottomBar />
 

@@ -132,11 +132,23 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
   const RenderBottomMargin = () => {
     return (
-      <View style={{ height: isKeyboardShown ? 0 : bottomBarHeight * 1.04, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }}>
-        <Text style={{ fontSize: scale.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
-          {/* - {Player.musicList.length} songs - */}
-        </Text>
-      </View>
+      <>
+        <View
+          style={{
+            height: 1,
+            marginLeft: listHeight + marginBetweenAlbumartAndText + width * 0.045,
+            marginRight: width * 0.06,
+          }}
+          lightColor='#dfdfdf'
+          darkColor='#343434'
+        />
+        <View style={{ height: isKeyboardShown ? 0 : bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }}>
+          <Text style={{ fontSize: scale.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
+            {/* - {Player.musicList.length} songs - */}
+          </Text>
+        </View>
+      </>
+
     )
   }
 

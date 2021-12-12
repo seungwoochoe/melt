@@ -19,6 +19,7 @@ import musicList from '../assets/data';
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
 const listHeightWithoutScale = width * 0.149;
+const bottomBarHeight = listHeightWithoutScale * 1.2;
 
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
@@ -31,7 +32,6 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
   const colorScheme = useColorScheme();
   const listHeight = width * 0.149 * useWindowDimensions().fontScale;
-  const bottomBarHeight = listHeight * 1.2;
 
 
   React.useEffect(() => {
@@ -129,7 +129,6 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           </Text>
         </View>
       </>
-
     )
   }
 

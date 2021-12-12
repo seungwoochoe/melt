@@ -13,7 +13,7 @@ export default function RenderTitle({ title }: { title: string }) {
 
 	const RenderTopMargin = () => {
 		return (
-			<View style={{ height: headerHeight, width: width }} />
+			<View style={{ height: headerHeight, width: width, backgroundColor: 'transparent' }} />
 		)
 	};
 

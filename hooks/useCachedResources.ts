@@ -20,10 +20,6 @@ export default function useCachedResources() {
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         });
 
-        // Load artworks
-        musicList.forEach(element => {
-          Asset.loadAsync(element.artwork);
-        })
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);

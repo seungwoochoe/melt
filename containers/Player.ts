@@ -21,12 +21,11 @@ export default class Player {
 
 		for (const file of files) {
 			let metadata: any = await Player.readMetadata(file);
-			console.log(metadata);
 			Player.musicList.unshift({
 				url: file.path,
 				title: metadata.tags.title,
 				artist: metadata.tags.artist,
-				artwork: require('../assets/artworks/pexels-min-an-1454789.jpg'),
+				artwork: Player.getPictureData(metadata),
 				id: file.path,
 			})
 		}
@@ -39,7 +38,6 @@ export default class Player {
 			new jsmediatags.Reader(file.path)
 				.read({
 					onSuccess: (metadata: any) => {
-						console.log("⭐️⭐️", Player.musicList);
 						resolve(metadata);
 					},
 					onError: (e: any) => {
@@ -48,6 +46,16 @@ export default class Player {
 					}
 				});
 		});
+	}
+
+	static getPictureData(metadata: any) {
+		console.log(metadata);
+		const { data } = metadata.tags.picture;
+		let base64String = "";
+		for (let i = 0; i < data.length; i++) {
+			base64String += String.fromCharCode(data[i]);
+		}
+		return {uri: `data:${data.format};base64,${window.btoa(base64String)}`};
 	}
 
 	static async setupPlayer() {
@@ -68,7 +76,6 @@ export default class Player {
 			],
 			compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SeekTo],
 		});
-		console.log("🎧🎧🎧", Player.musicList);
 
 		await TrackPlayer.add(Player.musicList);
 	}

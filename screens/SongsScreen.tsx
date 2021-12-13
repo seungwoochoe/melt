@@ -74,7 +74,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
       >
         <View>
           <Image
-            source={item.artwork}
+            source={typeof item.artwork === "number" ? item.artwork : {uri: item.artwork}}
             style={styles.artwork}
           />
         </View>

@@ -39,7 +39,7 @@ export type Music = {
   url: string,
   title: string,
   artist: string,
-  artwork: {uri: string},
+  artwork: string,
   weight?: number,
   id: string, // Will be title + artist.
 }

@@ -44,9 +44,8 @@ export default function RenderBottomBar() {
 		setTrack(Player.musicList[Player.currentIndex]);
 	});
 
-
 	const RenderSongForBottomBar = ({ item }: { item: Track }) => {
-		return (
+	return (
 			<TouchableOpacity
 				onPress={() => { }}
 				style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
@@ -59,7 +58,7 @@ export default function RenderBottomBar() {
 					backgroundColor: 'transparent',
 				}}>
 					<FastImage
-						source={item.artwork}
+						source={typeof item.artwork === "number" ? item.artwork : {uri: item.artwork}}
 						style={styles.artwork}
 					/>
 				</View>

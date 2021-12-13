@@ -60,5 +60,5 @@ function generatePictureData(metadata: any) {
 	for (let i = 0; i < data.length; i++) {
 		base64String += String.fromCharCode(data[i]);
 	}
-	return ({ uri: `data:${data.format};base64,${base64.encode(base64String)}` });
+	return `data:${data.format};base64,${base64.encode(base64String)}`;
 }

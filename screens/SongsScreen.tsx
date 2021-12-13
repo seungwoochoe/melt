@@ -14,7 +14,6 @@ import RenderBottomBar from '../components/BottomBar';
 
 import Player from '../containers/Player';
 import { RootTabScreenProps } from '../types';
-import musicList from '../assets/data';
 
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
@@ -51,7 +50,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
 
   function handleSearch(query: string) {
-    const filteredData = filter(musicList, music => {
+    const filteredData = filter(Player.musicList, music => {
       return search(music, query.toLowerCase());
     })
     setFilteredMusicList(filteredData);
@@ -71,7 +70,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     return (
       <TouchableOpacity
         disabled={isBusy}
-        onPress={() => {Keyboard.dismiss() }}
+        onPress={() => { Keyboard.dismiss() }}
         style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
       >
         <View>
@@ -81,12 +80,21 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           />
         </View>
         <View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
-          <View style={{ height: listHeight / 2.4, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
-          </View>
-          <View style={{ height: listHeight / 3.2, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ fontSize: scale.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
-          </View>
+          {item.artist === "" &&
+            <View style={{ height: listHeight, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
+            </View>
+          }
+          {item.artist !== "" &&
+            <View>
+              <View style={{ height: listHeight / 2.4, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
+              </View>
+              <View style={{ height: listHeight / 3.2, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: scale.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
+              </View>
+            </View>
+          }
         </View>
       </TouchableOpacity>
     )

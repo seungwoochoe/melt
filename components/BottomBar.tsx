@@ -43,7 +43,7 @@ export default function RenderBottomBar({navigation}: {navigation: any}) {
 	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
 		async function getTrackInfoFromTrackPlayer() {
 			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex);
+			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
 			setTrack(currentTrackPlayerTrack);
 		}
 		getTrackInfoFromTrackPlayer();

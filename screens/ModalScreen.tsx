@@ -11,7 +11,7 @@ import useColorScheme from '../hooks/useColorScheme';
 
 const { width, height } = Dimensions.get("window");
 const lightFilter = 'rgba(0, 0, 0, 0.4)';
-const darkFilter = 'rgba(0, 0, 0, 0.7)';
+const darkFilter = 'rgba(0, 0, 0, 0.6)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
 const blurRadius = 16700000 / Math.pow(height, 1.8);
@@ -37,8 +37,9 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
     async function getTrackInfoFromTrackPlayer() {
       const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-      const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex);
+      const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
       setTrack(currentTrackPlayerTrack);
+      setIsPlaying(true);
     }
     getTrackInfoFromTrackPlayer();
   });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Platform } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import FastImage from 'react-native-fast-image';
@@ -16,6 +16,7 @@ const { width } = Dimensions.get('screen');
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.2;
+const blankTrack: Track = { url: 'loading...', title: 'loading title...', artist: 'loading artist...', artwork: require('../assets/images/blank.png') };
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -59,7 +60,7 @@ export default function RenderBottomBar() {
 	return (
 		<BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
 			<View style={{ flex: 13, backgroundColor: 'transparent' }}>
-				<RenderSongForBottomBar item={Player.playlist == null ? Player.musicList[0] : Player.playlist[Player.currentIndex]} />
+				<RenderSongForBottomBar item={Player.playlist != null ? Player.playlist[Player.currentIndex] : (Player.musicList.length !== 0 ? Player.musicList[0] : blankTrack)} />
 			</View>
 			<View style={{ flex: 6, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
 				<TouchableOpacity

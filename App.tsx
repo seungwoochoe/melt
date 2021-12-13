@@ -12,7 +12,11 @@ export default function App() {
   const colorScheme = useColorScheme();
 
   React.useEffect(() => {
-    Player.setupPlayer();
+    async function initialize() {
+      await Player.getMusicFiles();
+      await Player.setupPlayer();
+    }
+    initialize();
   }, []);
 
   if (!isLoadingComplete) {

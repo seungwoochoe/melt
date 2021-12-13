@@ -64,7 +64,7 @@ export default function RenderBottomBar() {
 				<TouchableOpacity
 					disabled={isBusy}
 					onPress={async () => {
-						Player.play();
+						await Player.play();
 						// if (Player.isPlaying) {
 						//   await Player.pause();
 						//   setCount(c => c + 1);

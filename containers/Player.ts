@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TrackPlayer, { Capability, Event, State, usePlaybackState, useProgress, useTrackPlayerEvents } from 'react-native-track-player';
+import * as RNFS from 'react-native-fs';
 
 import { Music, Track, Action, History } from "../types";
 import music from "../assets/data";
@@ -14,6 +15,40 @@ export default class Player {
 	static histories: History[];
 
 	static uiWeightedMusicList: Music[];
+
+	static async getMusicFiles() {
+		const files = await RNFS.readDir(RNFS.DocumentDirectoryPath);
+
+		for (const file of files) {
+			let metadata: any = await Player.readMetadata(file);
+			console.log(metadata);
+			Player.musicList.unshift({
+				url: file.path,
+				title: metadata.tags.title,
+				artist: metadata.tags.artist,
+				artwork: require('../assets/artworks/pexels-min-an-1454789.jpg'),
+				id: file.path,
+			})
+		}
+	}
+
+	static async readMetadata(file: any) {
+		const jsmediatags = require('jsmediatags');
+
+		return new Promise((resolve, reject) => {
+			new jsmediatags.Reader(file.path)
+				.read({
+					onSuccess: (metadata: any) => {
+						console.log("⭐️⭐️", Player.musicList);
+						resolve(metadata);
+					},
+					onError: (e: any) => {
+						console.log("😢 Error occurred.", e);
+						reject(e);
+					}
+				});
+		});
+	}
 
 	static async setupPlayer() {
 		const currentTrack = await TrackPlayer.getCurrentTrack();
@@ -33,17 +68,9 @@ export default class Player {
 			],
 			compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SeekTo],
 		});
+		console.log("🎧🎧🎧", Player.musicList);
 
-		await TrackPlayer.add([{
-			url: require("../assets/music/bensound-adaytoremember.mp3"),
-			title: "1",
-			artist: "1a"
-		}, {
-			url: require("../assets/music/bensound-happiness.mp3"),
-			title: "Happiness",
-			artist: "Good Charlotte",
-		}
-		]);
+		await TrackPlayer.add(Player.musicList);
 	}
 
 	static async getStoredData() {
@@ -62,7 +89,6 @@ export default class Player {
 
 	static async play() {
 		await TrackPlayer.play();
-		console.log('aaaa');
 	}
 
 

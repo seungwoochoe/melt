@@ -26,7 +26,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
 
       <RenderTitle title='Home' />
 
-      <TouchableOpacity style={{ height: width * 0.2, width: width * 0.9, alignSelf: 'center', alignItems: 'center', backgroundColor: 'grey', borderRadius: 12 }}>
+      <TouchableOpacity
+      onPress={() => {}}
+       style={{ height: width * 0.2, width: width * 0.9, alignSelf: 'center', alignItems: 'center', backgroundColor: 'grey', borderRadius: 12 }}>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
           <Ionicons name="shuffle" size={scale.width * 1.2} />
           <Text style={{ fontSize: scale.width * 1.2, textAlign: 'center' }}>
@@ -35,7 +37,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
         </View>
       </TouchableOpacity>
 
-      <RenderBottomBar />
+      <RenderBottomBar navigation={navigation} />
     </View>
   );
 }

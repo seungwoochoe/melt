@@ -43,4 +43,9 @@ export default class Player {
 		Player.currentIndex += 1;
 		await TrackPlayer.skipToNext();
 	}
+
+	static async skipToPrevious() {
+		Player.currentIndex -= 1;
+		await TrackPlayer.skipToPrevious();
+	}
 }

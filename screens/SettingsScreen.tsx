@@ -227,8 +227,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
 
       <RenderDarkHeader title='Settings' blur={false} />
 
-      <RenderBottomBar />
-
+      <RenderBottomBar navigation={navigation} />
     </View>
   );
 };

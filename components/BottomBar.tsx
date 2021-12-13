@@ -26,7 +26,7 @@ if (Platform.OS === 'ios') {
 	blurIntensity = 200;
 }
 
-export default function RenderBottomBar() {
+export default function RenderBottomBar({navigation}: {navigation: any}) {
 	const [isPlaying, setIsPlaying] = React.useState(false);
 	const colorScheme = useColorScheme();
 	const [track, setTrack] = React.useState<any>(Player.musicList[0] ?? blankTrack);
@@ -50,9 +50,9 @@ export default function RenderBottomBar() {
 	});
 
 	const RenderSongForBottomBar = ({ item }: { item: Track }) => {
-	return (
+		return (
 			<TouchableOpacity
-				onPress={() => { }}
+				onPress={() => { navigation.navigate("Modal"); }}
 				style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
 				<View style={{
 					width: listHeight,
@@ -63,7 +63,7 @@ export default function RenderBottomBar() {
 					backgroundColor: 'transparent',
 				}}>
 					<FastImage
-						source={typeof item.artwork === "number" ? item.artwork : {uri: item.artwork}}
+						source={typeof item.artwork === "number" ? item.artwork : { uri: item.artwork }}
 						style={styles.artwork}
 					/>
 				</View>
@@ -78,7 +78,7 @@ export default function RenderBottomBar() {
 
 	return (
 		<BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
-			<View style={{ width: width * 0.69 , backgroundColor: 'transparent'}}>
+			<View style={{ width: width * 0.69, backgroundColor: 'transparent' }}>
 				<RenderSongForBottomBar item={track} />
 			</View>
 			<View style={{ width: width * 0.28, height: bottomBarHeight, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'transparent' }}>

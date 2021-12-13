@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Player from './containers/Player';
 import TrackPlayer, { Event, useTrackPlayerEvents } from 'react-native-track-player';
@@ -8,7 +8,6 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { readMusicFiles } from './containers/Reader';
-
 
 
 export default function App() {

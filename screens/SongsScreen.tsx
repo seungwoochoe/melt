@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, SectionList, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import filter from 'lodash.filter';
@@ -22,18 +22,17 @@ const bottomBarHeight = listHeightWithoutScale * 1.2;
 
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
-  const [isBusy, setIsBusy] = React.useState(false);
-  const [query, setQuery] = React.useState('');
-  const [filteredMusicList, setFilteredMusicList] = React.useState<Music[]>([]);
-  const [isKeyboardShown, setIsKeyboardShown] = React.useState(false);
-  const [isScrolled, setIsScrelled] = React.useState(false);
-  const [count, setCount] = React.useState(0);
+  const [isBusy, setIsBusy] = useState(false);
+  const [query, setQuery] = useState('');
+  const [filteredMusicList, setFilteredMusicList] = useState<Music[]>([]);
+  const [isKeyboardShown, setIsKeyboardShown] = useState(false);
+  const [isScrolled, setIsScrelled] = useState(false);
+  const [count, setCount] = useState(0);
 
   const colorScheme = useColorScheme();
   const listHeight = width * 0.149 * useWindowDimensions().fontScale;
 
-
-  React.useEffect(() => {
+  useEffect(() => {
     const keyboardShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setIsKeyboardShown(true);
     });

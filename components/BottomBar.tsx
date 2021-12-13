@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,15 +27,22 @@ if (Platform.OS === 'ios') {
 }
 
 export default function RenderBottomBar() {
-	const [isBusy, setIsBusy] = React.useState(false);
+	const [isPlaying, setIsPlaying] = React.useState(false);
 	const colorScheme = useColorScheme();
-	const [track, setTrack] = React.useState<any>(Player.playlist != null ? Player.playlist[Player.currentIndex] : (Player.musicList.length !== 0 ? Player.musicList[0] : blankTrack))
-	
-	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-		const currentTrack = await TrackPlayer.getCurrentTrack();
-		console.log(currentTrack);
-		setTrack(Player.musicList[Player.currentIndex]);
+	const [track, setTrack] = React.useState<any>(Player.musicList[0] ?? blankTrack);
+
+
+	useTrackPlayerEvents([Event.PlaybackState], event => {
+		if (event.state === 'playing') {
+			setIsPlaying(true);
+		} else if (event.state === 'paused') {
+			setIsPlaying(false);
+		}
 	})
+
+	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+		setTrack(Player.musicList[Player.currentIndex]);
+	});
 
 
 	const RenderSongForBottomBar = ({ item }: { item: Track }) => {
@@ -56,8 +63,8 @@ export default function RenderBottomBar() {
 						style={styles.artwork}
 					/>
 				</View>
-				<View style={{ width: width - listHeight * 2 - width * 0.22, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
-					<Text style={{ fontSize: scale.width, }} numberOfLines={1}>
+				<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
+					<Text style={{ fontSize: scale.width * 0.98, }} numberOfLines={1}>
 						{item.title}
 					</Text>
 				</View>
@@ -67,34 +74,27 @@ export default function RenderBottomBar() {
 
 	return (
 		<BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
-			<View style={{ flex: 13, backgroundColor: 'transparent' }}>
+			<View style={{ width: width * 0.69 , backgroundColor: 'transparent'}}>
 				<RenderSongForBottomBar item={track} />
 			</View>
-			<View style={{ flex: 6, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
+			<View style={{ width: width * 0.28, height: bottomBarHeight, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
 				<TouchableOpacity
-					disabled={isBusy}
 					onPress={async () => {
-						await Player.play();
-						// if (Player.isPlaying) {
-						//   await Player.pause();
-						//   setCount(c => c + 1);
-						// } else {
-						//   await Player.play();
-						//   setCount(c => c + 1);
-						// }
+						if (isPlaying) {
+							await TrackPlayer.pause();
+						} else {
+							await TrackPlayer.play();
+						}
 					}}
-					style={{ padding: Player.isPlaying ? scale.width * 0.6 : scale.width * 0.775 }}
+					style={{ padding: isPlaying ? scale.width * 0.5 : scale.width * 0.675, }}
 				>
-					<Ionicons name={Player.isPlaying ? "pause" : "play"} size={Player.isPlaying ? scale.width * 2 : scale.width * 1.65} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
+					<Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? scale.width * 2 : scale.width * 1.65} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
 				</TouchableOpacity>
 				<TouchableOpacity
-					disabled={!isBusy}
 					onPress={async () => {
-						// setIsAvailable(false);
-						// await Player.skipToNext();
-						// setIsAvailable(true);
+						await Player.playNext();
 					}}
-					style={{ padding: scale.width * 0.53, marginRight: width * 0.05 }}
+					style={{ padding: scale.width * 0.6, marginRight: width * 0.05 }}
 				>
 					<Ionicons name="play-forward" size={scale.width * 1.75} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
 				</TouchableOpacity>

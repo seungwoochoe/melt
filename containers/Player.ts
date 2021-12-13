@@ -40,6 +40,7 @@ export default class Player {
 	}
 
 	static async playNext() {
+		Player.currentIndex += 1;
 		await TrackPlayer.skipToNext();
 	}
 

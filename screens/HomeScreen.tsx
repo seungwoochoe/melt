@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -15,7 +15,7 @@ const { width, height } = Dimensions.get("screen");
 
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
-  const [isBusy, setIsBusy] = React.useState(false);
+  const [isBusy, setIsBusy] = useState(false);
   const colorScheme = useColorScheme();
 
 
@@ -27,7 +27,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
       <RenderTitle title='Home' />
 
       <TouchableOpacity style={{ height: width * 0.2, width: width * 0.9, alignSelf: 'center', alignItems: 'center', backgroundColor: 'grey', borderRadius: 12 }}>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent'}}>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
           <Ionicons name="shuffle" size={scale.width * 1.2} />
           <Text style={{ fontSize: scale.width * 1.2, textAlign: 'center' }}>
             Shuffle

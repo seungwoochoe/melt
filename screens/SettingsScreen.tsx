@@ -19,7 +19,6 @@ const marginHorizontal = width * 0.05;
 const borderRadius = 12;
 
 export default function SettingsScreen({ navigation }: RootTabScreenProps<'Settings'>) {
-
   const colorScheme = useColorScheme();
   const itemHeight = itemHeightWithoutScale * useWindowDimensions().fontScale;
 

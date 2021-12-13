@@ -39,6 +39,10 @@ export default class Player {
 		await TrackPlayer.add(Player.musicList);
 	}
 
+	static async skipToNext() {
+		await Player.playNext();
+	}
+
 	static async playNext() {
 		Player.currentIndex += 1;
 		await TrackPlayer.skipToNext();

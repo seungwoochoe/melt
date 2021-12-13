@@ -12,22 +12,30 @@ const { width, height } = Dimensions.get("window");
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
 const blankTrack: Track = { url: 'loading...', title: 'loading title...', artist: 'loading artist...', artwork: require('../assets/images/blank.png') };
+const blurRadius = 17000000 / Math.pow(height, 1.8);
 
 
 export default function ModalScreen() {
   const [track, setTrack] = React.useState<any>(Player.musicList[0] ?? blankTrack);
   const [isPlaying, setIsPlaying] = React.useState(false);
 
-  const blurRadius = 125;
 
-  useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-    async function getTrackInfoFromTrackPlayer() {
-      const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-      const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex);
-      setTrack(currentTrackPlayerTrack);
-    }
-    getTrackInfoFromTrackPlayer();
-  });
+	useTrackPlayerEvents([Event.PlaybackState], event => {
+		if (event.state === 'playing') {
+			setIsPlaying(true);
+		} else if (event.state === 'paused') {
+			setIsPlaying(false);
+		}
+	})
+
+	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+		async function getTrackInfoFromTrackPlayer() {
+			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
+			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex);
+			setTrack(currentTrackPlayerTrack);
+		}
+		getTrackInfoFromTrackPlayer();
+	});
 
 
   return (
@@ -122,7 +130,7 @@ export default function ModalScreen() {
             >
               <Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? scale.width * 2.8 : scale.width * 2.4} color={theme} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { }} style={{ padding: scale.width * 0.5 }}>
+            <TouchableOpacity onPress={() => { Player.skipToNext()}} style={{ padding: scale.width * 0.5 }}>
               <Ionicons name="play-forward" size={scale.width * 2} color={theme} />
             </TouchableOpacity>
           </View>
@@ -147,12 +155,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   title: {
-    fontSize: scale.ratio * 1.25,
+    fontSize: scale.width * 1.35,
     color: theme,
     fontWeight: '600',
   },
   artist: {
-    fontSize: scale.ratio * 1.1,
+    fontSize: scale.width * 1.1,
     color: dullTheme,
     fontWeight: '300',
   },

@@ -37,7 +37,7 @@ export async function readMusicFiles() {
 		console.log("added track");
 	};
 
-	return musicList.sort((a, b) => (a.title >= b.title) ? 1 : -1);
+	return musicList.sort((a, b) => (a.title.toLowerCase() >= b.title.toLowerCase()) ? 1 : -1);
 }
 
 function readMetadata(file: any) {

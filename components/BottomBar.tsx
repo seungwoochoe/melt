@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Image, Platform } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
+import FastImage from 'react-native-fast-image';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -41,7 +42,7 @@ export default function RenderBottomBar() {
 					shadowOffset: { width: -bottomBarHeight * 0.02, height: bottomBarHeight * 0.003 },
 					backgroundColor: 'transparent',
 				}}>
-					<Image
+					<FastImage
 						source={item.artwork}
 						style={styles.artwork}
 					/>

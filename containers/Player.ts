@@ -5,6 +5,8 @@ import * as RNFS from 'react-native-fs';
 import { Music, Track, Action, History } from "../types";
 import music from "../assets/data";
 
+const jsmediatags = require('jsmediatags');
+
 export default class Player {
 	static musicList: Music[] = music.sort((a, b) => (a.title >= b.title) ? 1 : -1);
 	static playlist: Track[];
@@ -20,20 +22,20 @@ export default class Player {
 		const files = await RNFS.readDir(RNFS.DocumentDirectoryPath);
 
 		for (const file of files) {
-			let metadata: any = await Player.readMetadata(file);
+			const metadata: any = await Player.readMetadata(file);
+			// const pictureData = await Player.getPictureData(metadata);
 			Player.musicList.unshift({
 				url: file.path,
 				title: metadata.tags.title,
 				artist: metadata.tags.artist,
-				artwork: Player.getPictureData(metadata),
+				// artwork: pictureData,
+				artwork: require('../assets/artworks/pexels-josh-sorenson-737552.jpg'),
 				id: file.path,
 			})
 		}
 	}
 
-	static async readMetadata(file: any) {
-		const jsmediatags = require('jsmediatags');
-
+	static readMetadata(file: any) {
 		return new Promise((resolve, reject) => {
 			new jsmediatags.Reader(file.path)
 				.read({
@@ -41,7 +43,6 @@ export default class Player {
 						resolve(metadata);
 					},
 					onError: (e: any) => {
-						console.log("😢 Error occurred.", e);
 						reject(e);
 					}
 				});
@@ -49,13 +50,15 @@ export default class Player {
 	}
 
 	static getPictureData(metadata: any) {
-		console.log(metadata);
-		const { data } = metadata.tags.picture;
-		let base64String = "";
-		for (let i = 0; i < data.length; i++) {
-			base64String += String.fromCharCode(data[i]);
-		}
-		return {uri: `data:${data.format};base64,${window.btoa(base64String)}`};
+		return new Promise((resolve, reject) => {
+			const { data } = metadata.tags.picture;
+			let base64String = "";
+			for (let i = 0; i < data.length; i++) {
+				base64String += String.fromCharCode(data[i]);
+			}
+			resolve({uri: `data:${data.format};base64,${window.btoa(base64String)}`});
+			reject("getPictureData is rejected.");
+		})
 	}
 
 	static async setupPlayer() {

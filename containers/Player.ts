@@ -33,7 +33,7 @@ export default class Player {
 				Capability.SkipToNext,
 				Capability.SkipToPrevious,
 			],
-			compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SeekTo],
+			compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SkipToPrevious, Capability.SeekTo],
 		});
 
 		await TrackPlayer.add(Player.musicList);

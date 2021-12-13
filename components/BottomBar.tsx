@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import FastImage from 'react-native-fast-image';
+import TrackPlayer, { Event, useTrackPlayerEvents } from 'react-native-track-player';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -28,6 +29,13 @@ if (Platform.OS === 'ios') {
 export default function RenderBottomBar() {
 	const [isBusy, setIsBusy] = React.useState(false);
 	const colorScheme = useColorScheme();
+	const [track, setTrack] = React.useState<any>(Player.playlist != null ? Player.playlist[Player.currentIndex] : (Player.musicList.length !== 0 ? Player.musicList[0] : blankTrack))
+	
+	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+		const currentTrack = await TrackPlayer.getCurrentTrack();
+		console.log(currentTrack);
+		setTrack(Player.musicList[Player.currentIndex]);
+	})
 
 
 	const RenderSongForBottomBar = ({ item }: { item: Track }) => {
@@ -60,7 +68,7 @@ export default function RenderBottomBar() {
 	return (
 		<BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
 			<View style={{ flex: 13, backgroundColor: 'transparent' }}>
-				<RenderSongForBottomBar item={Player.playlist != null ? Player.playlist[Player.currentIndex] : (Player.musicList.length !== 0 ? Player.musicList[0] : blankTrack)} />
+				<RenderSongForBottomBar item={track} />
 			</View>
 			<View style={{ flex: 6, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
 				<TouchableOpacity

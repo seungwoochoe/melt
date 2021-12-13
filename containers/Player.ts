@@ -5,8 +5,10 @@ import { Music, Track, Action, History } from "../types";
 
 export default class Player {
 	static musicList: Music[] = [];
+	static weightedMusicList: Music[];
 	static playlist: Track[];
 	static currentIndex = 0;
+	static currentTrack: Track[];
 	static isPlaying = false;
 
 	static actions: Action[];
@@ -35,20 +37,6 @@ export default class Player {
 		});
 
 		await TrackPlayer.add(Player.musicList);
-	}
-
-	static async getStoredData() {
-		let playlist = [];
-		let actions = [];
-		let histories = [];
-
-		try {
-
-		} catch (e) {
-			console.log(e);
-		}
-
-		// Player.playlist = playlist;
 	}
 
 	static async play() {

@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Player from './containers/Player';
+import TrackPlayer, { Event, useTrackPlayerEvents } from 'react-native-track-player';
 
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
@@ -24,6 +25,9 @@ export default function App() {
     initialize();
   }, []);
 
+  useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+    Player.currentIndex = await TrackPlayer.getCurrentTrack();
+	})
 
   if (!isLoadingComplete) {
     return null;

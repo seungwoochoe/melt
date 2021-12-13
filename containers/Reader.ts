@@ -10,17 +10,30 @@ export async function readMusicFiles() {
 	const files = await RNFS.readDir(RNFS.DocumentDirectoryPath);
 
 	for (const file of files) {
-		const metadata: any = await readMetadata(file);
-		const pictureData = generatePictureData(metadata);
+		let metadata: any;
+		try {
+			metadata = await readMetadata(file);
+		} catch {
+			metadata = false;
+		}
 
-		musicList.push({
-			url: file.path,
-			title: metadata.tags.title,
-			artist: metadata.tags.artist,
-			artwork: pictureData,
-			// artwork: require('../assets/images/blank.png'),
-			id: file.path,
-		})
+		if (metadata === false) {
+			musicList.push({
+				url: file.path,
+				title: file.path.split('/').pop()?.split('.')[0] ?? "Nullish Coalescing",
+				artist: "",
+				artwork: require('../assets/images/blank.png'),
+				id: file.path,
+			});
+		} else {
+			musicList.push({
+				url: file.path,
+				title: metadata.tags.title ?? file.path.split('/').pop()?.split('.')[0],
+				artist: metadata.tags.artist ?? "",
+				artwork: metadata.tags.picture == null ? require('../assets/images/blank.png') : generatePictureData(metadata),
+				id: file.path,
+			});
+		}
 		console.log("added track");
 	};
 

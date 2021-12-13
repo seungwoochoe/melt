@@ -6,7 +6,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
 
@@ -43,8 +43,12 @@ function RootNavigator() {
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} options={{headerShown: false}} />
+      <Stack.Group screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forCustomModalPresentationIOS,
+        gestureDirection: 'vertical'
+      }}
+      >
+        <Stack.Screen name="Modal" component={ModalScreen} options={{ headerShown: false }} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -116,6 +120,6 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof Ionicons>['name'];
   color: string;
 }) {
-  
+
   return <Ionicons size={scale.width * 1.58} style={{ marginBottom: -3 }} {...props} />;
 }

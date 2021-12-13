@@ -12,7 +12,7 @@ const { width, height } = Dimensions.get("window");
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
 const blankTrack: Track = { url: 'loading...', title: 'loading title...', artist: 'loading artist...', artwork: require('../assets/images/blank.png') };
-const blurRadius = 17000000 / Math.pow(height, 1.8);
+const blurRadius = 16700000 / Math.pow(height, 1.8);
 
 
 export default function ModalScreen() {

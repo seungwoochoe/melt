@@ -57,7 +57,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   }
 
   function search({ title, artist }: { title: string, artist: string }, query: string) {
-    const condition = new RegExp(`^${query}| ${query}`);
+    const condition = new RegExp(`^${query}| ${query}|\\(${query}`);
     if (title.toLowerCase().match(condition) || artist.toLowerCase().match(condition)) {
       return true;
     }

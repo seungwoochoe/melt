@@ -37,7 +37,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
         </View>
       </TouchableOpacity>
 
-      <RenderBottomBar navigation={navigation} />
+      <RenderBottomBar navigation={navigation} isEventHandler={true} />
     </View>
   );
 }

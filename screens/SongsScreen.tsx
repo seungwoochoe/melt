@@ -213,7 +213,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
       <RenderHeader title='Songs' blur={isScrolled} />
 
-      <RenderBottomBar navigation={navigation} />
+      <RenderBottomBar navigation={navigation} isEventHandler={false} />
 
     </KeyboardAvoidingView>
   );

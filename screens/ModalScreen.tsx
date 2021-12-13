@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ImageBackground, StatusBar, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import TrackPlayer, { Event, useTrackPlayerEvents, useProgress } from 'react-native-track-player';
+import TrackPlayer, { Event, useTrackPlayerEvents, useProgress, usePlaybackState, State } from 'react-native-track-player';
 
 import Player from '../containers/Player';
 import scale from '../constants/scale';
@@ -24,25 +24,26 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
   const { position, duration } = useProgress();
   const [isSliding, setIsSliding] = useState(false);
   const slidingValue = useRef(0);
+  const playbackState = usePlaybackState();
 
 
-  useTrackPlayerEvents([Event.PlaybackState], event => {
-    if (event.state === 'playing') {
-      setIsPlaying(true);
-    } else if (event.state === 'paused') {
-      setIsPlaying(false);
-    }
-  });
+	useEffect(() => {
+		async function updateTrack() {
+			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
+			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
+			setTrack(currentTrackPlayerTrack);
+		}
 
-  useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-    async function getTrackInfoFromTrackPlayer() {
-      const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-      const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
-      setTrack(currentTrackPlayerTrack);
-      setIsPlaying(true);
-    }
-    getTrackInfoFromTrackPlayer();
-  });
+		if (playbackState === State.Playing) {
+			setIsPlaying(true);
+		} else if (playbackState === State.Paused) {
+			setIsPlaying(false);
+		} else if (playbackState === State.Ready) {
+			updateTrack();
+		}
+	}, [playbackState]);
+
+
 
 
   return (

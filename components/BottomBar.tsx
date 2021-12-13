@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import FastImage from 'react-native-fast-image';
-import TrackPlayer, { Event, useTrackPlayerEvents } from 'react-native-track-player';
+import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State } from 'react-native-track-player';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -26,33 +26,42 @@ if (Platform.OS === 'ios') {
 	blurIntensity = 200;
 }
 
-export default function RenderBottomBar({navigation}: {navigation: any}) {
+export default function RenderBottomBar({ navigation, isEventHandler }: { navigation: any, isEventHandler: boolean }) {
 	const [isPlaying, setIsPlaying] = React.useState(false);
 	const colorScheme = useColorScheme();
 	const [track, setTrack] = React.useState<any>(Player.musicList[0] ?? blankTrack);
+	const playbackState = usePlaybackState();
 
-
-	useTrackPlayerEvents([Event.PlaybackState], event => {
-		if (event.state === 'playing') {
-			setIsPlaying(true);
-		} else if (event.state === 'paused') {
-			setIsPlaying(false);
-		}
-	})
-
-	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-		async function getTrackInfoFromTrackPlayer() {
+	useEffect(() => {
+		async function updateTrack() {
 			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
 			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
 			setTrack(currentTrackPlayerTrack);
 		}
-		getTrackInfoFromTrackPlayer();
+		
+		if (playbackState === State.Playing) {
+			setIsPlaying(true);
+		} else if (playbackState === State.Paused) {
+			setIsPlaying(false);
+		} else if (playbackState === State.Ready) {
+			updateTrack();
+		}
+	}, [playbackState]);
+
+
+	useTrackPlayerEvents([Event.RemoteSeek], async event => {
+		if (isEventHandler) {
+			await TrackPlayer.seekTo(event.position);
+			await TrackPlayer.pause();
+			await TrackPlayer.play();
+		}
 	});
+
 
 	const RenderSongForBottomBar = ({ item }: { item: Track }) => {
 		return (
 			<TouchableOpacity
-				onPress={() => { navigation.navigate("Modal", {track, isPlaying}); }}
+				onPress={() => { navigation.navigate("Modal", { track, isPlaying }); }}
 				style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
 				<View style={{
 					width: listHeight,

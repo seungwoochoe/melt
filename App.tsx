@@ -14,12 +14,12 @@ import { readMusicFiles } from './containers/Reader';
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const [count, setCount] = React.useState(0);
 
   
   React.useEffect(() => {
     async function initialize() {
-      await readMusicFiles();
+      const musicList = await readMusicFiles();
+      Player.musicList = musicList;
       await Player.setupPlayer();
     }
     initialize();

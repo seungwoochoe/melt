@@ -39,9 +39,10 @@ export default class Player {
 		await TrackPlayer.add(Player.musicList);
 	}
 
-	static async play() {
-		await TrackPlayer.play();
+	static async playNext() {
+		await TrackPlayer.skipToNext();
 	}
+
 
 
 }

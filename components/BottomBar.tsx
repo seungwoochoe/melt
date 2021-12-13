@@ -41,7 +41,12 @@ export default function RenderBottomBar() {
 	})
 
 	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-		setTrack(Player.musicList[Player.currentIndex]);
+		async function getTrackInfoFromTrackPlayer() {
+			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
+			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex);
+			setTrack(currentTrackPlayerTrack);
+		}
+		getTrackInfoFromTrackPlayer();
 	});
 
 	const RenderSongForBottomBar = ({ item }: { item: Track }) => {

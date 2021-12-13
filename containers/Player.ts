@@ -36,16 +36,6 @@ export default class Player {
 			compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SkipToPrevious, Capability.SeekTo],
 		});
 
-		// const playlistForTrackPlayer: Track[] = [];
-		// Player.musicList.forEach(element => {
-		// 	playlistForTrackPlayer.push({
-		// 		url: element.url,
-		// 		title: element.title,
-		// 		artist: element.artist,
-		// 		artwork: element.artwork.uri,
-		// 		id: element.,
-		// 	})
-		// })
 		await TrackPlayer.add(Player.musicList);
 	}
 
@@ -53,7 +43,4 @@ export default class Player {
 		Player.currentIndex += 1;
 		await TrackPlayer.skipToNext();
 	}
-
-
-
 }

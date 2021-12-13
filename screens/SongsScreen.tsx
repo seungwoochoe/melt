@@ -126,7 +126,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   const RenderBottomMargin = () => {
     return (
       <>
-        {(query.length === 0 || filteredMusicList.length !== 0) &&
+        {(Player.musicList.length !== 0 && (query.length === 0 || filteredMusicList.length !== 0)) &&
           <RenderSeparator />
         }
 

@@ -45,7 +45,7 @@ function RootNavigator() {
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forCustomModalPresentationIOS,
-        gestureDirection: 'vertical'
+        gestureDirection: 'vertical',
       }}
       >
         <Stack.Screen name="Modal" component={ModalScreen} options={{ headerShown: false }} />

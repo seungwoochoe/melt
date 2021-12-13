@@ -13,7 +13,7 @@ import { RootTabScreenProps } from '../types';
 import RenderBottomBar from '../components/BottomBar';
 
 const { width, height } = Dimensions.get("screen");
-const itemHeightWithoutScale = width * 0.1224;
+const itemHeightWithoutScale = width * 0.117;
 const marginBetweenIconAndText = itemHeightWithoutScale * 0.3;
 const marginHorizontal = width * 0.05;
 const borderRadius = 12;

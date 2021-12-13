@@ -1,41 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ImageBackground, StatusBar, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import TrackPlayer, { Event, useTrackPlayerEvents } from 'react-native-track-player';
+import TrackPlayer, { Event, useTrackPlayerEvents, useProgress } from 'react-native-track-player';
 
 import Player from '../containers/Player';
 import scale from '../constants/scale';
 import { Track } from '../types';
+import useColorScheme from '../hooks/useColorScheme';
 
 const { width, height } = Dimensions.get("window");
+const lightFilter = 'rgba(0, 0, 0, 0.4)';
+const darkFilter = 'rgba(0, 0, 0, 0.7)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
-const blankTrack: Track = { url: 'loading...', title: 'loading title...', artist: 'loading artist...', artwork: require('../assets/images/blank.png') };
 const blurRadius = 16700000 / Math.pow(height, 1.8);
 
 
-export default function ModalScreen() {
-  const [track, setTrack] = React.useState<any>(Player.musicList[0] ?? blankTrack);
-  const [isPlaying, setIsPlaying] = React.useState(false);
+export default function ModalScreen({ route, navigation }: { route: { params: { track: Track, isPlaying: boolean } }, navigation: any }) {
+  const [track, setTrack] = React.useState<any>(route.params.track);
+  const [isPlaying, setIsPlaying] = React.useState(route.params.isPlaying);
+  const colorScheme = useColorScheme();
+  const { position, duration } = useProgress();
+  const [isSliding, setIsSliding] = useState(false);
+  const slidingValue = useRef(0);
 
 
-	useTrackPlayerEvents([Event.PlaybackState], event => {
-		if (event.state === 'playing') {
-			setIsPlaying(true);
-		} else if (event.state === 'paused') {
-			setIsPlaying(false);
-		}
-	})
+  useTrackPlayerEvents([Event.PlaybackState], event => {
+    if (event.state === 'playing') {
+      setIsPlaying(true);
+    } else if (event.state === 'paused') {
+      setIsPlaying(false);
+    }
+  });
 
-	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-		async function getTrackInfoFromTrackPlayer() {
-			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex);
-			setTrack(currentTrackPlayerTrack);
-		}
-		getTrackInfoFromTrackPlayer();
-	});
+  useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+    async function getTrackInfoFromTrackPlayer() {
+      const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
+      const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex);
+      setTrack(currentTrackPlayerTrack);
+    }
+    getTrackInfoFromTrackPlayer();
+  });
 
 
   return (
@@ -46,7 +52,7 @@ export default function ModalScreen() {
     >
       <StatusBar barStyle="light-content" animated={true} />
 
-      <View style={{ flex: 1, transform: [{ rotate: '180deg' }], alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.4)' }}>
+      <View style={{ flex: 1, transform: [{ rotate: '180deg' }], alignItems: 'center', backgroundColor: colorScheme === 'light' ? lightFilter : darkFilter }}>
 
         <View style={{ flex: .8, flexDirection: 'row', alignItems: 'flex-end', marginBottom: height * 0.02 }}>
           {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -93,19 +99,26 @@ export default function ModalScreen() {
           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Slider
               style={styles.progressContainer}
-              // value={Number.isNaN(progress.current) ? 0 : progress.current}
-              value={0.2}
+              value={isSliding === true ? slidingValue.current : (duration === 0 ? 0 : (position / duration))}
               minimumValue={0}
               maximumValue={1}
               thumbTintColor='#ccc'
               minimumTrackTintColor={theme}
               maximumTrackTintColor='#aaa'
-              onSlidingStart={() => { }}
-              onSlidingComplete={async (value) => { }}
+              onSlidingStart={() => { setIsSliding(true); }}
+              onValueChange={(value) => { slidingValue.current = value; }}
+              onSlidingComplete={async (value) => {
+                await TrackPlayer.seekTo(value * duration);
+                setTimeout(() => setIsSliding(false), 1000);
+              }}
             />
             <View style={styles.progressLabelContainer}>
-              <Text style={{ color: '#bbb', fontSize: scale.width * 0.75 }}>0:00</Text>
-              <Text style={{ color: '#bbb', fontSize: scale.width * 0.75 }}>3:12</Text>
+              <Text style={{ color: '#bbb', fontSize: scale.width * 0.75 }}>
+                {Math.floor(position / 60).toString()}:{Math.floor(position % 60).toString().padStart(2, '0')}
+              </Text>
+              <Text style={{ color: '#bbb', fontSize: scale.width * 0.75 }}>
+                {Math.floor(duration / 60).toString()}:{Math.floor(duration % 60).toString().padStart(2, '0')}
+              </Text>
             </View>
           </View>
         </View>
@@ -130,7 +143,7 @@ export default function ModalScreen() {
             >
               <Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? scale.width * 2.8 : scale.width * 2.4} color={theme} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { Player.skipToNext()}} style={{ padding: scale.width * 0.5 }}>
+            <TouchableOpacity onPress={() => { Player.skipToNext() }} style={{ padding: scale.width * 0.5 }}>
               <Ionicons name="play-forward" size={scale.width * 2} color={theme} />
             </TouchableOpacity>
           </View>

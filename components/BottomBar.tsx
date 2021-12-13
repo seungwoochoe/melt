@@ -52,7 +52,7 @@ export default function RenderBottomBar({navigation}: {navigation: any}) {
 	const RenderSongForBottomBar = ({ item }: { item: Track }) => {
 		return (
 			<TouchableOpacity
-				onPress={() => { navigation.navigate("Modal"); }}
+				onPress={() => { navigation.navigate("Modal", {track, isPlaying}); }}
 				style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
 				<View style={{
 					width: listHeight,

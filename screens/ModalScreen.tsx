@@ -15,10 +15,15 @@ const darkFilter = 'rgba(0, 0, 0, 0.6)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
 const blurRadius = 16700000 / Math.pow(height, 1.8);
+const defaultArtwork = require('../assets/images/blank.png');
 
 
-export default function ModalScreen({ route, navigation }: { route: { params: { track: Track, isPlaying: boolean } }, navigation: any }) {
-  const [track, setTrack] = React.useState<any>(route.params.track);
+export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean } }, navigation: any }) {
+  const track = useRef<any>(route.params.initialTrack);
+  const [trackInfo, setTrackInfo] = React.useState<any>({
+    text: track.current,
+    artwork: typeof route.params.initialTrack.artwork === "object" ? defaultArtwork : { uri: route.params.initialTrack.artwork },
+  });
   const [isPlaying, setIsPlaying] = React.useState(route.params.isPlaying);
   const colorScheme = useColorScheme();
   const { position, duration } = useProgress();
@@ -27,28 +32,31 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
   const playbackState = usePlaybackState();
 
 
-	useEffect(() => {
-		async function updateTrack() {
-			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
-			setTrack(currentTrackPlayerTrack);
-		}
+  useEffect(() => {
+    async function updateTrack() {
+      const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
+      const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
+      track.current = currentTrackPlayerTrack;
+      setTrackInfo({
+        text: track.current,
+        artwork: typeof track.current.artwork === "object" ? defaultArtwork : { uri: track.current.artwork },
+      });
+    }
 
-		if (playbackState === State.Playing) {
-			setIsPlaying(true);
-		} else if (playbackState === State.Paused) {
-			setIsPlaying(false);
-		} else if (playbackState === State.Ready) {
-			updateTrack();
-		}
-	}, [playbackState]);
-
+    if (playbackState === State.Playing) {
+      setIsPlaying(true);
+    } else if (playbackState === State.Paused) {
+      setIsPlaying(false);
+    } else if (playbackState === State.Ready) {
+      updateTrack();
+    }
+  }, [playbackState]);
 
 
 
   return (
     <ImageBackground
-      source={typeof track.artwork === "number" ? track.artwork : { uri: track.artwork }}
+      source={trackInfo.artwork}
       blurRadius={blurRadius}
       style={{ flex: 1, transform: [{ rotate: '180deg' }] }}
     >
@@ -67,17 +75,17 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
         <View style={styles.artworkWrapper}>
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={typeof track.artwork === "number" ? track.artwork : { uri: track.artwork }} style={styles.arworkImage} />
+            <Image source={trackInfo.artwork} style={styles.arworkImage} />
           </View>
         </View>
 
         <View style={{ flex: 1, width: width * 0.8, flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ flex: 6, paddingRight: width * 0.032 }}>
             <View style={{ height: scale.ratio * 1.5, flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.title} numberOfLines={1}>{track.title}</Text>
+              <Text style={styles.title} numberOfLines={1}>{trackInfo.text.title}</Text>
             </View>
             <View style={{ height: scale.ratio * 1.6, flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.artist} numberOfLines={1}>{track.artist}</Text>
+              <Text style={styles.artist} numberOfLines={1}>{trackInfo.text.artist}</Text>
             </View>
           </View>
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import FastImage from 'react-native-fast-image';
 import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State } from 'react-native-track-player';
 
 import { View, Text } from '../components/Themed';
@@ -62,7 +61,7 @@ export default function RenderBottomBar({ navigation, isEventHandler }: { naviga
 		<BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
 			<View style={{ width: width * 0.69, backgroundColor: 'transparent' }}>
 				<TouchableOpacity
-					onPress={() => { navigation.navigate("Modal", { track, isPlaying }); }}
+					onPress={() => { navigation.navigate("Modal", { initialTrack: track, isPlaying: isPlaying }); }}
 					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
 					<View style={{
 						width: listHeight,
@@ -72,10 +71,10 @@ export default function RenderBottomBar({ navigation, isEventHandler }: { naviga
 						shadowOffset: { width: -bottomBarHeight * 0.02, height: bottomBarHeight * 0.003 },
 						backgroundColor: 'transparent',
 					}}>
-						<Image
+						{/* <Image
 							source={typeof track.artwork === "number" ? track.artwork : { uri: track.artwork }}
 							style={styles.artwork}
-						/>
+						/> */}
 					</View>
 					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
 						<Text style={{ fontSize: scale.width * 0.98, }} numberOfLines={1}>

@@ -19,6 +19,7 @@ const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
 const listHeightWithoutScale = width * 0.149;
 const bottomBarHeight = listHeightWithoutScale * 1.2;
+const defaultArtwork = require('../assets/images/blank.png');
 
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
@@ -64,9 +65,8 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
     return false;
   }
 
-
   const RenderSong = ({ item }: { item: Music }) => {
-    return (
+  return (
       <TouchableOpacity
         disabled={isBusy}
         onPress={() => { Keyboard.dismiss() }}
@@ -74,7 +74,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
       >
         <View>
           <Image
-            source={typeof item.artwork === "number" ? item.artwork : {uri: item.artwork}}
+            source={typeof item.artwork === "number" ? defaultArtwork : { uri: item.artwork }}
             style={styles.artwork}
           />
         </View>

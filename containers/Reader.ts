@@ -2,7 +2,8 @@ import * as RNFS from 'react-native-fs';
 import * as jsmediatags from 'jsmediatags'
 import base64 from 'react-native-base64';
 import { Music } from '../types';
-import Player from './Player';
+
+const defaultArtwork = require('../assets/images/blank.png');
 
 
 export async function readMusicFiles() {
@@ -22,7 +23,7 @@ export async function readMusicFiles() {
 				url: file.path,
 				title: file.path.split('/').pop()?.split('.')[0] ?? "Nullish Coalescing",
 				artist: "",
-				artwork: require('../assets/images/blank.png'),
+				artwork: defaultArtwork,
 				id: file.path,
 			});
 		} else {
@@ -30,11 +31,10 @@ export async function readMusicFiles() {
 				url: file.path,
 				title: metadata.tags.title ?? file.path.split('/').pop()?.split('.')[0],
 				artist: metadata.tags.artist ?? "",
-				artwork: metadata.tags.picture == null ? require('../assets/images/blank.png') : generatePictureData(metadata),
+				artwork: metadata.tags.picture == null ? defaultArtwork : generatePictureData(metadata),
 				id: file.path,
 			});
 		}
-		console.log("added track");
 	};
 
 	return musicList.sort((a, b) => (a.title.toLowerCase() >= b.title.toLowerCase()) ? 1 : -1);

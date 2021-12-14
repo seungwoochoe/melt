@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ImageBackground, StatusBar, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import TrackPlayer, { useProgress, usePlaybackState, State } from 'react-native-track-player';
+import TrackPlayer, { useProgress, usePlaybackState, State, useTrackPlayerEvents, Event } from 'react-native-track-player';
 
 import Player from '../containers/Player';
 import scale from '../constants/scale';
@@ -52,7 +52,6 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
       updateTrack();
     }
   }, [playbackState]);
-
 
 
   return (

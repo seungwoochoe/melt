@@ -11,7 +11,6 @@ import { Music, Track } from '../types';
 import RenderHeader from '../components/Header';
 import RenderTitle from '../components/Title';
 import RenderBottomBar from '../components/BottomBar';
-
 import Player from '../containers/Player';
 import { RootTabScreenProps } from '../types';
 

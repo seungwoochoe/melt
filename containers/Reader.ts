@@ -24,7 +24,7 @@ export async function readMusicFiles() {
 				title: file.path.split('/').pop()?.split('.')[0] ?? "Nullish Coalescing",
 				artist: "",
 				artwork: defaultArtwork,
-				id: file.path,
+				id: file.path.split('Documents/').pop() ?? file.path,
 			});
 		} else {
 			musicList.push({
@@ -32,7 +32,7 @@ export async function readMusicFiles() {
 				title: metadata.tags.title ?? file.path.split('/').pop()?.split('.')[0],
 				artist: metadata.tags.artist ?? "",
 				artwork: metadata.tags.picture == null ? defaultArtwork : generatePictureData(metadata),
-				id: file.path,
+				id: file.path.split('Documents/').pop() ?? file.path,
 			});
 		}
 	};

@@ -16,7 +16,8 @@ const { width } = Dimensions.get('screen');
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.2;
-const blankTrack: Track = { url: 'loading...', title: 'loading title...', artist: 'loading artist...', artwork: require('../assets/images/blank.png') };
+const defaultArtwork = require('../assets/images/blank.png');
+const blankTrack: Track = { url: 'loading...', title: 'loading songs...', artist: 'loading songs...', artwork: defaultArtwork };
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -71,10 +72,10 @@ export default function RenderBottomBar({ navigation, isEventHandler }: { naviga
 						shadowOffset: { width: -bottomBarHeight * 0.02, height: bottomBarHeight * 0.003 },
 						backgroundColor: 'transparent',
 					}}>
-						{/* <Image
-							source={typeof track.artwork === "number" ? track.artwork : { uri: track.artwork }}
+						<Image
+							source={typeof track.artwork !== "string" ? defaultArtwork : { uri: track.artwork }}
 							style={styles.artwork}
-						/> */}
+						/>
 					</View>
 					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
 						<Text style={{ fontSize: scale.width * 0.98, }} numberOfLines={1}>

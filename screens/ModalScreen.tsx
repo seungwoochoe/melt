@@ -19,10 +19,11 @@ const defaultArtwork = require('../assets/images/blank.png');
 
 
 export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean } }, navigation: any }) {
+  console.log(route.params.initialTrack.artwork);
   const track = useRef<any>(route.params.initialTrack);
   const [trackInfo, setTrackInfo] = React.useState<any>({
     text: track.current,
-    artwork: typeof route.params.initialTrack.artwork === "object" ? defaultArtwork : { uri: route.params.initialTrack.artwork },
+    artwork: typeof route.params.initialTrack.artwork !== "string" ? defaultArtwork : { uri: route.params.initialTrack.artwork },
   });
   const [isPlaying, setIsPlaying] = React.useState(route.params.isPlaying);
   const colorScheme = useColorScheme();
@@ -39,7 +40,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
       track.current = currentTrackPlayerTrack;
       setTrackInfo({
         text: track.current,
-        artwork: typeof track.current.artwork === "object" ? defaultArtwork : { uri: track.current.artwork },
+        artwork: typeof track.current.artwork !== "string" ? defaultArtwork : { uri: track.current.artwork },
       });
     }
 

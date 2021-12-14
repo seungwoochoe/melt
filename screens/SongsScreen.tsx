@@ -47,8 +47,15 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
 
   function handleSearch(query: string) {
+    let safeQuery = query;
+    const blacklist = ['^', '.', '[', ']', '$', '(', ')', '\\', '*', '{', '}', '?', '+', ];
+
+    for (const item of blacklist) {
+      safeQuery = safeQuery.replaceAll(item, '');
+    }
+
     const filteredData = filter(Player.musicList, music => {
-      return search(music, query.toLowerCase());
+      return search(music, safeQuery.toLowerCase());
     })
     setFilteredMusicList(filteredData);
     setQuery(query);

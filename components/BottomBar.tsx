@@ -38,7 +38,7 @@ export default function RenderBottomBar({ navigation, isEventHandler }: { naviga
 			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
 			setTrack(currentTrackPlayerTrack);
 		}
-		
+
 		if (playbackState === State.Playing) {
 			setIsPlaying(true);
 		} else if (playbackState === State.Paused) {
@@ -58,37 +58,31 @@ export default function RenderBottomBar({ navigation, isEventHandler }: { naviga
 	});
 
 
-	const RenderSongForBottomBar = ({ item }: { item: Track }) => {
-		return (
-			<TouchableOpacity
-				onPress={() => { navigation.navigate("Modal", { track, isPlaying }); }}
-				style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
-				<View style={{
-					width: listHeight,
-					shadowColor: 'black',
-					shadowRadius: width * 0.02,
-					shadowOpacity: 0.25,
-					shadowOffset: { width: -bottomBarHeight * 0.02, height: bottomBarHeight * 0.003 },
-					backgroundColor: 'transparent',
-				}}>
-					<FastImage
-						source={typeof item.artwork === "number" ? item.artwork : { uri: item.artwork }}
-						style={styles.artwork}
-					/>
-				</View>
-				<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
-					<Text style={{ fontSize: scale.width * 0.98, }} numberOfLines={1}>
-						{item.title}
-					</Text>
-				</View>
-			</TouchableOpacity>
-		);
-	}
-
 	return (
 		<BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
 			<View style={{ width: width * 0.69, backgroundColor: 'transparent' }}>
-				<RenderSongForBottomBar item={track} />
+				<TouchableOpacity
+					onPress={() => { navigation.navigate("Modal", { track, isPlaying }); }}
+					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
+					<View style={{
+						width: listHeight,
+						shadowColor: 'black',
+						shadowRadius: width * 0.02,
+						shadowOpacity: 0.25,
+						shadowOffset: { width: -bottomBarHeight * 0.02, height: bottomBarHeight * 0.003 },
+						backgroundColor: 'transparent',
+					}}>
+						<Image
+							source={typeof track.artwork === "number" ? track.artwork : { uri: track.artwork }}
+							style={styles.artwork}
+						/>
+					</View>
+					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
+						<Text style={{ fontSize: scale.width * 0.98, }} numberOfLines={1}>
+							{track.title}
+						</Text>
+					</View>
+				</TouchableOpacity>
 			</View>
 			<View style={{ width: width * 0.28, height: bottomBarHeight, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
 				<TouchableOpacity

@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ImageBackground, StatusBar, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import TrackPlayer, { Event, useTrackPlayerEvents, useProgress, usePlaybackState, State } from 'react-native-track-player';
+import TrackPlayer, { useProgress, usePlaybackState, State } from 'react-native-track-player';
 
 import Player from '../containers/Player';
 import scale from '../constants/scale';
 import { Track } from '../types';
 import useColorScheme from '../hooks/useColorScheme';
+import Colors from '../constants/Colors';
 
 const { width, height } = Dimensions.get("window");
 const lightFilter = 'rgba(0, 0, 0, 0.4)';
@@ -19,18 +20,17 @@ const defaultArtwork = require('../assets/images/blank.png');
 
 
 export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean } }, navigation: any }) {
-  console.log(route.params.initialTrack.artwork);
   const track = useRef<any>(route.params.initialTrack);
-  const [trackInfo, setTrackInfo] = React.useState<any>({
-    text: track.current,
-    artwork: typeof route.params.initialTrack.artwork !== "string" ? defaultArtwork : { uri: route.params.initialTrack.artwork },
-  });
-  const [isPlaying, setIsPlaying] = React.useState(route.params.isPlaying);
+  const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
   const colorScheme = useColorScheme();
   const { position, duration } = useProgress();
   const [isSliding, setIsSliding] = useState(false);
   const slidingValue = useRef(0);
   const playbackState = usePlaybackState();
+  const [trackInfo, setTrackInfo] = useState<any>({
+    text: track.current,
+    artwork: typeof route.params.initialTrack.artwork !== "string" ? defaultArtwork : { uri: route.params.initialTrack.artwork },
+  });
 
 
   useEffect(() => {
@@ -137,10 +137,15 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
         <View style={{ flex: 1.7, flexDirection: 'row' }}>
           <View style={styles.MusicControls}>
-            <TouchableOpacity onPress={async () => { Player.skipToPrevious(); }} style={{ padding: scale.width * 0.5 }}>
-              <Ionicons name="play-back" size={scale.width * 2} color={theme} />
+            <TouchableOpacity
+              disabled={trackInfo.text.url === 'loading'}
+              onPress={async () => { Player.skipToPrevious(); }}
+              style={{ padding: scale.width * 0.5 }}
+            >
+              <Ionicons name="play-back" size={scale.width * 2} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
             </TouchableOpacity>
             <TouchableOpacity
+              disabled={trackInfo.text.url === 'loading'}
               onPress={async () => {
                 if (isPlaying) {
                   await TrackPlayer.pause();
@@ -152,10 +157,14 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               }}
               style={{ padding: isPlaying ? scale.width * 0.2 : scale.width * 0.4 }}
             >
-              <Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? scale.width * 2.8 : scale.width * 2.4} color={theme} />
+              <Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? scale.width * 2.8 : scale.width * 2.4} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { Player.skipToNext() }} style={{ padding: scale.width * 0.5 }}>
-              <Ionicons name="play-forward" size={scale.width * 2} color={theme} />
+            <TouchableOpacity
+              disabled={trackInfo.text.url === 'loading'}
+              onPress={() => { Player.skipToNext(); }}
+              style={{ padding: scale.width * 0.5 }}
+            >
+              <Ionicons name="play-forward" size={scale.width * 2} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
             </TouchableOpacity>
           </View>
         </View>

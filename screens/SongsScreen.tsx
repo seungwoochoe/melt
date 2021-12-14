@@ -23,15 +23,13 @@ const defaultArtwork = require('../assets/images/blank.png');
 
 
 export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>) {
-  const [isBusy, setIsBusy] = useState(false);
   const [query, setQuery] = useState('');
   const [filteredMusicList, setFilteredMusicList] = useState<Music[]>([]);
   const [isKeyboardShown, setIsKeyboardShown] = useState(false);
   const [isScrolled, setIsScrelled] = useState(false);
-  const [count, setCount] = useState(0);
 
   const colorScheme = useColorScheme();
-  const listHeight = width * 0.149 * useWindowDimensions().fontScale;
+  const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
 
   useEffect(() => {
     const keyboardShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -68,7 +66,6 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
   const RenderSong = ({ item }: { item: Music }) => {
   return (
       <TouchableOpacity
-        disabled={isBusy}
         onPress={() => { Keyboard.dismiss() }}
         style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
       >

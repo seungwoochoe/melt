@@ -17,7 +17,7 @@ const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.2;
 const defaultArtwork = require('../assets/images/blank.png');
-const blankTrack: Track = { url: 'loading...', title: 'loading songs...', artist: 'loading songs...', artwork: defaultArtwork };
+const blankTrack: Track = { url: 'loading', title: 'loading songs...', artist: 'loading songs...', artwork: defaultArtwork };
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -86,6 +86,7 @@ export default function RenderBottomBar({ navigation, isEventHandler }: { naviga
 			</View>
 			<View style={{ width: width * 0.28, height: bottomBarHeight, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
 				<TouchableOpacity
+					disabled={track.url === 'loading'}
 					onPress={async () => {
 						if (isPlaying) {
 							await TrackPlayer.pause();
@@ -95,15 +96,24 @@ export default function RenderBottomBar({ navigation, isEventHandler }: { naviga
 					}}
 					style={{ padding: isPlaying ? scale.width * 0.5 : scale.width * 0.675, }}
 				>
-					<Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? scale.width * 2 : scale.width * 1.65} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
+					<Ionicons
+						name={isPlaying ? "pause" : "play"}
+						size={isPlaying ? scale.width * 2 : scale.width * 1.65}
+						color={colorScheme === "light" ? (track.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (track.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
+					/>
 				</TouchableOpacity>
 				<TouchableOpacity
+					disabled={track.url === 'loading'}
 					onPress={async () => {
 						await Player.playNext();
 					}}
 					style={{ padding: scale.width * 0.6, marginRight: width * 0.05 }}
 				>
-					<Ionicons name="play-forward" size={scale.width * 1.75} color={colorScheme === "light" ? Colors.light.text : Colors.dark.text}></Ionicons>
+					<Ionicons
+						name="play-forward"
+						size={scale.width * 1.75}
+						color={colorScheme === "light" ? (track.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (track.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
+					/>
 				</TouchableOpacity>
 			</View>
 		</BlurView>

@@ -7,19 +7,22 @@ import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import scale from '../constants/scale';
-import { Music } from '../types';
+import { Music, LibraryItem } from '../types';
 import RenderHeader from '../components/Header';
 import RenderTitle from '../components/Title';
+import RenderBottomBar from '../components/BottomBar';
 import Player from '../containers/Player';
+import { RootTabScreenProps } from '../types';
 
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
 const listHeightWithoutScale = width * 0.149;
 const bottomBarHeight = listHeightWithoutScale * 1.2;
+const marginHorizontal = width * 0.05;
 const defaultArtwork = require('../assets/images/blank.png');
 
 
-export default function SongsScreen({ navigation }: any) {
+export default function LibraryScreen({ navigation }: any) {
   const [query, setQuery] = useState('');
   const [filteredMusicList, setFilteredMusicList] = useState<Music[]>([]);
   const [isKeyboardShown, setIsKeyboardShown] = useState(false);
@@ -48,18 +51,23 @@ export default function SongsScreen({ navigation }: any) {
 
 
   function handleSearch(query: string) {
-    let safeQuery = query;
-    const blacklist = ['^', '.', '[', ']', '$', '(', ')', '\\', '*', '{', '}', '?', '+', ];
+    if (query.length === 0) {
+      setFilteredMusicList([]);
+      setQuery(query);
+    } else {
+      let safeQuery = query;
+      const blacklist = ['^', '.', '[', ']', '$', '(', ')', '\\', '*', '{', '}', '?', '+',];
 
-    for (const item of blacklist) {
-      safeQuery = safeQuery.replaceAll(item, '');
+      for (const item of blacklist) {
+        safeQuery = safeQuery.replaceAll(item, '');
+      }
+
+      const filteredData = filter(Player.musicList, music => {
+        return search(music, safeQuery.toLowerCase());
+      })
+      setFilteredMusicList(filteredData);
+      setQuery(query);
     }
-
-    const filteredData = filter(Player.musicList, music => {
-      return search(music, safeQuery.toLowerCase());
-    })
-    setFilteredMusicList(filteredData);
-    setQuery(query);
   }
 
   function search({ title, artist }: { title: string, artist: string }, query: string) {
@@ -70,10 +78,46 @@ export default function SongsScreen({ navigation }: any) {
     return false;
   }
 
-  const RenderSong = ({ item }: { item: Music }) => {
-  return (
+
+  const RenderButtonToSongsScreen = () => {
+    return (
       <TouchableOpacity
-        onPress={() => { Keyboard.dismiss() }}
+        onPress={() => { navigation.navigate("SongsScreen") }}
+        style={{ width: width, height: width / 7, alignSelf: 'center', }}
+      >
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', borderRadius: 15, backgroundColor: 'pink', marginHorizontal: marginHorizontal }}>
+          <Ionicons name='musical-note' size={scale.width * 1.5} color={colorScheme === 'light' ? Colors.dark.text : Colors.light.text} />
+          <Text style={{fontSize: scale.width * 1.1}}>
+            Songs
+          </Text>
+          <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight: width * 0.03 }}>
+            <Ionicons name='chevron-forward-outline' size={scale.width * 1.5} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
+          </View>
+        </View>
+
+      </TouchableOpacity>
+    )
+  }
+
+
+
+  const RenderInitialScreen = () => {
+    return (
+      <View style={{ width: width }}>
+        <FlatList
+          ListHeaderComponent={RenderButtonToSongsScreen}
+          data={[]}
+          renderItem={RenderSong}
+          ListEmptyComponent={RenderNoResult}
+        />
+      </View>
+    )
+  }
+
+  const RenderSong = ({ item }: { item: Music }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => { }}
         style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
       >
         <View>
@@ -84,16 +128,16 @@ export default function SongsScreen({ navigation }: any) {
         </View>
         <View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
           {item.artist === "" &&
-            <View style={{ height: listHeight, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ height: listHeight, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
               <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
             </View>
           }
           {item.artist !== "" &&
             <View>
-              <View style={{ height: listHeight / 2.4, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ height: listHeight / 2.4, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
               </View>
-              <View style={{ height: listHeight / 3.2, width: width - listHeightWithoutScale * 2 - width * 0.05, flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ height: listHeight / 3.2, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={{ fontSize: scale.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
               </View>
             </View>
@@ -151,12 +195,11 @@ export default function SongsScreen({ navigation }: any) {
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
-          data={query.length === 0 ? Player.musicList : filteredMusicList}
-          ListEmptyComponent={RenderNoResult}
-          // stickyHeaderIndices={[0]}
+          data={filteredMusicList}
+          ListEmptyComponent={RenderInitialScreen}
           ListHeaderComponent={
             <View>
-              <RenderTitle title='Songs' />
+              <RenderTitle title='Library' />
 
               <View style={{
                 alignSelf: 'center',
@@ -164,7 +207,7 @@ export default function SongsScreen({ navigation }: any) {
                 alignItems: 'center',
                 height: scale.width * 2.15,
                 width: width * 0.89,
-                marginHorizontal: width * 0.05,
+                marginHorizontal: marginHorizontal,
                 paddingLeft: width * 0.03,
                 marginTop: scale.width * 0.5,
                 marginBottom: scale.width,
@@ -175,7 +218,7 @@ export default function SongsScreen({ navigation }: any) {
                 <TextInput
                   autoCapitalize='none'
                   autoCorrect={false}
-                  placeholder={'Search'}
+                  placeholder={'Songs or artists'}
                   placeholderTextColor={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3}
                   clearButtonMode='always'
                   underlineColorAndroid='transparent'
@@ -213,12 +256,12 @@ export default function SongsScreen({ navigation }: any) {
           scrollEnabled={query.length !== 0 && filteredMusicList.length === 0 ? false : true}
           keyExtractor={keyExtractor}
           getItemLayout={(data, index) => (
-            {length: listHeight + 1, offset: (listHeight + 1) * index, index}
-          )} 
+            { length: listHeight + 1, offset: (listHeight + 1) * index, index }
+          )}
         />
       </View>
 
-      <RenderHeader title='Songs' blur={isScrolled} />
+      <RenderHeader title='Library' blur={isScrolled} />
 
     </KeyboardAvoidingView>
   );

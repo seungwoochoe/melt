@@ -1,19 +1,18 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, SectionList, useWindowDimensions } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, SectionList, useWindowDimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as RNFS from 'react-native-fs';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
-import Colors from '../constants/Colors';
 import scale from '../constants/scale';
 import RenderDarkHeader from '../components/DarkHeader';
 import RenderTitle from '../components/Title';
 
 import { RootTabScreenProps } from '../types';
-import RenderBottomBar from '../components/BottomBar';
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 const itemHeightWithoutScale = width * 0.117;
 const marginBetweenIconAndText = itemHeightWithoutScale * 0.3;
 const marginHorizontal = width * 0.05;
@@ -128,12 +127,15 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
         style={{ width: width, height: itemHeight, backgroundColor: 'transparent' }}
       >
         <TouchableOpacity 
-        onPress={() => {
+        onPress={async () => {
           if (item.title === "Remove stored music list") {
             try {
-              AsyncStorage.removeItem('musicList');
+              await AsyncStorage.removeItem('musicList');
+              await RNFS.unlink(RNFS.DocumentDirectoryPath + '/assets');
+              Alert.alert("Success!");
             } catch (e) {
               console.log("Error occurred.", e);
+              Alert.alert("Failed to remove the folder");
             }
           }
         }}
@@ -214,7 +216,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
   }
 
   return (
-    <View style={{ flex: 1, width: width, backgroundColor: colorScheme === 'light' ? '#f2f2f7' : '#000' }}>
+    <View style={{ flex: 1,  width: width, backgroundColor: colorScheme === 'light' ? '#f2f2f7' : '#000' }}>
 
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
@@ -237,8 +239,6 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
       />
 
       <RenderDarkHeader title='Settings' blur={false} />
-
-      <RenderBottomBar navigation={navigation} isEventHandler={false} />
     </View>
   );
 };

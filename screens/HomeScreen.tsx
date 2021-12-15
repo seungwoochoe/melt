@@ -7,7 +7,6 @@ import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import scale from '../constants/scale';
 import RenderTitle from '../components/Title';
-import RenderBottomBar from '../components/BottomBar';
 
 import { RootTabScreenProps } from '../types';
 
@@ -36,8 +35,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
           </Text>
         </View>
       </TouchableOpacity>
-
-      <RenderBottomBar navigation={navigation} isEventHandler={true} />
     </View>
   );
 }

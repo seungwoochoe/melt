@@ -22,7 +22,7 @@ const linking: LinkingOptions<RootStackParamList> = {
           },
           Songs: {
             screens: {
-              SongsScreen: 'two',
+              LibraryScreen: 'two',
             },
           },
           Settings: {

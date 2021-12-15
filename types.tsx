@@ -5,7 +5,7 @@
 
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 
 declare global {
   namespace ReactNavigation {
@@ -17,22 +17,23 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Modal: undefined;
   NotFound: undefined;
+  SongsByTitleScreen: undefined;
 };
 
-export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
+export type RootStackScreenProps<Screen extends keyof RootStackParamList> = StackScreenProps<
   RootStackParamList,
   Screen
 >;
 
 export type RootTabParamList = {
   Home: undefined;
-  Songs: undefined;
+  Library: undefined;
   Settings: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
   BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
+  StackScreenProps<RootStackParamList>
 >;
 
 export type Music = {
@@ -68,4 +69,10 @@ export type History = {
   artwork: number,
   id: string,
   secPlayed: number,
+}
+
+export type LibraryItem = {
+  title: string,
+  icon: string,
+  linkTo: string,
 }

@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State } from 'react-native-track-player';
+import { useNavigation } from '@react-navigation/native';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -26,11 +27,12 @@ if (Platform.OS === 'ios') {
 	blurIntensity = 200;
 }
 
-export default function RenderBottomBar({ navigation, isEventHandler }: { navigation: any, isEventHandler: boolean }) {
+export default function RenderBottomBar() {
 	const [isPlaying, setIsPlaying] = React.useState(false);
 	const colorScheme = useColorScheme();
 	const [track, setTrack] = React.useState<any>(Player.musicList[0] ?? blankTrack);
 	const playbackState = usePlaybackState();
+	const navigation = useNavigation();
 
 	useEffect(() => {
 		async function updateTrack() {
@@ -50,11 +52,9 @@ export default function RenderBottomBar({ navigation, isEventHandler }: { naviga
 
 
 	useTrackPlayerEvents([Event.RemoteSeek], async event => {
-		if (isEventHandler) {
-			await TrackPlayer.seekTo(event.position);
-			await TrackPlayer.pause();
-			await TrackPlayer.play();
-		}
+		await TrackPlayer.seekTo(event.position);
+		await TrackPlayer.pause();
+		await TrackPlayer.play();
 	});
 
 
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		left: 0,
 		right: 0,
-		bottom: 0,
+		bottom: 49,
 	},
 	bottomMusic: {
 		alignItems: 'center',

@@ -14,10 +14,11 @@ import scale from '../constants/scale';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
-import NotFoundScreen from '../screens/NotFoundScreen';
 import HomeScreen from '../screens/HomeScreen';
-import SongsScreen from '../screens/SongsScreen';
+import LibraryScreen from '../screens/LibraryScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import SongsScreen from '../screens/SongsScreen';
+import RenderBottomBar from '../components/BottomBar';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -36,21 +37,14 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
  * A root stack navigator is often used for displaying modals on top of all other content.
  * https://reactnavigation.org/docs/modal
  */
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<any>();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{
-        cardStyleInterpolator: CardStyleInterpolators.forCustomModalPresentationIOS,
-        gestureDirection: 'vertical',
-      }}
-      >
-        <Stack.Screen name="Modal" component={ModalScreen} options={{ headerShown: false }} />
-      </Stack.Group>
-    </Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Root" component={BottomTabNavigator} />
+      <Stack.Screen name="Modal" component={ModalScreen} options={{ cardStyleInterpolator: CardStyleInterpolators.forCustomModalPresentationIOS, gestureDirection: 'vertical' }} />
+    </Stack.Navigator >
   );
 }
 
@@ -64,52 +58,65 @@ function BottomTabNavigator() {
   const colorScheme = useColorScheme();
 
   return (
-    <BottomTab.Navigator
-      initialRouteName="Songs"
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
-        headerShown: false,
-      }}>
-      <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={({ navigation }: RootTabScreenProps<'Home'>) => ({
-          title: 'Home',
-          tabBarLabelStyle: {
-            fontSize: scale.width * 0.6,
-            fontWeight: '700',
-          },
-          lazy: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="home-outline" color={color} />,
-        })}
-      />
-      <BottomTab.Screen
-        name="Songs"
-        component={SongsScreen}
-        options={{
-          title: 'Songs',
-          tabBarLabelStyle: {
-            fontSize: scale.width * 0.6,
-            fontWeight: '700',
-          },
-          lazy: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
-        }}
-      />
-      <BottomTab.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          title: 'Settings',
-          tabBarLabelStyle: {
-            fontSize: scale.width * 0.6,
-            fontWeight: '700',
-          },
-          lazy: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="settings-outline" color={color} />,
-        }}
-      />
-    </BottomTab.Navigator>
+    <>
+      <BottomTab.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme].tint,
+          headerShown: false,
+        }}>
+        <BottomTab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            title: 'Home',
+            tabBarLabelStyle: {
+              fontSize: scale.width * 0.6,
+              fontWeight: '700',
+            },
+            lazy: false,
+            tabBarIcon: ({ color }) => <TabBarIcon name="home-outline" color={color} />,
+          }}
+        />
+        <BottomTab.Screen
+          name="Library"
+          component={LibraryScreenNavigator}
+          options={{
+            title: 'Library',
+            tabBarLabelStyle: {
+              fontSize: scale.width * 0.6,
+              fontWeight: '700',
+            },
+            lazy: false,
+            tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
+          }}
+        />
+        <BottomTab.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            title: 'Settings',
+            tabBarLabelStyle: {
+              fontSize: scale.width * 0.6,
+              fontWeight: '700',
+            },
+            lazy: false,
+            tabBarIcon: ({ color }) => <TabBarIcon name="settings-outline" color={color} />,
+          }}
+        />
+      </BottomTab.Navigator>
+
+      <RenderBottomBar />
+    </>
+  );
+}
+
+function LibraryScreenNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="LibraryScreen" component={LibraryScreen} />
+      <Stack.Screen name="SongsScreen" component={SongsScreen} />
+    </Stack.Navigator >
   );
 }
 
@@ -117,7 +124,7 @@ function BottomTabNavigator() {
  * You can explore the built-in icon families and icons on the web at https://icons`.expo.fyi/
  */
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof Ionicons>['name'];
+  name: string;
   color: string;
 }) {
 

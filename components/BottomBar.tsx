@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,13 +12,14 @@ import layout from '../constants/layout';
 import { Track } from '../types';
 
 import Player from '../containers/Player';
+import { appendMoreTracks } from '../containers/Creater';
 
 const { width } = Dimensions.get('screen');
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.2;
 const defaultMiniArt = require('../assets/images/blank.png');
-const blankTrack: Track = { url: 'loading', title: 'loading songs...', artist: 'loading songs...', artwork: defaultMiniArt, miniArt: defaultMiniArt, id: 'blankTrack', isPlayed: false, isTrigger: false };
+const blankTrack: Track = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, id: 'blankTrack', isPlayed: false, isTrigger: false };
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -28,17 +29,25 @@ if (Platform.OS === 'ios') {
 }
 
 export default function RenderBottomBar() {
-	const [isPlaying, setIsPlaying] = React.useState(false);
+	const track = useRef<Track>(Player.tracks[0]);
+	const [isPlaying, setIsPlaying] = useState(false);
 	const colorScheme = useColorScheme();
-	const [track, setTrack] = React.useState<any>(Player.musicList[0] ?? blankTrack);
+	const [trackInfo, setTrackInfo] = useState<Track>(blankTrack);
 	const playbackState = usePlaybackState();
 	const navigation = useNavigation();
 
 	useEffect(() => {
 		async function updateTrack() {
 			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
-			setTrack(currentTrackPlayerTrack);
+			track.current = Player.tracks[currentTrackPlayerIndex];
+			setTrackInfo(track.current);
+			
+			if (track.current.isTrigger === true) {
+				const currentTracksLength = Player.tracks.length;
+				Player.tracks = appendMoreTracks(Player.tracks);
+				await TrackPlayer.add(Player.tracks.slice(currentTracksLength));
+				Player.tracks[currentTrackPlayerIndex].isTrigger = false;
+			}
 		}
 
 		if (playbackState === State.Playing) {
@@ -62,7 +71,7 @@ export default function RenderBottomBar() {
 		<BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
 			<View style={{ width: width * 0.69, backgroundColor: 'transparent' }}>
 				<TouchableOpacity
-					onPress={() => { navigation.navigate("Modal", { initialTrack: track, isPlaying: isPlaying }); }}
+					onPress={() => { navigation.navigate("Modal", { initialTrack: trackInfo, isPlaying: isPlaying }); }}
 					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
 					<View style={{
 						width: listHeight,
@@ -73,20 +82,20 @@ export default function RenderBottomBar() {
 						backgroundColor: 'transparent',
 					}}>
 						<Image
-							source={typeof track.miniArt !== "string" ? defaultMiniArt : { uri: track.miniArt }}
+							source={typeof trackInfo.miniArt !== "string" ? defaultMiniArt : { uri: trackInfo.miniArt }}
 							style={styles.miniArt}
 						/>
 					</View>
 					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
 						<Text style={{ fontSize: layout.width * 0.98, }} numberOfLines={1}>
-							{track.title}
+							{trackInfo.title}
 						</Text>
 					</View>
 				</TouchableOpacity>
 			</View>
 			<View style={{ width: width * 0.28, height: bottomBarHeight, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
 				<TouchableOpacity
-					disabled={track.url === 'loading'}
+					disabled={trackInfo.url === 'loading'}
 					onPress={async () => {
 						if (isPlaying) {
 							await TrackPlayer.pause();
@@ -99,11 +108,11 @@ export default function RenderBottomBar() {
 					<Ionicons
 						name={isPlaying ? "pause" : "play"}
 						size={isPlaying ? layout.width * 2 : layout.width * 1.65}
-						color={colorScheme === "light" ? (track.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (track.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
+						color={colorScheme === "light" ? (trackInfo.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (trackInfo.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
 					/>
 				</TouchableOpacity>
 				<TouchableOpacity
-					disabled={track.url === 'loading'}
+					disabled={trackInfo.url === 'loading'}
 					onPress={async () => {
 						await Player.playNext();
 					}}
@@ -112,7 +121,7 @@ export default function RenderBottomBar() {
 					<Ionicons
 						name="play-forward"
 						size={layout.width * 1.75}
-						color={colorScheme === "light" ? (track.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (track.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
+						color={colorScheme === "light" ? (trackInfo.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (trackInfo.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
 					/>
 				</TouchableOpacity>
 			</View>

@@ -10,17 +10,17 @@ const defaultArtwork = require('../assets/images/blank.png');
 const documentDirectory = RNFS.DocumentDirectoryPath;
 
 export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
+	let isThereAnyChangeOnMusicList = false;
 	let storedMusicList: Music[] | null = null;
 
 	try {
 		const jsonValue = await AsyncStorage.getItem('musicList');
 		storedMusicList = jsonValue != null ? JSON.parse(jsonValue) : null;
 	} catch (e) {
-		console.log("Reader.ts: Error occurred while reading data.", e);
+		console.log(e);
 	}
 
-	// console.log(storedMusicList);
-
+	
 	const musicList: Music[] = [];
 	const files = await RNFS.readDir(documentDirectory);
 
@@ -100,7 +100,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 		const jsonValue = JSON.stringify(sortedMusiclist);
 		await AsyncStorage.setItem('musicList', jsonValue);
 	} catch (e) {
-		console.log("Reader.ts: Error occurred while storing data.", e);
+		console.log(e);
 	}
 
 	return sortedMusiclist;
@@ -150,7 +150,7 @@ function compressPicture(source: string, imageSize: number) {
 				resolve(resizedImage.path);
 			})
 			.catch(e => {
-				console.log("Error occurred while compressing picture.", e);
+				console.log(e);
 			})
 	})
 }
@@ -165,7 +165,7 @@ export async function getStoredTracks() {
 		const jsonValue = await AsyncStorage.getItem('track');
 		tracks = jsonValue != null ? JSON.parse(jsonValue) : null;
 	} catch (e) {
-		console.log("Reader.ts: Error occurred while reading track data.", e);
+		console.log(e);
 	}
 
 	if (tracks == null) {

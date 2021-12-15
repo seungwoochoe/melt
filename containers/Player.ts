@@ -1,17 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import TrackPlayer, { Capability, Event, State, usePlaybackState, useProgress, useTrackPlayerEvents } from 'react-native-track-player';
+import TrackPlayer, { Capability } from 'react-native-track-player';
 
-import { Music, Track, Action, History } from "../types";
+import { Music, WeightedMusic, Track,  History } from "../types";
 
 export default class Player {
 	static musicList: Music[] = [];
-	static weightedMusicList: Music[];
-	static playlist: Track[];
+	static weightedMusicList: WeightedMusic[];
+	static tracks: Track[] = [];
 	static currentIndex = 0;
-	static currentTrack: Track[];
+	static currentTrack: Track;
 	static isPlaying = false;
 
-	static actions: Action[];
 	static histories: History[];
 
 	static uiWeightedMusicList: Music[];
@@ -36,7 +35,7 @@ export default class Player {
 			compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SkipToPrevious, Capability.SeekTo],
 		});
 
-		await TrackPlayer.add(Player.musicList);
+		await TrackPlayer.add(Player.tracks);
 	}
 
 	static async skipToNext() {

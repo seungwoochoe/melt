@@ -4,7 +4,10 @@ import { TouchableOpacity, StyleSheet, Dimensions, Image, useWindowDimensions } 
 import { View, Text } from '../components/Themed';
 import Colors from '../constants/Colors';
 import layout from '../constants/layout';
-import { Music } from '../types';
+import { Music, WeightedMusic } from '../types';
+import { appendMoreTracks, complementTracks } from '../containers/Creater';
+import Player from '../containers/Player';
+import TrackPlayer from 'react-native-track-player';
 
 const { width } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
@@ -12,13 +15,23 @@ const listHeightWithoutScale = width * 0.149;
 const marginHorizontal = width * 0.05;
 const defaultMiniArt = require('../assets/images/blank.png');
 
-export default function RenderSong({ item, colorScheme }: { item: Music, colorScheme: string }) {
+export default function RenderSong({ item, colorScheme }: { item: WeightedMusic, colorScheme: string }) {
 
 	const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
 
 	return (
 		<TouchableOpacity
-			onPress={() => { }}
+			onPress={async() => {
+				if (Player.musicList.length === 1) {
+					Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: false }];
+				} else {
+					Player.tracks = complementTracks([{...item, isPlayed: false, isTrigger: false}]);
+				}
+
+				await TrackPlayer.reset();
+				await TrackPlayer.add(Player.tracks);
+				await TrackPlayer.play();
+			 }}
 			style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 		>
 			<View>

@@ -20,7 +20,7 @@ const defaultArtwork = require('../assets/images/blank.png');
 
 
 export default function ModalScreen({ route }: { route: { params: { initialTrack: Track, isPlaying: boolean } } }) {
-  const track = useRef<any>(route.params.initialTrack);
+  const track = useRef<Track>(route.params.initialTrack);
   const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
   const colorScheme = useColorScheme();
   const { position, duration } = useProgress();
@@ -37,7 +37,7 @@ export default function ModalScreen({ route }: { route: { params: { initialTrack
   useEffect(() => {
     async function updateTrack() {
       const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-      const currentTrackPlayerTrack = await TrackPlayer.getTrack(currentTrackPlayerIndex ?? 0);
+      const currentTrackPlayerTrack = Player.tracks[currentTrackPlayerIndex ?? 0];
       track.current = currentTrackPlayerTrack;
       setTrackInfo({
         text: track.current,

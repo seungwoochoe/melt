@@ -9,11 +9,12 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { readMusicFiles, getStoredTracks } from './containers/Reader';
+import { initializeWeights, complementTracks } from './containers/Creater';
 
 
 const { width } = Dimensions.get('screen');
 const artworkSize = Math.floor(width * 1.8);
-const miniArtSize = width * 0.24;
+const miniArtSize = width * 0.26;
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -22,19 +23,26 @@ export default function App() {
 
   React.useEffect(() => {
     async function initialize() {
-      const musicList = await readMusicFiles(artworkSize, miniArtSize);
-      const storedTracks = await getStoredTracks();
-      Player.musicList = musicList;
-      await Player.setupPlayer();
+      Player.musicList = await readMusicFiles(artworkSize, miniArtSize);
+      Player.weightedMusicList = initializeWeights(Player.musicList);
+
+      if (Player.weightedMusicList.length === 0) {
+        // No music!
+      } else {
+        if (Player.weightedMusicList.length > 1) {
+          const storedTracks = await getStoredTracks();
+          const complementedTracks = complementTracks(storedTracks);
+          Player.tracks = complementedTracks;
+        } else {
+          Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: true }];
+        }
+
+        await Player.setupPlayer();
+      }
     }
     initialize();
   }, []);
 
-
-  useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-    Player.currentIndex = await TrackPlayer.getCurrentTrack();
-  })
-  
 
   if (!isLoadingComplete) {
     return null;

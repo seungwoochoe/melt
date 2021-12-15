@@ -134,7 +134,6 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
               await RNFS.unlink(RNFS.DocumentDirectoryPath + '/assets');
               Alert.alert("Success!");
             } catch (e) {
-              console.log("Error occurred.", e);
               Alert.alert("Failed to remove the folder");
             }
           }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, SectionList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -74,7 +75,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
           position: '',
         },
         {
-          title: 'Export',
+          title: 'Remove stored music list',
           iconName: 'download',
           iconBackgroundColor: 'grey',
           position: 'bottom',
@@ -126,7 +127,17 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
       <View
         style={{ width: width, height: itemHeight, backgroundColor: 'transparent' }}
       >
-        <TouchableOpacity style={{
+        <TouchableOpacity 
+        onPress={() => {
+          if (item.title === "Remove stored music list") {
+            try {
+              AsyncStorage.removeItem('musicList');
+            } catch (e) {
+              console.log("Error occurred.", e);
+            }
+          }
+        }}
+        style={{
           flex: 1,
           flexDirection: 'row',
           marginHorizontal: marginHorizontal,

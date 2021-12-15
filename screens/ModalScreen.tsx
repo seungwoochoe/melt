@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ImageBackground, StatusBar, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import TrackPlayer, { useProgress, usePlaybackState, State, useTrackPlayerEvents, Event } from 'react-native-track-player';
+import TrackPlayer, { useProgress, usePlaybackState, State } from 'react-native-track-player';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
@@ -19,7 +19,7 @@ const blurRadius = 16700000 / Math.pow(height, 1.8);
 const defaultArtwork = require('../assets/images/blank.png');
 
 
-export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean } }, navigation: any }) {
+export default function ModalScreen({ route }: { route: { params: { initialTrack: Track, isPlaying: boolean } } }) {
   const track = useRef<any>(route.params.initialTrack);
   const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
   const colorScheme = useColorScheme();
@@ -30,6 +30,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
   const [trackInfo, setTrackInfo] = useState<any>({
     text: track.current,
     artwork: typeof route.params.initialTrack.artwork !== "string" ? defaultArtwork : { uri: route.params.initialTrack.artwork },
+    miniArt: typeof route.params.initialTrack.miniArt !== "string" ? defaultArtwork : { uri: route.params.initialTrack.miniArt },
   });
 
 
@@ -41,6 +42,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
       setTrackInfo({
         text: track.current,
         artwork: typeof track.current.artwork !== "string" ? defaultArtwork : { uri: track.current.artwork },
+        miniArt: typeof track.current.miniArt !== "string" ? defaultArtwork : { uri: track.current.miniArt },
       });
     }
 
@@ -56,7 +58,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
   return (
     <ImageBackground
-      source={trackInfo.artwork}
+      source={trackInfo.miniArt}
       blurRadius={blurRadius}
       style={{ flex: 1, transform: [{ rotate: '180deg' }] }}
     >

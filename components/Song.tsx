@@ -10,7 +10,7 @@ const { width } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
 const listHeightWithoutScale = width * 0.149;
 const marginHorizontal = width * 0.05;
-const defaultArtwork = require('../assets/images/blank.png');
+const defaultMiniArt = require('../assets/images/blank.png');
 
 export default function RenderSong({ item, colorScheme }: { item: Music, colorScheme: string }) {
 
@@ -23,8 +23,8 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 		>
 			<View>
 				<Image
-					source={typeof item.artwork === "number" ? defaultArtwork : { uri: item.artwork }}
-					style={styles.artwork}
+					source={typeof item.miniArt === "number" ? defaultMiniArt : { uri: item.miniArt }}
+					style={styles.miniArt}
 				/>
 			</View>
 			<View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
@@ -50,7 +50,7 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 
 
 const styles = StyleSheet.create({
-	artwork: {
+	miniArt: {
 		width: listHeightWithoutScale * 0.88,
 		height: listHeightWithoutScale * 0.88,
 		margin: listHeightWithoutScale * 0.06,

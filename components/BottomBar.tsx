@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,8 +17,8 @@ const { width } = Dimensions.get('screen');
 const listHeight = width * 0.149;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.2;
-const defaultArtwork = require('../assets/images/blank.png');
-const blankTrack: Track = { url: 'loading', title: 'loading songs...', artist: 'loading songs...', artwork: defaultArtwork };
+const defaultMiniArt = require('../assets/images/blank.png');
+const blankTrack: Track = { url: 'loading', title: 'loading songs...', artist: 'loading songs...', artwork: defaultMiniArt, miniArt: defaultMiniArt, id: 'blankTrack', isPlayed: false, isTrigger: false };
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -73,8 +73,8 @@ export default function RenderBottomBar() {
 						backgroundColor: 'transparent',
 					}}>
 						<Image
-							source={typeof track.artwork !== "string" ? defaultArtwork : { uri: track.artwork }}
-							style={styles.artwork}
+							source={typeof track.miniArt !== "string" ? defaultMiniArt : { uri: track.miniArt }}
+							style={styles.miniArt}
 						/>
 					</View>
 					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
@@ -121,7 +121,7 @@ export default function RenderBottomBar() {
 }
 
 const styles = StyleSheet.create({
-	artwork: {
+	miniArt: {
 		width: listHeight * 0.9,
 		height: listHeight * 0.9,
 		margin: listHeight * 0.05,

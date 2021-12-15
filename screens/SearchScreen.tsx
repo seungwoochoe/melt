@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: width,
 	},
-	artwork: {
+	miniArt: {
 		width: listHeightWithoutScale * 0.88,
 		height: listHeightWithoutScale * 0.88,
 		margin: listHeightWithoutScale * 0.06,

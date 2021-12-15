@@ -1,28 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, SectionList, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import layout from '../constants/layout';
-import { Music, LibraryItem } from '../types';
 import RenderHeader from '../components/Header';
 import RenderTitle from '../components/Title';
 import Player from '../containers/Player';
+import RenderSong from '../components/Song';
 
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
 const listHeightWithoutScale = width * 0.149;
 const bottomBarHeight = listHeightWithoutScale * 1.2;
 const marginHorizontal = width * 0.05;
-const defaultArtwork = require('../assets/images/blank.png');
 
 
 export default function LibraryScreen({ navigation }: any) {
-  const [query, setQuery] = useState('');
-  const [filteredMusicList, setFilteredMusicList] = useState<Music[]>([]);
-  const [isKeyboardShown, setIsKeyboardShown] = useState(false);
+
   const [isScrolled, setIsScrelled] = useState(false);
 
   const colorScheme = useColorScheme();
@@ -30,50 +27,6 @@ export default function LibraryScreen({ navigation }: any) {
 
   const keyExtractor = useCallback((item) => item.id, []);
 
-
-  useEffect(() => {
-    const keyboardShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setIsKeyboardShown(true);
-    });
-
-    const keyboardHideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setIsKeyboardShown(false);
-    });
-
-    return () => {
-      keyboardShowSubscription.remove();
-      keyboardHideSubscription.remove();
-    }
-  }, []);
-
-
-  // function handleSearch(query: string) {
-  //   if (query.length === 0) {
-  //     setFilteredMusicList([]);
-  //     setQuery(query);
-  //   } else {
-  //     let safeQuery = query;
-  //     const blacklist = ['^', '.', '[', ']', '$', '(', ')', '\\', '*', '{', '}', '?', '+',];
-
-  //     for (const item of blacklist) {
-  //       safeQuery = safeQuery.replaceAll(item, '');
-  //     }
-
-  //     const filteredData = filter(Player.musicList, music => {
-  //       return search(music, safeQuery.toLowerCase());
-  //     })
-  //     setFilteredMusicList(filteredData);
-  //     setQuery(query);
-  //   }
-  // }
-
-  // function search({ title, artist }: { title: string, artist: string }, query: string) {
-  //   const condition = new RegExp(`^${query}| ${query}|\\(${query}`);
-  //   if (title.toLowerCase().match(condition) || artist.toLowerCase().match(condition)) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
 
 
   const RenderButtonToSongsScreen = () => {
@@ -91,7 +44,6 @@ export default function LibraryScreen({ navigation }: any) {
             <Ionicons name='chevron-forward-outline' size={layout.width * 1.5} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
           </View>
         </View>
-
       </TouchableOpacity>
     )
   }
@@ -104,46 +56,16 @@ export default function LibraryScreen({ navigation }: any) {
         <FlatList
           ListHeaderComponent={RenderButtonToSongsScreen}
           data={[]}
-          renderItem={RenderSong}
-          ListEmptyComponent={<RenderNoResult text="No history" />}
+          renderItem={(item) => {
+            return (
+              <RenderSong item={item} colorScheme={colorScheme} />
+            )
+          }}
+          ListEmptyComponent={<RenderNoResult text="Welcome!" />}
         />
       </View>
     )
   }
-
-  const RenderSong = ({ item }: { item: Music }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => { }}
-        style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
-      >
-        <View>
-          <Image
-            source={typeof item.artwork === "number" ? defaultArtwork : { uri: item.artwork }}
-            style={styles.artwork}
-          />
-        </View>
-        <View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
-          {item.artist === "" &&
-            <View style={{ height: listHeight, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: layout.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
-            </View>
-          }
-          {item.artist !== "" &&
-            <View>
-              <View style={{ height: listHeight / 2.4, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: layout.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
-              </View>
-              <View style={{ height: listHeight / 3.2, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: layout.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
-              </View>
-            </View>
-          }
-        </View>
-      </TouchableOpacity>
-    )
-  }
-
 
   const RenderNoResult = ({ text }: { text: string }) => {
     return (
@@ -172,15 +94,11 @@ export default function LibraryScreen({ navigation }: any) {
   const RenderBottomMargin = () => {
     return (
       <>
-        {(Player.musicList.length !== 0 && (query.length === 0 || filteredMusicList.length !== 0)) &&
+        {Player.musicList.length !== 0 &&
           <RenderSeparator />
         }
 
-        <View style={{ height: isKeyboardShown ? 0 : bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }}>
-          <Text style={{ fontSize: layout.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
-            {/* - {Player.musicList.length} songs - */}
-          </Text>
-        </View>
+        <View style={{ height: bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }} />
       </>
     )
   }
@@ -193,27 +111,27 @@ export default function LibraryScreen({ navigation }: any) {
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
-          data={filteredMusicList}
+          data={[]}
 
           ListHeaderComponent={
             <View>
               <RenderTitle title='Library' />
 
-              <TouchableOpacity 
-              onPress={() => {navigation.navigate("SearchScreen")}}              
-              style={{
-                alignSelf: 'center',
-                flexDirection: 'row',
-                alignItems: 'center',
-                height: layout.width * 2.4,
-                width: width * 0.89,
-                marginHorizontal: marginHorizontal,
-                paddingLeft: width * 0.03,
-                marginTop: layout.width * 0.5,
-                marginBottom: layout.width,
-                borderRadius: 11,
-                backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
-              }}>
+              <TouchableOpacity
+                onPress={() => { navigation.navigate("SearchScreen") }}
+                style={{
+                  alignSelf: 'center',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: layout.width * 2.4,
+                  width: width * 0.89,
+                  marginHorizontal: marginHorizontal,
+                  paddingLeft: width * 0.03,
+                  marginTop: layout.width * 0.5,
+                  marginBottom: layout.width,
+                  borderRadius: 11,
+                  backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
+                }}>
                 <Ionicons name="search-outline" size={layout.width * 1.15} color={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3} />
                 <Text style={{
                   marginLeft: width * 0.02,
@@ -248,7 +166,7 @@ export default function LibraryScreen({ navigation }: any) {
 
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps='handled'
-          scrollEnabled={query.length !== 0 && filteredMusicList.length === 0 ? false : true}
+          scrollEnabled={true}
           keyExtractor={keyExtractor}
           getItemLayout={(data, index) => (
             { length: listHeight + 1, offset: (listHeight + 1) * index, index }
@@ -267,7 +185,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: width,
   },
-  artwork: {
+  miniArt: {
     width: listHeightWithoutScale * 0.88,
     height: listHeightWithoutScale * 0.88,
     margin: listHeightWithoutScale * 0.06,

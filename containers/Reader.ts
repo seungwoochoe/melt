@@ -4,12 +4,12 @@ import base64 from 'react-native-base64';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
 
-import { Music } from '../types';
+import { Music, Track } from '../types';
 
 const defaultArtwork = require('../assets/images/blank.png');
 const documentDirectory = RNFS.DocumentDirectoryPath;
 
-export async function readMusicFiles(thumbnailSize: number) {
+export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 	let storedMusicList: Music[] | null = null;
 
 	try {
@@ -33,13 +33,6 @@ export async function readMusicFiles(thumbnailSize: number) {
 			if (storedMusicList != null) {
 				const match = storedMusicList.find(item => item.id === id);
 
-				// if (match == null) {
-				// 	console.log("😢 Not found");
-				// } else {
-				// 	foundCount++;
-				// 	console.log(`🎉 Found ${foundCount} songs from storedMusicList!!`)
-				// }
-
 				if (match != null) {
 					musicList.push(match);
 				} else {
@@ -56,6 +49,7 @@ export async function readMusicFiles(thumbnailSize: number) {
 							title: id?.substring(0, id.lastIndexOf('.')) ?? "Nullish Coalescing",
 							artist: "",
 							artwork: defaultArtwork,
+							miniArt: defaultArtwork,
 							id: id ?? file.path,
 						});
 					} else {
@@ -63,7 +57,8 @@ export async function readMusicFiles(thumbnailSize: number) {
 							url: file.path,
 							title: metadata.tags.title ?? id?.substring(0, id.lastIndexOf('.')),
 							artist: metadata.tags.artist ?? "",
-							artwork: metadata.tags.picture == null ? defaultArtwork : await generatePictureData(metadata, true, thumbnailSize),
+							artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
+							miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
 							id: id ?? file.path,
 						});
 					}
@@ -82,6 +77,7 @@ export async function readMusicFiles(thumbnailSize: number) {
 						title: id?.substring(0, id.lastIndexOf('.')) ?? "Nullish Coalescing",
 						artist: "",
 						artwork: defaultArtwork,
+						miniArt: defaultArtwork,
 						id: id ?? file.path,
 					});
 				} else {
@@ -89,7 +85,8 @@ export async function readMusicFiles(thumbnailSize: number) {
 						url: file.path,
 						title: metadata.tags.title ?? id?.substring(0, id.lastIndexOf('.')),
 						artist: metadata.tags.artist ?? "",
-						artwork: metadata.tags.picture == null ? defaultArtwork : await generatePictureData(metadata, true, thumbnailSize),
+						artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
+						miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
 						id: id ?? file.path,
 					});
 				}
@@ -109,6 +106,7 @@ export async function readMusicFiles(thumbnailSize: number) {
 	return sortedMusiclist;
 }
 
+
 function readMetadata(file: any) {
 	return new Promise((resolve, reject) => {
 		new jsmediatags.Reader(file.path)
@@ -123,7 +121,7 @@ function readMetadata(file: any) {
 	});
 }
 
-async function generatePictureData(metadata: any, compress: boolean, thumbnailSize: number) {
+async function generateImageData(metadata: any, imageSize: number) {
 	const data = metadata.tags.picture.data;
 	let base64String = "";
 
@@ -131,29 +129,26 @@ async function generatePictureData(metadata: any, compress: boolean, thumbnailSi
 		base64String += String.fromCharCode(data[i]);
 	}
 
-	if (compress) {
-		const compressedPicture = await compressPicture(`data:${data.format};base64,${base64.encode(base64String)}`, thumbnailSize);
-		return compressedPicture;
-	} else {
-		return `data:${data.format};base64,${base64.encode(base64String)}`
-	}
+	const compressedImage = await compressPicture(`data:${data.format};base64,${base64.encode(base64String)}`, imageSize);
+	return compressedImage;
 }
 
-function compressPicture(source: string, thumbnailSize: number) {
+function compressPicture(source: string, imageSize: number) {
 	return new Promise((resolve) => {
 		ImageResizer.createResizedImage(
 			source,
-			thumbnailSize,
-			thumbnailSize,
+			imageSize,
+			imageSize,
 			'JPEG',
 			100,
 			0,
 			documentDirectory + '/assets',
 			false,
-			{onlyScaleDown: true},
-		).then(resizedImage => {
-			resolve(resizedImage.uri);
-		})
+			{ onlyScaleDown: true },
+		)
+			.then(resizedImage => {
+				resolve(resizedImage.path);
+			})
 			.catch(e => {
 				console.log("Error occurred while compressing picture.", e);
 			})
@@ -161,21 +156,26 @@ function compressPicture(source: string, thumbnailSize: number) {
 }
 
 
-export async function getBigArtwork(file: string) {
-	let metadata: any;
+
+// Get stored track.
+export async function getStoredTracks() {
+	let tracks: Track[] | null = null;
+
 	try {
-		metadata = await readMetadata(file);
-	} catch {
-		metadata = false;
+		const jsonValue = await AsyncStorage.getItem('track');
+		tracks = jsonValue != null ? JSON.parse(jsonValue) : null;
+	} catch (e) {
+		console.log("Reader.ts: Error occurred while reading track data.", e);
 	}
 
-	if (metadata === false) {
-		return defaultArtwork;
-	} else {
-		if (metadata.tags.picture == null) {
-			return defaultArtwork;
-		} else {
-			return generatePictureData(metadata, false, 0);
-		}
-	};
+	if (tracks == null) {
+		return [];
+	}
+	return pruneTracks(tracks);
+}
+
+function pruneTracks(tracks: Track[] ) {
+	const isNotPlayed = (track: Track) => track.isPlayed === false;
+	const isNotPlayedIndex = tracks.findIndex(isNotPlayed);
+	return tracks.slice(isNotPlayedIndex);
 }

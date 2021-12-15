@@ -8,11 +8,12 @@ import TrackPlayer, { Event, useTrackPlayerEvents } from 'react-native-track-pla
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
-import { readMusicFiles } from './containers/Reader';
+import { readMusicFiles, getStoredTracks } from './containers/Reader';
 
 
 const { width } = Dimensions.get('screen');
-const thumbnailSize = width * 0.24;
+const artworkSize = Math.floor(width * 1.8);
+const miniArtSize = width * 0.24;
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -21,7 +22,8 @@ export default function App() {
 
   React.useEffect(() => {
     async function initialize() {
-      const musicList = await readMusicFiles(thumbnailSize);
+      const musicList = await readMusicFiles(artworkSize, miniArtSize);
+      const storedTracks = await getStoredTracks();
       Player.musicList = musicList;
       await Player.setupPlayer();
     }

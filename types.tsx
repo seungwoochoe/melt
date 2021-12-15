@@ -41,24 +41,29 @@ export type Music = {
   title: string,
   artist: string,
   artwork: string,
-  weight?: number,
-  id: string, // Will be title + artist.
+  miniArt: string,
+  id: string,
+}
+
+export type WeightedMusic = {
+  url: string,
+  title: string,
+  artist: string,
+  artwork: string,
+  miniArt: string,
+  id: string,
+  weight: number,
 }
 
 export type Track = {
   url: string,
   title: string,
   artist: string,
-  duration?: number,
-  artwork: number,
-}
-
-export type Action = {
-  time: number,
-  title: string,
-  artist: string,
+  artwork: string,
+  miniArt: string,
   id: string,
-  action: string,
+  isPlayed: boolean,
+  isTrigger: boolean,
 }
 
 export type History = {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, SectionList, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import filter from 'lodash.filter';
@@ -29,6 +29,9 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
 
   const colorScheme = useColorScheme();
   const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
+
+  const keyExtractor = useCallback((item) => item.id, []);
+
 
   useEffect(() => {
     const keyboardShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -151,7 +154,7 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
           data={query.length === 0 ? Player.musicList : filteredMusicList}
-          ListEmptyComponent={<RenderNoResult />}
+          ListEmptyComponent={RenderNoResult}
           // stickyHeaderIndices={[0]}
           ListHeaderComponent={
             <View>
@@ -210,7 +213,10 @@ export default function SongsScreen({ navigation }: RootTabScreenProps<'Songs'>)
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps='handled'
           scrollEnabled={query.length !== 0 && filteredMusicList.length === 0 ? false : true}
-          keyExtractor={(item) => item.id}
+          keyExtractor={keyExtractor}
+          getItemLayout={(data, index) => (
+            {length: listHeight + 1, offset: (listHeight + 1) * index, index}
+          )} 
         />
       </View>
 

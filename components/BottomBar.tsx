@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
-import scale from '../constants/scale';
+import layout from '../constants/layout';
 import { Track } from '../types';
 
 import Player from '../containers/Player';
@@ -78,7 +78,7 @@ export default function RenderBottomBar() {
 						/>
 					</View>
 					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
-						<Text style={{ fontSize: scale.width * 0.98, }} numberOfLines={1}>
+						<Text style={{ fontSize: layout.width * 0.98, }} numberOfLines={1}>
 							{track.title}
 						</Text>
 					</View>
@@ -94,11 +94,11 @@ export default function RenderBottomBar() {
 							await TrackPlayer.play();
 						}
 					}}
-					style={{ padding: isPlaying ? scale.width * 0.5 : scale.width * 0.675, }}
+					style={{ padding: isPlaying ? layout.width * 0.5 : layout.width * 0.675, }}
 				>
 					<Ionicons
 						name={isPlaying ? "pause" : "play"}
-						size={isPlaying ? scale.width * 2 : scale.width * 1.65}
+						size={isPlaying ? layout.width * 2 : layout.width * 1.65}
 						color={colorScheme === "light" ? (track.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (track.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
 					/>
 				</TouchableOpacity>
@@ -107,11 +107,11 @@ export default function RenderBottomBar() {
 					onPress={async () => {
 						await Player.playNext();
 					}}
-					style={{ padding: scale.width * 0.6, marginRight: width * 0.05 }}
+					style={{ padding: layout.width * 0.6, marginRight: width * 0.05 }}
 				>
 					<Ionicons
 						name="play-forward"
-						size={scale.width * 1.75}
+						size={layout.width * 1.75}
 						color={colorScheme === "light" ? (track.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (track.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
 					/>
 				</TouchableOpacity>

@@ -6,7 +6,7 @@ import * as RNFS from 'react-native-fs';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
-import scale from '../constants/scale';
+import layout from '../constants/layout';
 import RenderDarkHeader from '../components/DarkHeader';
 import RenderTitle from '../components/Title';
 
@@ -110,10 +110,10 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
             alignItems: 'center',
           }}>
             <View style={{ flex: 1, alignItems: 'center', backgroundColor: 'transparent', marginLeft: itemHeightWithoutScale * 0.016 }}>
-              <Ionicons name='star' size={scale.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
+              <Ionicons name='star' size={layout.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
             </View>
           </View>
-          <Text style={{ fontSize: scale.width * 1.02, }}>
+          <Text style={{ fontSize: layout.width * 1.02, }}>
             You're a star!
           </Text>
         </TouchableOpacity>
@@ -174,14 +174,14 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
                   ? itemHeightWithoutScale * 0.03 : itemHeightWithoutScale * 0.016,
             }}
             >
-              <Ionicons name={item.iconName} size={scale.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
+              <Ionicons name={item.iconName} size={layout.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
             </View>
           </View>
-          <Text style={{ fontSize: scale.width * .95, }}>
+          <Text style={{ fontSize: layout.width * .95, }}>
             {item.title}
           </Text>
           <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight: width * 0.03 }}>
-            <Ionicons name='chevron-forward-outline' size={scale.width * 1.25} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
+            <Ionicons name='chevron-forward-outline' size={layout.width * 1.25} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
           </View>
         </TouchableOpacity>
       </View>

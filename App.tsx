@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Dimensions } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Player from './containers/Player';
@@ -28,9 +28,11 @@ export default function App() {
     initialize();
   }, []);
 
+
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
     Player.currentIndex = await TrackPlayer.getCurrentTrack();
   })
+  
 
   if (!isLoadingComplete) {
     return null;

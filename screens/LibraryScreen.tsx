@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, TextInput, SectionList, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import filter from 'lodash.filter';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
-import scale from '../constants/scale';
+import layout from '../constants/layout';
 import { Music, LibraryItem } from '../types';
 import RenderHeader from '../components/Header';
 import RenderTitle from '../components/Title';
-import RenderBottomBar from '../components/BottomBar';
 import Player from '../containers/Player';
-import { RootTabScreenProps } from '../types';
 
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
@@ -50,33 +47,33 @@ export default function LibraryScreen({ navigation }: any) {
   }, []);
 
 
-  function handleSearch(query: string) {
-    if (query.length === 0) {
-      setFilteredMusicList([]);
-      setQuery(query);
-    } else {
-      let safeQuery = query;
-      const blacklist = ['^', '.', '[', ']', '$', '(', ')', '\\', '*', '{', '}', '?', '+',];
+  // function handleSearch(query: string) {
+  //   if (query.length === 0) {
+  //     setFilteredMusicList([]);
+  //     setQuery(query);
+  //   } else {
+  //     let safeQuery = query;
+  //     const blacklist = ['^', '.', '[', ']', '$', '(', ')', '\\', '*', '{', '}', '?', '+',];
 
-      for (const item of blacklist) {
-        safeQuery = safeQuery.replaceAll(item, '');
-      }
+  //     for (const item of blacklist) {
+  //       safeQuery = safeQuery.replaceAll(item, '');
+  //     }
 
-      const filteredData = filter(Player.musicList, music => {
-        return search(music, safeQuery.toLowerCase());
-      })
-      setFilteredMusicList(filteredData);
-      setQuery(query);
-    }
-  }
+  //     const filteredData = filter(Player.musicList, music => {
+  //       return search(music, safeQuery.toLowerCase());
+  //     })
+  //     setFilteredMusicList(filteredData);
+  //     setQuery(query);
+  //   }
+  // }
 
-  function search({ title, artist }: { title: string, artist: string }, query: string) {
-    const condition = new RegExp(`^${query}| ${query}|\\(${query}`);
-    if (title.toLowerCase().match(condition) || artist.toLowerCase().match(condition)) {
-      return true;
-    }
-    return false;
-  }
+  // function search({ title, artist }: { title: string, artist: string }, query: string) {
+  //   const condition = new RegExp(`^${query}| ${query}|\\(${query}`);
+  //   if (title.toLowerCase().match(condition) || artist.toLowerCase().match(condition)) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
 
   const RenderButtonToSongsScreen = () => {
@@ -86,12 +83,12 @@ export default function LibraryScreen({ navigation }: any) {
         style={{ width: width, height: width / 7, alignSelf: 'center', }}
       >
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', borderRadius: 15, backgroundColor: 'pink', marginHorizontal: marginHorizontal }}>
-          <Ionicons name='musical-note' size={scale.width * 1.5} color={colorScheme === 'light' ? Colors.dark.text : Colors.light.text} />
-          <Text style={{fontSize: scale.width * 1.1}}>
+          <Ionicons name='musical-note' size={layout.width * 1.5} color={colorScheme === 'light' ? Colors.dark.text : Colors.light.text} />
+          <Text style={{ fontSize: layout.width * 1.1 }}>
             Songs
           </Text>
           <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight: width * 0.03 }}>
-            <Ionicons name='chevron-forward-outline' size={scale.width * 1.5} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
+            <Ionicons name='chevron-forward-outline' size={layout.width * 1.5} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
           </View>
         </View>
 
@@ -108,7 +105,7 @@ export default function LibraryScreen({ navigation }: any) {
           ListHeaderComponent={RenderButtonToSongsScreen}
           data={[]}
           renderItem={RenderSong}
-          ListEmptyComponent={RenderNoResult}
+          ListEmptyComponent={<RenderNoResult text="No history" />}
         />
       </View>
     )
@@ -129,16 +126,16 @@ export default function LibraryScreen({ navigation }: any) {
         <View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
           {item.artist === "" &&
             <View style={{ height: listHeight, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
+              <Text style={{ fontSize: layout.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
             </View>
           }
           {item.artist !== "" &&
             <View>
               <View style={{ height: listHeight / 2.4, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: scale.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
+                <Text style={{ fontSize: layout.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
               </View>
               <View style={{ height: listHeight / 3.2, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: scale.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
+                <Text style={{ fontSize: layout.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
               </View>
             </View>
           }
@@ -147,11 +144,12 @@ export default function LibraryScreen({ navigation }: any) {
     )
   }
 
-  const RenderNoResult = () => {
+
+  const RenderNoResult = ({ text }: { text: string }) => {
     return (
       <View style={{ height: height * 0.35, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
-        <Text style={{ fontSize: scale.width * 1.2, color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
-          No results
+        <Text style={{ fontSize: layout.width * 1.2, color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
+          {text}
         </Text>
       </View>
     )
@@ -179,7 +177,7 @@ export default function LibraryScreen({ navigation }: any) {
         }
 
         <View style={{ height: isKeyboardShown ? 0 : bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }}>
-          <Text style={{ fontSize: scale.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
+          <Text style={{ fontSize: layout.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
             {/* - {Player.musicList.length} songs - */}
           </Text>
         </View>
@@ -196,52 +194,48 @@ export default function LibraryScreen({ navigation }: any) {
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
           data={filteredMusicList}
-          ListEmptyComponent={RenderInitialScreen}
+
           ListHeaderComponent={
             <View>
               <RenderTitle title='Library' />
 
-              <View style={{
+              <TouchableOpacity 
+              onPress={() => {navigation.navigate("SearchScreen")}}              
+              style={{
                 alignSelf: 'center',
                 flexDirection: 'row',
                 alignItems: 'center',
-                height: scale.width * 2.15,
+                height: layout.width * 2.4,
                 width: width * 0.89,
                 marginHorizontal: marginHorizontal,
                 paddingLeft: width * 0.03,
-                marginTop: scale.width * 0.5,
-                marginBottom: scale.width,
+                marginTop: layout.width * 0.5,
+                marginBottom: layout.width,
                 borderRadius: 11,
                 backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
               }}>
-                <Ionicons name="search-outline" size={scale.width * 1.15} color={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3} />
-                <TextInput
-                  autoCapitalize='none'
-                  autoCorrect={false}
-                  placeholder={'Songs or artists'}
-                  placeholderTextColor={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3}
-                  clearButtonMode='always'
-                  underlineColorAndroid='transparent'
-                  value={query}
-                  onChangeText={queryText => handleSearch(queryText)}
-                  style={{
-                    marginLeft: width * 0.02,
-                    height: scale.width * 3,
-                    fontSize: scale.width * 1.03,
-                    width: width * 0.76,
-                    color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
-                  }}
-                />
-              </View>
+                <Ionicons name="search-outline" size={layout.width * 1.15} color={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3} />
+                <Text style={{
+                  marginLeft: width * 0.02,
+                  fontSize: layout.width * 1.03,
+                  color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
+                }}
+                >
+                  Songs or artists
+                </Text>
+              </TouchableOpacity>
             </View>
           }
+
+          ListEmptyComponent={RenderInitialScreen}
+          renderItem={RenderSong}
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderBottomMargin}
-          renderItem={RenderSong}
+
           onScroll={(event) => {
             const scrollOffset = event.nativeEvent.contentOffset.y;
 
-            if (scrollOffset < scale.width * 2.05) {
+            if (scrollOffset < layout.width * 2.05) {
               if (isScrolled === true) {
                 setIsScrelled(false);
               }
@@ -251,6 +245,7 @@ export default function LibraryScreen({ navigation }: any) {
               }
             }
           }}
+
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps='handled'
           scrollEnabled={query.length !== 0 && filteredMusicList.length === 0 ? false : true}

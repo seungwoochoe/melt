@@ -5,7 +5,7 @@ import Slider from '@react-native-community/slider';
 import TrackPlayer, { useProgress, usePlaybackState, State, useTrackPlayerEvents, Event } from 'react-native-track-player';
 
 import Player from '../containers/Player';
-import scale from '../constants/scale';
+import layout from '../constants/layout';
 import { Track } from '../types';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
@@ -66,8 +66,8 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
         <View style={{ flex: .8, flexDirection: 'row', alignItems: 'flex-end', marginBottom: height * 0.02 }}>
           {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name='stats-chart-outline' size={scale.ratio * 0.85} color={dullTheme} />
-            <Text style={{ fontSize: scale.ratio * 0.95, color: dullTheme, fontWeight: '300', marginLeft: width * 0.02 }}>
+            <Ionicons name='stats-chart-outline' size={layout.ratio * 0.85} color={dullTheme} />
+            <Text style={{ fontSize: layout.ratio * 0.95, color: dullTheme, fontWeight: '300', marginLeft: width * 0.02 }}>
               {Math.floor((Player.weightedMusicList.find(element => element.title === Player.playlist[Player.currentIndex].title).weight / Player.weightSum) * 10 * Player.musicList.length)}
             </Text>
           </View> */}
@@ -81,10 +81,10 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
         <View style={{ flex: 1, width: width * 0.8, flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ flex: 6, paddingRight: width * 0.032 }}>
-            <View style={{ height: scale.ratio * 1.5, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ height: layout.ratio * 1.5, flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.title} numberOfLines={1}>{trackInfo.text.title}</Text>
             </View>
-            <View style={{ height: scale.ratio * 1.6, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ height: layout.ratio * 1.6, flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.artist} numberOfLines={1}>{trackInfo.text.artist}</Text>
             </View>
           </View>
@@ -94,11 +94,11 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 Player.ToggleLike(Player.musicList.find(music => music.title === Player.playlist[Player.currentIndex].title));
                 setCount(c => c + 1);
               }}
-              style={{ padding: scale.width * 0.3 }}
+              style={{ padding: layout.width * 0.3 }}
             >
               <Ionicons
                 name={Player.musicList.find(music => music.title === Player.playlist[Player.currentIndex].title).like ? "heart" : "heart-outline"}
-                size={scale.ratio * 1.5}
+                size={layout.ratio * 1.5}
                 color={dullTheme}> 
                 />
             </TouchableOpacity> */}
@@ -123,10 +123,10 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               }}
             />
             <View style={styles.progressLabelContainer}>
-              <Text style={{ color: '#bbb', fontSize: scale.width * 0.75 }}>
+              <Text style={{ color: '#bbb', fontSize: layout.width * 0.75 }}>
                 {Math.floor(position / 60).toString()}:{Math.floor(position % 60).toString().padStart(2, '0')}
               </Text>
-              <Text style={{ color: '#bbb', fontSize: scale.width * 0.75 }}>
+              <Text style={{ color: '#bbb', fontSize: layout.width * 0.75 }}>
                 {Math.floor(duration / 60).toString()}:{Math.floor(duration % 60).toString().padStart(2, '0')}
               </Text>
             </View>
@@ -139,9 +139,9 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
             <TouchableOpacity
               disabled={trackInfo.text.url === 'loading'}
               onPress={async () => { Player.skipToPrevious(); }}
-              style={{ padding: scale.width * 0.5 }}
+              style={{ padding: layout.width * 0.5 }}
             >
-              <Ionicons name="play-back" size={scale.width * 2} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
+              <Ionicons name="play-back" size={layout.width * 2} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
             </TouchableOpacity>
             <TouchableOpacity
               disabled={trackInfo.text.url === 'loading'}
@@ -154,16 +154,16 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                   setIsPlaying(true);
                 }
               }}
-              style={{ padding: isPlaying ? scale.width * 0.2 : scale.width * 0.4 }}
+              style={{ padding: isPlaying ? layout.width * 0.2 : layout.width * 0.4 }}
             >
-              <Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? scale.width * 2.8 : scale.width * 2.4} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
+              <Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? layout.width * 2.8 : layout.width * 2.4} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
             </TouchableOpacity>
             <TouchableOpacity
               disabled={trackInfo.text.url === 'loading'}
               onPress={() => { Player.skipToNext(); }}
-              style={{ padding: scale.width * 0.5 }}
+              style={{ padding: layout.width * 0.5 }}
             >
-              <Ionicons name="play-forward" size={scale.width * 2} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
+              <Ionicons name="play-forward" size={layout.width * 2} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
             </TouchableOpacity>
           </View>
         </View>
@@ -187,12 +187,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   title: {
-    fontSize: scale.width * 1.35,
+    fontSize: layout.width * 1.35,
     color: theme,
     fontWeight: '600',
   },
   artist: {
-    fontSize: scale.width * 1.1,
+    fontSize: layout.width * 1.1,
     color: dullTheme,
     fontWeight: '300',
   },

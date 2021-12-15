@@ -8,9 +8,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import { ColorSchemeName } from 'react-native';
+import { ColorSchemeName, Dimensions } from 'react-native';
 
-import scale from '../constants/scale';
+import layout from '../constants/layout';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
@@ -21,6 +21,9 @@ import SongsScreen from '../screens/SongsScreen';
 import RenderBottomBar from '../components/BottomBar';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import SearchScreen from '../screens/SearchScreen';
+
+const { height } = Dimensions.get('screen');
 
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
@@ -39,11 +42,34 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
  */
 const Stack = createStackNavigator<any>();
 
+// const config = {
+//   animation: 'spring',
+//   config: {
+//     stiffness: 1000,
+//     damping: 500,
+//     mass: 3,
+//     overshootClamping: true,
+//     restDisplacementThreshold: 0.01,
+//     restSpeedThreshold: 0.01,
+//   },
+// };
+
 function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Root" component={BottomTabNavigator} />
-      <Stack.Screen name="Modal" component={ModalScreen} options={{ cardStyleInterpolator: CardStyleInterpolators.forCustomModalPresentationIOS, gestureDirection: 'vertical' }} />
+      <Stack.Screen
+        name="Modal"
+        component={ModalScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forCustomModalPresentationIOS,
+          gestureDirection: 'vertical',
+          gestureResponseDistance: height * 0.78,
+          // transitionSpec: {
+          //   open: config,
+          //   close: config,
+          // },
+        }} />
     </Stack.Navigator >
   );
 }
@@ -71,7 +97,7 @@ function BottomTabNavigator() {
           options={{
             title: 'Home',
             tabBarLabelStyle: {
-              fontSize: scale.width * 0.6,
+              fontSize: layout.width * 0.6,
               fontWeight: '700',
             },
             lazy: false,
@@ -84,7 +110,7 @@ function BottomTabNavigator() {
           options={{
             title: 'Library',
             tabBarLabelStyle: {
-              fontSize: scale.width * 0.6,
+              fontSize: layout.width * 0.6,
               fontWeight: '700',
             },
             lazy: false,
@@ -97,7 +123,7 @@ function BottomTabNavigator() {
           options={{
             title: 'Settings',
             tabBarLabelStyle: {
-              fontSize: scale.width * 0.6,
+              fontSize: layout.width * 0.6,
               fontWeight: '700',
             },
             lazy: false,
@@ -111,11 +137,19 @@ function BottomTabNavigator() {
   );
 }
 
+const forFade = ({ current }: {current: any}) => ({
+  cardStyle: {
+    opacity: current.progress,
+  },
+});
+
 function LibraryScreenNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator  
+    screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LibraryScreen" component={LibraryScreen} />
       <Stack.Screen name="SongsScreen" component={SongsScreen} />
+      <Stack.Screen name="SearchScreen" component={SearchScreen} options={{cardStyleInterpolator: forFade}} />
     </Stack.Navigator >
   );
 }
@@ -128,5 +162,5 @@ function TabBarIcon(props: {
   color: string;
 }) {
 
-  return <Ionicons size={scale.width * 1.58} style={{ marginBottom: -3 }} {...props} />;
+  return <Ionicons size={layout.width * 1.58} style={{ marginBottom: -3 }} {...props} />;
 }

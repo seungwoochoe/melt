@@ -1,12 +1,10 @@
-import { Dimensions } from 'react-native';
+import { Dimensions } from "react-native"
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+const { width, height } = Dimensions.get('screen');
+
 
 export default {
-  window: {
-    width,
-    height,
-  },
-  isSmallDevice: width < 375,
-};
+	ratio: (height / width) * 8.31754,
+	width: width / 21.66666,
+	height: height / 46.88888,
+}

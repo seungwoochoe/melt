@@ -25,7 +25,7 @@ export async function readMusicFiles(thumbnailSize: number) {
 	const files = await RNFS.readDir(documentDirectory);
 
 	for (const file of files) {
-		if (file.path.includes('.imageAssets')) {
+		if (file.path.includes('Documents/assets')) {
 			// This is the asset folder. Do nothing.
 		} else {
 			const id = file.path.split('Documents/').pop();
@@ -148,7 +148,7 @@ function compressPicture(source: string, thumbnailSize: number) {
 			'JPEG',
 			100,
 			0,
-			documentDirectory + '/.imageAssets',
+			documentDirectory + '/assets',
 			false,
 			{onlyScaleDown: true},
 		).then(resizedImage => {

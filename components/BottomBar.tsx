@@ -12,7 +12,6 @@ import layout from '../constants/layout';
 import { Track } from '../types';
 
 import Player from '../containers/Player';
-import { appendMoreTracks } from '../containers/Creater';
 
 const { width } = Dimensions.get('screen');
 const listHeight = width * 0.149;
@@ -43,10 +42,7 @@ export default function RenderBottomBar() {
 			setTrackInfo(track.current);
 			
 			if (track.current.isTrigger === true) {
-				const currentTracksLength = Player.tracks.length;
-				Player.tracks = appendMoreTracks(Player.tracks);
-				await TrackPlayer.add(Player.tracks.slice(currentTracksLength));
-				Player.tracks[currentTrackPlayerIndex].isTrigger = false;
+				await Player.appendMoreTracks(currentTrackPlayerIndex);
 			}
 		}
 

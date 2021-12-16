@@ -7,6 +7,9 @@ import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import layout from '../constants/layout';
 import RenderTitle from '../components/Title';
+import Player from '../containers/Player';
+import { complementTracks } from '../containers/Creater';
+import TrackPlayer from 'react-native-track-player';
 
 import { RootTabScreenProps } from '../types';
 
@@ -14,9 +17,8 @@ const { width, height } = Dimensions.get("screen");
 
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
-  const [isBusy, setIsBusy] = useState(false);
-  const colorScheme = useColorScheme();
 
+  const colorScheme = useColorScheme();
 
   return (
     <View style={styles.container}>
@@ -26,8 +28,19 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
       <RenderTitle title='Home' />
 
       <TouchableOpacity
-      onPress={() => {}}
-       style={{ height: width * 0.2, width: width * 0.9, alignSelf: 'center', alignItems: 'center', backgroundColor: 'grey', borderRadius: 12 }}>
+        onPress={async () => {
+          Player.createAndPlayNewTracks();
+        }}
+        style={{
+          height: width * 0.2,
+          width: width * 0.9,
+          alignSelf: 'center',
+          alignItems: 'center',
+          backgroundColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
+          borderRadius: 12,
+          marginTop: 20,
+        }}
+      >
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
           <Ionicons name="shuffle" size={layout.width * 1.2} />
           <Text style={{ fontSize: layout.width * 1.2, textAlign: 'center' }}>

@@ -157,8 +157,8 @@ function compressPicture(source: string, imageSize: number) {
 
 
 
-// Get stored track.
-export async function getStoredTracks() {
+// Returns pruned stored tracks.
+export async function pruneStoredTracks() {
 	let tracks: Track[] | null = null;
 
 	try {

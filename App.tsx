@@ -3,12 +3,11 @@ import React from 'react';
 import { Dimensions } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Player from './containers/Player';
-import TrackPlayer, { Event, useTrackPlayerEvents } from 'react-native-track-player';
 
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
-import { readMusicFiles, getStoredTracks } from './containers/Reader';
+import { readMusicFiles, pruneStoredTracks } from './containers/Reader';
 import { initializeWeights, complementTracks } from './containers/Creater';
 
 
@@ -30,8 +29,8 @@ export default function App() {
         // No music!
       } else {
         if (Player.weightedMusicList.length > 1) {
-          const storedTracks = await getStoredTracks();
-          const complementedTracks = complementTracks(storedTracks);
+          const storedTracks = await pruneStoredTracks();
+          const complementedTracks = complementTracks(storedTracks, Player.weightedMusicList);
           Player.tracks = complementedTracks;
         } else {
           Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: true }];

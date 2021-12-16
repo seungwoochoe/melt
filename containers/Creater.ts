@@ -1,6 +1,4 @@
-import { Alert } from 'react-native';
 import { Music, WeightedMusic, Track, History } from '../types';
-import Player from './Player';
 
 const TRACK_LENGTH = 20;
 
@@ -45,24 +43,23 @@ export function initializeWeights(musicList: Music[]) {
 };
 
 // If there is no or only one music in storage, "createPlaylist" function should not be called.
-export function complementTracks(currentTracks: Track[]) {
-	const tracksToBeAdded = drawMusic(TRACK_LENGTH - currentTracks.length, currentTracks[currentTracks.length - 1]);
+export function complementTracks(currentTracks: Track[], weightedMusicList: WeightedMusic[]) {
+	const tracksToBeAdded = drawMusic(TRACK_LENGTH - currentTracks.length, currentTracks[currentTracks.length - 1], weightedMusicList);
 	const tracks = [...currentTracks, ...tracksToBeAdded];
 	return markIsTrigger(tracks);
 }
 
-export function appendMoreTracks(currentTracks: Track[]) {
-	if (Player.musicList.length === 1) {
-		return [...currentTracks, {...Player.weightedMusicList[0], isPlayed: false, isTrigger: true}];
+export function getMoreTracks(currentTracks: Track[], weightedMusicList: WeightedMusic[]) {
+	if (weightedMusicList.length === 1) {
+		return [{...weightedMusicList[0], isPlayed: false, isTrigger: true}];
 	}
 
-	let tracksToBeAdded = drawMusic(TRACK_LENGTH / 2, currentTracks[currentTracks.length - 1]);
-	tracksToBeAdded = markIsTrigger(tracksToBeAdded);
-	return [...currentTracks, ...tracksToBeAdded];
+	const tracks = drawMusic(TRACK_LENGTH / 2, currentTracks[currentTracks.length - 1], weightedMusicList);
+	return markIsTrigger(tracks);
 }
 
-function drawMusic(drawingAmount: number, priorTrack: Track | undefined) {
-	const totalWeight = getTotalWeight();
+function drawMusic(drawingAmount: number, priorTrack: Track | undefined, weightedMusicList: WeightedMusic[]) {
+	const totalWeight = getTotalWeight(weightedMusicList);
 	const tracks: Track[] = [];
 
 	for (let k = 0; k < drawingAmount; k++) {
@@ -71,35 +68,35 @@ function drawMusic(drawingAmount: number, priorTrack: Track | undefined) {
 		let currentWeightSum = 0;
 		let index = 0;
 		while (currentWeightSum <= randomWeight) {
-			currentWeightSum += Player.weightedMusicList[index].weight;
+			currentWeightSum += weightedMusicList[index].weight;
 			index++;
 		}
 
 		if (k === 0) {
 			if (priorTrack == null) {
-				tracks.push({ ...Player.weightedMusicList[index - 1], isPlayed: false, isTrigger: false });
+				tracks.push({ ...weightedMusicList[index - 1], isPlayed: false, isTrigger: false });
 			} else {
-				if (priorTrack.title !== Player.weightedMusicList[index - 1].title) {
-					tracks.push({ ...Player.weightedMusicList[index - 1], isPlayed: false, isTrigger: false });
+				if (priorTrack.title !== weightedMusicList[index - 1].title) {
+					tracks.push({ ...weightedMusicList[index - 1], isPlayed: false, isTrigger: false });
 				} else {
 					k--;
 				}
 			}
 		} else {
-			if (tracks[k - 1].title === Player.weightedMusicList[index - 1].title) {
+			if (tracks[k - 1].title === weightedMusicList[index - 1].title) {
 				k--;
 			} else {
-				tracks.push({ ...Player.weightedMusicList[index - 1], isPlayed: false, isTrigger: false });
+				tracks.push({ ...weightedMusicList[index - 1], isPlayed: false, isTrigger: false });
 			}
 		}
 	}
 	return tracks;
 }
 
-function getTotalWeight() {
+function getTotalWeight(weightedMusicList: WeightedMusic[]) {
 	let totalWeight = 0;
 
-	for (const weightedMusic of Player.weightedMusicList) {
+	for (const weightedMusic of weightedMusicList) {
 		totalWeight += weightedMusic.weight;
 	}
 	return totalWeight;

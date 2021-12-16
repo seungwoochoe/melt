@@ -4,10 +4,8 @@ import { TouchableOpacity, StyleSheet, Dimensions, Image, useWindowDimensions } 
 import { View, Text } from '../components/Themed';
 import Colors from '../constants/Colors';
 import layout from '../constants/layout';
-import { Music, WeightedMusic } from '../types';
-import { appendMoreTracks, complementTracks } from '../containers/Creater';
+import { WeightedMusic } from '../types';
 import Player from '../containers/Player';
-import TrackPlayer from 'react-native-track-player';
 
 const { width } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
@@ -21,17 +19,9 @@ export default function RenderSong({ item, colorScheme }: { item: WeightedMusic,
 
 	return (
 		<TouchableOpacity
-			onPress={async() => {
-				if (Player.musicList.length === 1) {
-					Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: false }];
-				} else {
-					Player.tracks = complementTracks([{...item, isPlayed: false, isTrigger: false}]);
-				}
-
-				await TrackPlayer.reset();
-				await TrackPlayer.add(Player.tracks);
-				await TrackPlayer.play();
-			 }}
+			onPress={async () => {
+				await Player.createAndPlayNewTracks(item);
+			}}
 			style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 		>
 			<View>

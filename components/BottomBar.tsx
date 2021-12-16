@@ -29,18 +29,19 @@ if (Platform.OS === 'ios') {
 
 export default function RenderBottomBar() {
 	const track = useRef<Track>(Player.tracks[0]);
-	const [isPlaying, setIsPlaying] = useState(false);
-	const colorScheme = useColorScheme();
 	const [trackInfo, setTrackInfo] = useState<Track>(blankTrack);
+	const [isPlaying, setIsPlaying] = useState(false);
+
+	const colorScheme = useColorScheme();
 	const playbackState = usePlaybackState();
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 
 	useEffect(() => {
 		async function updateTrack() {
 			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
 			track.current = Player.tracks[currentTrackPlayerIndex];
 			setTrackInfo(track.current);
-			
+
 			if (track.current.isTrigger === true) {
 				await Player.appendMoreTracks(currentTrackPlayerIndex);
 			}
@@ -48,18 +49,20 @@ export default function RenderBottomBar() {
 
 		if (playbackState === State.Playing) {
 			setIsPlaying(true);
-		} else if (playbackState === State.Paused) {
-			setIsPlaying(false);
 		} else if (playbackState === State.Ready) {
 			updateTrack();
 		}
 	}, [playbackState]);
 
 
-	useTrackPlayerEvents([Event.RemoteSeek], async event => {
-		await TrackPlayer.seekTo(event.position);
-		await TrackPlayer.pause();
-		await TrackPlayer.play();
+	useTrackPlayerEvents([Event.RemotePause, Event.RemoteSeek], async event => {
+		if (event.type === Event.RemotePause) {
+			setIsPlaying(false);
+		} else {
+			await TrackPlayer.seekTo(event.position);
+			await TrackPlayer.pause();
+			await TrackPlayer.play();
+		}
 	});
 
 
@@ -95,6 +98,7 @@ export default function RenderBottomBar() {
 					onPress={async () => {
 						if (isPlaying) {
 							await TrackPlayer.pause();
+							setIsPlaying(false);
 						} else {
 							await TrackPlayer.play();
 						}

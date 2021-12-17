@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State } from 'react-native-track-player';
+import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State, useProgress } from 'react-native-track-player';
 import { useNavigation } from '@react-navigation/native';
 
 import { View, Text } from '../components/Themed';
@@ -14,9 +14,9 @@ import { Track } from '../types';
 import Player from '../containers/Player';
 
 const { width } = Dimensions.get('screen');
-const listHeight = width * 0.149;
+const listHeight = width * 0.16;
 const marginBetweenAlbumartAndText = width * 0.029;
-const bottomBarHeight = listHeight * 1.2;
+const bottomBarHeight = listHeight * 1.12;
 const defaultMiniArt = require('../assets/images/blank.png');
 const blankTrack: Track = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, id: 'blankTrack', isPlayed: false, isTrigger: false };
 
@@ -28,37 +28,37 @@ if (Platform.OS === 'ios') {
 }
 
 export default function RenderBottomBar() {
-	const track = useRef<Track>(Player.tracks[0]);
 	const [trackInfo, setTrackInfo] = useState<Track>(blankTrack);
 	const [isPlaying, setIsPlaying] = useState(false);
 
 	const colorScheme = useColorScheme();
 	const playbackState = usePlaybackState();
+	const { duration } = useProgress();
 	const navigation = useNavigation<any>();
 
+
 	useEffect(() => {
-		async function updateTrack() {
-			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			track.current = Player.tracks[currentTrackPlayerIndex];
-			setTrackInfo(track.current);
-
-			if (track.current.isTrigger === true) {
-				await Player.appendMoreTracks(currentTrackPlayerIndex);
-			}
-		}
-
 		if (playbackState === State.Playing) {
 			setIsPlaying(true);
-		} else if (playbackState === State.Ready) {
-			updateTrack();
+		}
+		else if (playbackState === State.Paused) {
+			setIsPlaying(false)
+		}
+		else if (playbackState === State.Ready) {
+			setTrackInfo(Player.tracks[Player.currentIndex]);
 		}
 	}, [playbackState]);
 
 
-	useTrackPlayerEvents([Event.RemotePause, Event.RemoteSeek], async event => {
-		if (event.type === Event.RemotePause) {
-			setIsPlaying(false);
-		} else {
+	useTrackPlayerEvents([Event.RemoteSeek, Event.PlaybackTrackChanged], async event => {
+		if (event.type === Event.PlaybackTrackChanged) {
+			Player.currentDuration = duration === 0 ? 1000 : duration;
+
+			if (event.position > duration * 0.99) {
+				Player.handlePlayNext();
+			}
+		}
+		else if (event.type === Event.RemoteSeek) {
 			await TrackPlayer.seekTo(event.position);
 			await TrackPlayer.pause();
 			await TrackPlayer.play();
@@ -97,10 +97,10 @@ export default function RenderBottomBar() {
 					disabled={trackInfo.url === 'loading'}
 					onPress={async () => {
 						if (isPlaying) {
-							await TrackPlayer.pause();
+							await Player.pause();
 							setIsPlaying(false);
 						} else {
-							await TrackPlayer.play();
+							await Player.play();
 						}
 					}}
 					style={{ padding: isPlaying ? layout.width * 0.5 : layout.width * 0.675, }}
@@ -114,7 +114,7 @@ export default function RenderBottomBar() {
 				<TouchableOpacity
 					disabled={trackInfo.url === 'loading'}
 					onPress={async () => {
-						await Player.playNext();
+						await Player.skipToNext();
 					}}
 					style={{ padding: layout.width * 0.6, marginRight: width * 0.05 }}
 				>
@@ -131,9 +131,9 @@ export default function RenderBottomBar() {
 
 const styles = StyleSheet.create({
 	miniArt: {
-		width: listHeight * 0.9,
-		height: listHeight * 0.9,
-		margin: listHeight * 0.05,
+		width: listHeight * 0.82,
+		height: listHeight * 0.82,
+		margin: listHeight * 0.09,
 		borderRadius: 4.5,
 	},
 	bottomBarContainer: {

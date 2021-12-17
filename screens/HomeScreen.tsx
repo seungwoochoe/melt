@@ -8,8 +8,6 @@ import Colors from '../constants/Colors';
 import layout from '../constants/layout';
 import RenderTitle from '../components/Title';
 import Player from '../containers/Player';
-import { complementTracks } from '../containers/Creater';
-import TrackPlayer from 'react-native-track-player';
 
 import { RootTabScreenProps } from '../types';
 
@@ -29,7 +27,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
 
       <TouchableOpacity
         onPress={async () => {
-          Player.createAndPlayNewTracks();
+          await Player.createNewTracks();
+          await Player.play();
         }}
         style={{
           height: width * 0.2,

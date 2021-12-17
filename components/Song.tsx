@@ -9,7 +9,7 @@ import Player from '../containers/Player';
 
 const { width } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
-const listHeightWithoutScale = width * 0.149;
+const listHeightWithoutScale = width * 0.16;
 const marginHorizontal = width * 0.05;
 const defaultMiniArt = require('../assets/images/blank.png');
 
@@ -20,7 +20,8 @@ export default function RenderSong({ item, colorScheme }: { item: WeightedMusic,
 	return (
 		<TouchableOpacity
 			onPress={async () => {
-				await Player.createAndPlayNewTracks(item);
+				await Player.createNewTracks(item);
+				await Player.play();
 			}}
 			style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 		>
@@ -42,7 +43,7 @@ export default function RenderSong({ item, colorScheme }: { item: WeightedMusic,
 							<Text style={{ fontSize: layout.width * 0.93 }} numberOfLines={1}>{item.title}</Text>
 						</View>
 						<View style={{ height: listHeight / 3.2, width: width - listHeightWithoutScale * 2 - marginHorizontal, flexDirection: 'row', alignItems: 'center' }}>
-							<Text style={{ fontSize: layout.width * 0.78, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
+							<Text style={{ fontSize: layout.width * 0.76, color: colorScheme === "light" ? Colors.light.text2 : Colors.dark.text2, fontWeight: '300' }} numberOfLines={1}>{item.artist}</Text>
 						</View>
 					</View>
 				}
@@ -54,9 +55,9 @@ export default function RenderSong({ item, colorScheme }: { item: WeightedMusic,
 
 const styles = StyleSheet.create({
 	miniArt: {
-		width: listHeightWithoutScale * 0.88,
-		height: listHeightWithoutScale * 0.88,
-		margin: listHeightWithoutScale * 0.06,
+		width: listHeightWithoutScale * 0.82,
+		height: listHeightWithoutScale * 0.82,
+		margin: listHeightWithoutScale * 0.09,
 		borderRadius: 4.5,
 	},
 });

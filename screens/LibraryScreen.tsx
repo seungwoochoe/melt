@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { View, Text } from '../components/Themed';
@@ -24,9 +24,7 @@ export default function LibraryScreen({ navigation }: any) {
 
   const colorScheme = useColorScheme();
   const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
-
   const keyExtractor = useCallback((item) => item.id, []);
-
 
 
   const RenderButtonToSongsScreen = () => {

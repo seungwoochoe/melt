@@ -68,7 +68,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
           position: '',
         },
         {
-          title: 'Privacy',
+          title: 'Delete histories',
           iconName: 'lock-closed',
           iconBackgroundColor: '#63c065',
           position: '',
@@ -135,6 +135,14 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
               Alert.alert("Success!");
             } catch (e) {
               Alert.alert("Failed to remove the folder");
+            }
+          }
+          else if (item.title === "Delete histories") {
+            try {
+              await AsyncStorage.removeItem('histories');
+              Alert.alert("Success!");
+            } catch (e) {
+              Alert.alert("Failed to delete histories");
             }
           }
         }}

@@ -11,15 +11,15 @@ import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 
 const { width, height } = Dimensions.get("window");
-const lightFilter = 'rgba(0, 0, 0, 0.4)';
-const darkFilter = 'rgba(0, 0, 0, 0.6)';
+const lightFilter = 'rgba(0, 0, 0, 0.35)';
+const darkFilter = 'rgba(0, 0, 0, 0.5)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
 const blurRadius = 16700000 / Math.pow(height, 1.8);
 const defaultArtwork = require('../assets/images/blank.png');
 
 
-export default function ModalScreen({ route }: { route: { params: { initialTrack: Track, isPlaying: boolean } } }) {
+export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean } }, navigation: any }) {
   const track = useRef<Track>(route.params.initialTrack);
   const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
   const colorScheme = useColorScheme();
@@ -129,7 +129,7 @@ export default function ModalScreen({ route }: { route: { params: { initialTrack
                 {Math.floor(position / 60).toString()}:{Math.floor(position % 60).toString().padStart(2, '0')}
               </Text>
               <Text style={{ color: '#bbb', fontSize: layout.width * 0.75 }}>
-                {Math.floor(duration / 60).toString()}:{Math.floor(duration % 60).toString().padStart(2, '0')}
+                -{Math.floor((duration - position) / 60).toString()}:{Math.floor((duration - position) % 60).toString().padStart(2, '0')}
               </Text>
             </View>
           </View>
@@ -140,7 +140,7 @@ export default function ModalScreen({ route }: { route: { params: { initialTrack
           <View style={styles.MusicControls}>
             <TouchableOpacity
               disabled={trackInfo.text.url === 'loading'}
-              onPress={async () => { Player.skipToPrevious(); }}
+              onPress={async () => { Player.skipToPrevious(position); }}
               style={{ padding: layout.width * 0.5 }}
             >
               <Ionicons name="play-back" size={layout.width * 2} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
@@ -149,10 +149,10 @@ export default function ModalScreen({ route }: { route: { params: { initialTrack
               disabled={trackInfo.text.url === 'loading'}
               onPress={async () => {
                 if (isPlaying) {
-                  await TrackPlayer.pause();
+                  await Player.pause();
                   setIsPlaying(false);
                 } else {
-                  await TrackPlayer.play();
+                  await Player.play();
                   setIsPlaying(true);
                 }
               }}

@@ -20,14 +20,15 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 		console.log(e);
 	}
 
-	
+
 	const musicList: Music[] = [];
 	const files = await RNFS.readDir(documentDirectory);
 
 	for (const file of files) {
 		if (file.path.includes('Documents/assets')) {
 			// This is the asset folder. Do nothing.
-		} else {
+		}
+		else {
 			const id = file.path.split('Documents/').pop();
 
 			if (storedMusicList != null) {
@@ -35,7 +36,8 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 
 				if (match != null) {
 					musicList.push(match);
-				} else {
+				}
+				else {
 					let metadata: any;
 					try {
 						metadata = await readMetadata(file);
@@ -52,7 +54,8 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 							miniArt: defaultArtwork,
 							id: id ?? file.path,
 						});
-					} else {
+					}
+					else {
 						musicList.push({
 							url: file.path,
 							title: metadata.tags.title ?? id?.substring(0, id.lastIndexOf('.')),
@@ -63,7 +66,8 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 						});
 					}
 				}
-			} else { // There is no stored music data.
+			}
+			else { // There is no stored music data.
 				let metadata: any;
 				try {
 					metadata = await readMetadata(file);
@@ -80,7 +84,8 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 						miniArt: defaultArtwork,
 						id: id ?? file.path,
 					});
-				} else {
+				}
+				else {
 					musicList.push({
 						url: file.path,
 						title: metadata.tags.title ?? id?.substring(0, id.lastIndexOf('.')),
@@ -174,7 +179,7 @@ export async function pruneStoredTracks() {
 	return pruneTracks(tracks);
 }
 
-function pruneTracks(tracks: Track[] ) {
+function pruneTracks(tracks: Track[]) {
 	const isNotPlayed = (track: Track) => track.isPlayed === false;
 	const isNotPlayedIndex = tracks.findIndex(isNotPlayed);
 	return tracks.slice(isNotPlayedIndex);

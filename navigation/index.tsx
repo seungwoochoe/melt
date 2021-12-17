@@ -100,7 +100,6 @@ function BottomTabNavigator() {
               fontSize: layout.width * 0.6,
               fontWeight: '700',
             },
-            lazy: false,
             tabBarIcon: ({ color }) => <TabBarIcon name="home-outline" color={color} />,
           }}
         />
@@ -113,7 +112,6 @@ function BottomTabNavigator() {
               fontSize: layout.width * 0.6,
               fontWeight: '700',
             },
-            lazy: false,
             tabBarIcon: ({ color }) => <TabBarIcon name="musical-notes-outline" color={color} />,
           }}
         />
@@ -126,7 +124,6 @@ function BottomTabNavigator() {
               fontSize: layout.width * 0.6,
               fontWeight: '700',
             },
-            lazy: false,
             tabBarIcon: ({ color }) => <TabBarIcon name="settings-outline" color={color} />,
           }}
         />

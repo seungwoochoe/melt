@@ -45,35 +45,20 @@ export type Music = {
   id: string,
 }
 
-export type WeightedMusic = {
-  url: string,
-  title: string,
-  artist: string,
-  artwork: string,
-  miniArt: string,
-  id: string,
+export type WeightedMusic = Music & {
   weight: number,
 }
 
-export type Track = {
-  url: string,
-  title: string,
-  artist: string,
-  artwork: string,
-  miniArt: string,
-  id: string,
+export type Track = Music & {
   isPlayed: boolean,
   isTrigger: boolean,
 }
 
-export type History = {
+export type History = Music & {
   endTime: number,
-  title: string,
-  artist: string,
-  duration: number,
-  artwork: number,
-  id: string,
-  secPlayed: number,
+  reasonStart: "normal" | "selected" | "returned",
+  reasonEnd: "normal" | "skipped",
+  playedRatio: number,
 }
 
 export type LibraryItem = {

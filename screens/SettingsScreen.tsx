@@ -141,6 +141,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
             try {
               await AsyncStorage.removeItem('histories');
               await AsyncStorage.removeItem('tracks');
+              await AsyncStorage.removeItem('musicSelection');
               Alert.alert("Success!");
             } catch (e) {
               Alert.alert("Failed to delete histories");

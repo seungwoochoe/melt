@@ -7,7 +7,7 @@ import Player from './containers/Player';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
-import { readMusicFiles, pruneStoredTracks } from './containers/Reader';
+import { readMusicFiles, pruneStoredTracks, getStoredHistories, getStoredMusicSelection } from './containers/Reader';
 import { initializeWeights, complementTracks } from './containers/Creater';
 
 
@@ -23,6 +23,8 @@ export default function App() {
   React.useEffect(() => {
     async function initialize() {
       Player.musicList = await readMusicFiles(artworkSize, miniArtSize);
+      Player.histories = await getStoredHistories();
+      Player.musicSelection = await getStoredMusicSelection();
       Player.weightedMusicList = initializeWeights(Player.musicList);
 
       if (Player.weightedMusicList.length === 0) {

@@ -45,10 +45,10 @@ export default function RenderBottomBar() {
 			setIsPlaying(false)
 		}
 		else if (playbackState === State.Ready) {
-			setTrackInfo(Player.tracks[Player.currentIndex]);
-			setTimeout(() => {
+			setTimeout(() => { // Is it okay to code like this..? useTrackPlayerEvents belew is a bit slower I guess, and because of that, I have to wait for Player.handlePlayNext(); to be fired.
+				setTrackInfo(Player.tracks[Player.currentIndex]);
 				Player.storeTracks();
-			}, 100);
+			}, 70);
 		}
 	}, [playbackState]);
 

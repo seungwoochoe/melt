@@ -4,7 +4,7 @@ import base64 from 'react-native-base64';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
 
-import { Music, Track } from '../types';
+import { Music, Track, History } from '../types';
 
 const defaultArtwork = require('../assets/images/blank.png');
 const documentDirectory = RNFS.DocumentDirectoryPath;
@@ -184,4 +184,30 @@ function pruneTracks(tracks: Track[]) {
 	const isNotPlayed = (track: Track) => track.isPlayed === false;
 	const isNotPlayedIndex = tracks.findIndex(isNotPlayed);
 	return tracks.slice(isNotPlayedIndex);
+}
+
+
+export async function getStoredHistories() {
+	let histories: History[] = [];
+
+	try {
+		const jsonValue = await AsyncStorage.getItem('histories');
+		histories = jsonValue != null ? JSON.parse(jsonValue) : [];
+	} catch (e) {
+		// console.log(e);
+	}
+	return histories;
+}
+
+
+export async function getStoredMusicSelection() {
+	let musicSelection: Music[] = [];
+
+	try {
+		const jsonValue = await AsyncStorage.getItem('musicSelection');
+		musicSelection = jsonValue != null ? JSON.parse(jsonValue) : [];
+	} catch (e) {
+		// console.log(e);
+	}
+	return musicSelection;
 }

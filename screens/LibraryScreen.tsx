@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -10,6 +10,7 @@ import RenderHeader from '../components/Header';
 import RenderTitle from '../components/Title';
 import Player from '../containers/Player';
 import RenderSong from '../components/Song';
+import { usePlaybackState } from 'react-native-track-player';
 
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
@@ -24,8 +25,10 @@ export default function LibraryScreen({ navigation }: any) {
 
   const colorScheme = useColorScheme();
   const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
-  const keyExtractor = useCallback((item) => item.id, []);
+  const playbackState = usePlaybackState();
 
+
+  const keyExtractor = useCallback((item) => item.id, []);
 
   const RenderButtonToSongsScreen = () => {
     return (
@@ -33,7 +36,7 @@ export default function LibraryScreen({ navigation }: any) {
         onPress={() => { navigation.navigate("SongsScreen") }}
         style={{ width: width, height: width / 7, alignSelf: 'center', }}
       >
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', borderRadius: 15, backgroundColor: 'pink', marginHorizontal: marginHorizontal }}>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', borderRadius: 15, backgroundColor: colorScheme === 'dark' ? Colors.dark.text3 : Colors.light.text3, marginHorizontal: marginHorizontal }}>
           <Ionicons name='musical-note' size={layout.width * 1.5} color={colorScheme === 'light' ? Colors.dark.text : Colors.light.text} />
           <Text style={{ fontSize: layout.width * 1.1 }}>
             Songs
@@ -46,24 +49,6 @@ export default function LibraryScreen({ navigation }: any) {
     )
   }
 
-
-
-  const RenderInitialScreen = () => {
-    return (
-      <View style={{ width: width }}>
-        <FlatList
-          ListHeaderComponent={RenderButtonToSongsScreen}
-          data={[]}
-          renderItem={(item) => {
-            return (
-              <RenderSong item={item} colorScheme={colorScheme} />
-            )
-          }}
-          ListEmptyComponent={<RenderNoResult text="Welcome!" />}
-        />
-      </View>
-    )
-  }
 
   const RenderNoResult = ({ text }: { text: string }) => {
     return (
@@ -109,7 +94,7 @@ export default function LibraryScreen({ navigation }: any) {
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
-          data={[]}
+          data={Player.musicSelection}
 
           ListHeaderComponent={
             <View>
@@ -140,11 +125,13 @@ export default function LibraryScreen({ navigation }: any) {
                   Songs or artists
                 </Text>
               </TouchableOpacity>
+
+              <RenderButtonToSongsScreen />
             </View>
           }
 
-          ListEmptyComponent={RenderInitialScreen}
-          renderItem={RenderSong}
+          ListEmptyComponent={<RenderNoResult text="Welcome!" />}
+          renderItem={({ item }) => <RenderSong item={item} colorScheme={colorScheme} />}
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderBottomMargin}
 

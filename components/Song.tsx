@@ -4,7 +4,7 @@ import { TouchableOpacity, StyleSheet, Dimensions, Image, useWindowDimensions } 
 import { View, Text } from '../components/Themed';
 import Colors from '../constants/Colors';
 import layout from '../constants/layout';
-import { WeightedMusic } from '../types';
+import { Music } from '../types';
 import Player from '../containers/Player';
 
 const { width } = Dimensions.get('screen');
@@ -13,7 +13,7 @@ const listHeightWithoutScale = width * 0.16;
 const marginHorizontal = width * 0.05;
 const defaultMiniArt = require('../assets/images/blank.png');
 
-export default function RenderSong({ item, colorScheme }: { item: WeightedMusic, colorScheme: string }) {
+export default function RenderSong({ item, colorScheme }: { item: Music, colorScheme: string }) {
 
 	const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
 
@@ -22,6 +22,7 @@ export default function RenderSong({ item, colorScheme }: { item: WeightedMusic,
 			onPress={async () => {
 				await Player.createNewTracks(item);
 				await Player.play();
+				Player.updateMusicSelection(item);
 			}}
 			style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 		>

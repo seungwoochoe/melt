@@ -12,6 +12,7 @@ export default class Player {
 	static currentIndex = 0;
 
 	static histories: History[] = [];
+	static musicSelection: Music[] = [];
 
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";
@@ -40,18 +41,13 @@ export default class Player {
 			compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SkipToPrevious, Capability.SeekTo],
 		});
 
-		try {
-			const jsonValue = await AsyncStorage.getItem('histories');
-			Player.histories = jsonValue != null ? JSON.parse(jsonValue) : [];
-		} catch (e) {
-			// console.log(e);
-		}
+
 
 		await TrackPlayer.add(Player.tracks);
 	}
 
 
-	static async createNewTracks(item?: WeightedMusic) {
+	static async createNewTracks(item?: Music) {
 		Player.currentReasonEnd = "skipped";
 		Player.currentMsPlayed = Player.isPlaying ? (Player.currentMsPlayed + (Date.now() - Player.currentPlayStartTime)) : Player.currentMsPlayed;
 		await Player.storeHistory();
@@ -213,6 +209,35 @@ export default class Player {
 		try {
 			const jsonValue = JSON.stringify(Player.histories);
 			await AsyncStorage.setItem('histories', jsonValue);
+		} catch (e) {
+			// console.log(e);
+		}
+	}
+
+
+
+
+
+	// --------------------------------------------------------------------
+	// For HomeScreen and LibraryScreen.
+
+	static async updateMusicSelection(music: Music) {
+		const musicSelectionSize = 12;
+
+		if (Player.musicSelection.length === musicSelectionSize) {
+			Player.musicSelection.pop();
+		}
+
+		const duplicateIndex = Player.musicSelection.findIndex(element => element.title === music.title);
+		if (duplicateIndex !== -1) {
+			Player.musicSelection.splice(duplicateIndex, 1);
+		}
+
+		Player.musicSelection.unshift(music);
+
+		try {
+			const jsonValue = JSON.stringify(Player.musicSelection);
+			await AsyncStorage.setItem('musicSelection', jsonValue);
 		} catch (e) {
 			// console.log(e);
 		}

@@ -44,7 +44,7 @@ export default class Player {
 			const jsonValue = await AsyncStorage.getItem('histories');
 			Player.histories = jsonValue != null ? JSON.parse(jsonValue) : [];
 		} catch (e) {
-			console.log(e);
+			// console.log(e);
 		}
 
 		await TrackPlayer.add(Player.tracks);
@@ -142,6 +142,8 @@ export default class Player {
 			await Player.appendMoreTracks();
 		}
 
+		console.log(Player.tracks.length);
+
 		// console.log("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️");
 		// for (const [i, track] of Player.tracks.entries()) {
 		// 	console.log(i, track.isPlayed, track.title);
@@ -164,7 +166,7 @@ export default class Player {
 						const jsonValue = JSON.stringify(Player.histories);
 						await AsyncStorage.setItem('histories', jsonValue);
 					} catch (e) {
-						console.log(e);
+						// console.log(e);
 					}
 				}
 
@@ -190,7 +192,7 @@ export default class Player {
 			const jsonValue = JSON.stringify(Player.tracks);
 			await AsyncStorage.setItem('tracks', jsonValue);
 		} catch (e) {
-			console.log(e);
+			// console.log(e);
 		}
 	}
 
@@ -212,7 +214,7 @@ export default class Player {
 			const jsonValue = JSON.stringify(Player.histories);
 			await AsyncStorage.setItem('histories', jsonValue);
 		} catch (e) {
-			console.log(e);
+			// console.log(e);
 		}
 	}
 }

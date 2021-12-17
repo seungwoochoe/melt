@@ -17,7 +17,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 		const jsonValue = await AsyncStorage.getItem('musicList');
 		storedMusicList = jsonValue != null ? JSON.parse(jsonValue) : null;
 	} catch (e) {
-		console.log(e);
+		// console.log(e);
 	}
 
 
@@ -105,7 +105,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 		const jsonValue = JSON.stringify(sortedMusiclist);
 		await AsyncStorage.setItem('musicList', jsonValue);
 	} catch (e) {
-		console.log(e);
+		// console.log(e);
 	}
 
 	return sortedMusiclist;
@@ -155,7 +155,7 @@ function compressPicture(source: string, imageSize: number) {
 				resolve(resizedImage.path);
 			})
 			.catch(e => {
-				console.log(e);
+				// console.log(e);
 			})
 	})
 }
@@ -170,12 +170,13 @@ export async function pruneStoredTracks() {
 		const jsonValue = await AsyncStorage.getItem('tracks');
 		tracks = jsonValue != null ? JSON.parse(jsonValue) : null;
 	} catch (e) {
-		console.log(e);
+		// console.log(e);
 	}
 
 	if (tracks == null) {
 		return [];
 	}
+
 	return pruneTracks(tracks);
 }
 

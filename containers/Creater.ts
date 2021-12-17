@@ -51,7 +51,7 @@ export function complementTracks(currentTracks: Track[], weightedMusicList: Weig
 
 export function getMoreTracks(currentTracks: Track[], weightedMusicList: WeightedMusic[]) {
 	if (weightedMusicList.length === 1) {
-		return [{...weightedMusicList[0], isPlayed: false, isTrigger: true}];
+		return [{ ...weightedMusicList[0], isPlayed: false, isTrigger: true }];
 	}
 
 	const tracks = drawMusic(TRACK_LENGTH / 2, currentTracks[currentTracks.length - 1], weightedMusicList);
@@ -108,7 +108,9 @@ function markIsTrigger(tracks: Track[]) {
 	for (const track of tracks) {
 		count++;
 
-		if (count % (TRACK_LENGTH / 2) === 0) {
+		if (count % (TRACK_LENGTH / 2) !== 0) {
+			track.isTrigger = false;
+		} else {
 			track.isTrigger = true;
 		}
 	}

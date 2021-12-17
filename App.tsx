@@ -30,8 +30,7 @@ export default function App() {
       } else {
         if (Player.weightedMusicList.length > 1) {
           const storedTracks = await pruneStoredTracks();
-          const complementedTracks = complementTracks(storedTracks, Player.weightedMusicList);
-          Player.tracks = complementedTracks;
+          Player.tracks = complementTracks(storedTracks, Player.weightedMusicList);
         } else {
           Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: true }];
         }

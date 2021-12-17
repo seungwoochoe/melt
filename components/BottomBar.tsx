@@ -46,7 +46,9 @@ export default function RenderBottomBar() {
 		}
 		else if (playbackState === State.Ready) {
 			setTrackInfo(Player.tracks[Player.currentIndex]);
-			Player.storeTracks();
+			setTimeout(() => {
+				Player.storeTracks();
+			}, 100);
 		}
 	}, [playbackState]);
 
@@ -56,6 +58,7 @@ export default function RenderBottomBar() {
 			Player.currentDuration = duration === 0 ? 1000 : duration;
 
 			if (event.position > duration * 0.99) {
+				console.log("fire");
 				Player.handlePlayNext();
 			}
 		}

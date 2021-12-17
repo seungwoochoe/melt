@@ -46,6 +46,7 @@ export default function RenderBottomBar() {
 		}
 		else if (playbackState === State.Ready) {
 			setTrackInfo(Player.tracks[Player.currentIndex]);
+			Player.storeTracks();
 		}
 	}, [playbackState]);
 

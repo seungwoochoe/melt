@@ -167,7 +167,7 @@ export async function pruneStoredTracks() {
 	let tracks: Track[] | null = null;
 
 	try {
-		const jsonValue = await AsyncStorage.getItem('track');
+		const jsonValue = await AsyncStorage.getItem('tracks');
 		tracks = jsonValue != null ? JSON.parse(jsonValue) : null;
 	} catch (e) {
 		console.log(e);

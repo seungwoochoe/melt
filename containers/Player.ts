@@ -84,6 +84,8 @@ export default class Player {
 		Player.tracks = [...Player.tracks, ...tracksToBeAppended];
 		await TrackPlayer.add(tracksToBeAppended);
 		Player.tracks[Player.currentIndex].isTrigger = false;
+
+
 	}
 
 
@@ -139,6 +141,11 @@ export default class Player {
 		if (!!Player.tracks[Player.currentIndex].isTrigger) {
 			await Player.appendMoreTracks();
 		}
+
+		// console.log("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️");
+		// for (const [i, track] of Player.tracks.entries()) {
+		// 	console.log(i, track.isPlayed, track.title);
+		// }
 	}
 
 
@@ -152,7 +159,6 @@ export default class Player {
 			if (currentPosition < skipToPreviousTrackThreshold) {
 				if (Player.histories[Player.histories.length - 1].reasonEnd === "skipped") {
 					Player.histories.pop();
-					console.log(Player.histories);
 
 					try { // Save pruned history.
 						const jsonValue = JSON.stringify(Player.histories);
@@ -179,6 +185,15 @@ export default class Player {
 	}
 
 
+	static async storeTracks() {
+		try {
+			const jsonValue = JSON.stringify(Player.tracks);
+			await AsyncStorage.setItem('tracks', jsonValue);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 	static async storeHistory() {
 		Player.histories.push({
 			endTime: Date.now(),
@@ -193,10 +208,6 @@ export default class Player {
 			playedRatio: Player.currentMsPlayed / (Player.currentDuration * 1000),
 		});
 
-		console.log(Player.histories);
-		// console.log(Player.histories[Player.histories.length - 1].title);
-		// console.log(Player.histories[Player.histories.length - 1].msPlayed);
-		// console.log(Player.histories[Player.histories.length - 1].reasonStart);
 		try {
 			const jsonValue = JSON.stringify(Player.histories);
 			await AsyncStorage.setItem('histories', jsonValue);

@@ -125,10 +125,10 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               }}
             />
             <View style={styles.progressLabelContainer}>
-              <Text style={{ color: '#bbb', fontSize: layout.width * 0.75 }}>
+              <Text style={{ color: '#bbb', fontSize: layout.width * 0.75, fontVariant:['tabular-nums'] }}>
                 {Math.floor(position / 60).toString()}:{Math.floor(position % 60).toString().padStart(2, '0')}
               </Text>
-              <Text style={{ color: '#bbb', fontSize: layout.width * 0.75 }}>
+              <Text style={{ color: '#bbb', fontSize: layout.width * 0.75, fontVariant:['tabular-nums'] }}>
                 -{Math.floor((duration - position) / 60).toString()}:{Math.floor((duration - position) % 60).toString().padStart(2, '0')}
               </Text>
             </View>

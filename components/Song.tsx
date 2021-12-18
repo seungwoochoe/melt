@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Image, useWindowDimensions } from 'react-native';
+import { TouchableOpacity, Keyboard, Dimensions, Image, useWindowDimensions } from 'react-native';
 
 import { View, Text } from '../components/Themed';
 import Colors from '../constants/Colors';
@@ -20,6 +20,7 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 	return (
 		<TouchableOpacity
 			onPress={async () => {
+				Keyboard.dismiss();
 				await Player.createNewTracks(item);
 				await Player.play();
 				Player.updateMusicSelection(item);
@@ -34,7 +35,7 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 						height: listHeightWithoutScale * 0.83,
 						margin: listHeightWithoutScale * 0.085,
 						borderRadius: 3,
-						borderWidth: 0.1,
+						borderWidth: 0.15,
 						borderColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
 					}}
 				/>

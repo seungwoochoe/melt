@@ -17,7 +17,7 @@ export default class Player {
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";
 	static currentDuration = 10000;
-	static currentMsPlayed = 0;
+	static currentSecPlayed = 0;
 	static currentPlayStartTime = 0;
 	static isPlaying = false;
 
@@ -49,7 +49,6 @@ export default class Player {
 
 	static async createNewTracks(item?: Music) {
 		Player.currentReasonEnd = "skipped";
-		Player.currentMsPlayed = Player.isPlaying ? (Player.currentMsPlayed + (Date.now() - Player.currentPlayStartTime)) : Player.currentMsPlayed;
 		await Player.storeHistory();
 
 		if (Player.weightedMusicList.length === 1) {
@@ -69,7 +68,6 @@ export default class Player {
 
 		Player.currentReasonEnd = "normal";
 		Player.currentIndex = 0;
-		Player.currentMsPlayed = 0;
 		await TrackPlayer.reset();
 		await TrackPlayer.add(Player.tracks);
 	}
@@ -97,21 +95,18 @@ export default class Player {
 
 
 	static async pause() {
-		Player.currentMsPlayed += Date.now() - Player.currentPlayStartTime;
 		await TrackPlayer.pause();
 		Player.isPlaying = false;
 	}
 
 
 	static async handlePlayNext() {
-		Player.currentMsPlayed += Date.now() - Player.currentPlayStartTime;
 		await Player.storeHistory();
 
 		Player.tracks[Player.currentIndex].isPlayed = true;
 		Player.currentIndex += 1;
 		Player.currentReasonStart = "normal";
 		Player.currentReasonEnd = "normal";
-		Player.currentMsPlayed = 0;
 		Player.currentPlayStartTime = Date.now();
 
 		if (!!Player.tracks[Player.currentIndex].isTrigger) {
@@ -122,14 +117,12 @@ export default class Player {
 
 	static async skipToNext() {
 		Player.currentReasonEnd = "skipped";
-		Player.currentMsPlayed = Player.isPlaying ? (Player.currentMsPlayed + (Date.now() - Player.currentPlayStartTime)) : Player.currentMsPlayed;
 		await Player.storeHistory();
 
 		Player.tracks[Player.currentIndex].isPlayed = true;
 		Player.currentIndex += 1;
 		Player.currentReasonStart = "normal";
 		Player.currentReasonEnd = "normal";
-		Player.currentMsPlayed = 0;
 		Player.currentPlayStartTime = Date.now();
 		await TrackPlayer.skipToNext();
 		Player.isPlaying = true;
@@ -168,7 +161,6 @@ export default class Player {
 				Player.tracks[Player.currentIndex].isPlayed = false;
 				Player.currentReasonStart = "returned"
 				Player.currentReasonEnd = "normal";
-				Player.currentMsPlayed = 0;
 				Player.currentPlayStartTime = Date.now();
 				await TrackPlayer.skipToPrevious();
 			}
@@ -191,6 +183,14 @@ export default class Player {
 	}
 
 	static async storeHistory() {
+		let secPlayed = 0;
+		try {
+			const jsonValue = await AsyncStorage.getItem('secPlayed');
+			secPlayed = jsonValue != null ? (Number(JSON.parse(jsonValue))) : 0;
+		} catch (e) {
+			// console.log(e);
+		}
+
 		Player.histories.push({
 			endTime: Date.now(),
 			url: Player.tracks[Player.currentIndex].url,
@@ -201,7 +201,7 @@ export default class Player {
 			id: Player.tracks[Player.currentIndex].id,
 			reasonStart: Player.currentReasonStart,
 			reasonEnd: Player.currentReasonEnd,
-			playedRatio: Player.currentMsPlayed / (Player.currentDuration * 1000),
+			playedRatio: secPlayed / Player.currentDuration,
 		});
 
 		try {
@@ -210,6 +210,16 @@ export default class Player {
 		} catch (e) {
 			// console.log(e);
 		}
+
+		const log = Player.histories.map((element) => (
+			{
+				title: element.title,
+				reasonStart: element.reasonStart,
+				reasonEnd: element.reasonEnd,
+				playedRatio: element.playedRatio,
+			}
+			));
+		console.table(log);
 	}
 
 

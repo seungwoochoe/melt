@@ -40,8 +40,8 @@ export default function LibraryScreen({ navigation }: any) {
           flex: 1,
           flexDirection: 'row',
           alignItems: 'center',
-          borderRadius: 15,
-          backgroundColor: colorScheme === 'dark' ? Colors.dark.text3 : Colors.light.text3,
+          borderRadius: 11,
+          backgroundColor: 'rgba(255, 186, 8, .85)',
           marginHorizontal: marginHorizontal,
         }}
         >
@@ -57,7 +57,7 @@ export default function LibraryScreen({ navigation }: any) {
             <Ionicons
               name='chevron-forward-outline'
               size={layout.width * 1.5}
-              color={colorScheme === 'light' ? '#d0d0d0' : '#555'}
+              color={colorScheme === 'light' ? '#fff' : '#555'}
             />
           </View>
         </View>

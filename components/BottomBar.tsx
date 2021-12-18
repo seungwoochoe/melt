@@ -24,7 +24,7 @@ const blankTrack: Track = { url: 'loading', title: 'processing files...', artist
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
 	blurIntensity = 97;
-} 
+}
 else {
 	blurIntensity = 200;
 }
@@ -40,15 +40,15 @@ else {
 export default function RenderBottomBar() {
 	const [trackInfo, setTrackInfo] = useState<Track>(blankTrack);
 	const [isPlaying, setIsPlaying] = useState(false);
-	
+
 	const savedPosition = useRef(0);
+	const secPlayed = useRef(0);
 
 	const colorScheme = useColorScheme();
 	const playbackState = usePlaybackState();
 	const { position, duration } = useProgress();
-	
-	const navigation = useNavigation<any>();
 
+	const navigation = useNavigation<any>();
 
 	useEffect(() => {
 		async function getSavedPosition() {
@@ -58,10 +58,20 @@ export default function RenderBottomBar() {
 			} catch (e) {
 				// console.log(e);
 			}
-
 			await TrackPlayer.seekTo(savedPosition.current);
 		}
+
+		async function getSavedSecPlayed() {
+			try {
+				const jsonValue = await AsyncStorage.getItem('secPlayed');
+				secPlayed.current = jsonValue != null ? Number(JSON.parse(jsonValue)) : 0;
+			} catch (e) {
+				// console.log(e);
+			}
+		}
+
 		getSavedPosition();
+		getSavedSecPlayed();
 	}, []);
 
 
@@ -76,6 +86,7 @@ export default function RenderBottomBar() {
 			setTimeout(() => { // Is it okay to code like this..? useTrackPlayerEvents belew is a bit slower I guess, and because of that, I have to wait for Player.handlePlayNext(); to be fired.
 				setTrackInfo(Player.tracks[Player.currentIndex]);
 				Player.storeTracks();
+				secPlayed.current = 0;
 			}, 70);
 		}
 	}, [playbackState]);
@@ -83,7 +94,7 @@ export default function RenderBottomBar() {
 
 	useTrackPlayerEvents([Event.RemoteSeek, Event.PlaybackTrackChanged], async event => {
 		if (event.type === Event.PlaybackTrackChanged) {
-			Player.currentDuration = duration === 0 ? 1000 : duration;
+			Player.currentDuration = duration === 0 ? 1000 : Math.floor(duration);
 
 			if (event.position > duration * 0.99) {
 				Player.handlePlayNext();
@@ -108,8 +119,24 @@ export default function RenderBottomBar() {
 				// console.log(e);
 			}
 		}
+
+		async function saveSecPlayed() {
+			if (isPlaying === true) {
+				secPlayed.current++;
+				console.log("Bottom bar", secPlayed.current);
+
+				try {
+					const jsonValue = JSON.stringify(secPlayed.current);
+					await AsyncStorage.setItem('secPlayed', jsonValue);
+				} catch (e) {
+					// console.log(e);
+				}
+			}
+		}
+
 		savePosition();
-	});
+		saveSecPlayed();
+	}, [position]);
 
 
 

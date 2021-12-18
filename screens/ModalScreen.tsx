@@ -11,11 +11,12 @@ import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 
 const { width, height } = Dimensions.get("window");
-const lightFilter = 'rgba(0, 0, 0, 0.35)';
+const lightFilter = 'rgba(0, 0, 0, 0.4)';
 const darkFilter = 'rgba(0, 0, 0, 0.5)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
-const blurRadius = 16700000 / Math.pow(height, 1.8);
+// const blurRadius = 16700000 / Math.pow(height, 1.8);
+const blurRadius = 11000000 / Math.pow(height, 1.8);
 const defaultArtwork = require('../assets/images/blank.png');
 
 
@@ -126,7 +127,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
             />
             <View style={styles.progressLabelContainer}>
               <Text style={{ color: '#bbb', fontSize: layout.width * 0.75, fontVariant:['tabular-nums'] }}>
-                {Math.floor(position / 60).toString()}:{Math.floor(position % 60).toString().padStart(2, '0')}
+                {position > 0 ? Math.floor(position / 60).toString(): '0'}:{position > 0 ? Math.floor(position % 60).toString().padStart(2, '0') : '00'}
               </Text>
               <Text style={{ color: '#bbb', fontSize: layout.width * 0.75, fontVariant:['tabular-nums'] }}>
                 -{Math.floor((duration - position) / 60).toString()}:{Math.floor((duration - position) % 60).toString().padStart(2, '0')}
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   arworkImage: {
     width: width * 0.855,
     height: width * 0.855,
-    borderRadius: 15,
+    borderRadius: width / 32,
   },
   title: {
     fontSize: layout.width * 1.35,

@@ -16,7 +16,7 @@ const { width } = Dimensions.get("screen");
 const itemHeightWithoutScale = width * 0.117;
 const marginBetweenIconAndText = itemHeightWithoutScale * 0.3;
 const marginHorizontal = width * 0.05;
-const borderRadius = 12;
+const borderRadius = 11;
 
 export default function SettingsScreen({ navigation }: RootTabScreenProps<'Settings'>) {
   const colorScheme = useColorScheme();
@@ -64,7 +64,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
         {
           title: 'About',
           iconName: 'information',
-          iconBackgroundColor: '#ff9b36',
+          iconBackgroundColor: '#ffb908',
           position: '',
         },
         {
@@ -105,7 +105,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
             marginLeft: itemHeightWithoutScale * 0.35,
             marginRight: marginBetweenIconAndText,
             borderRadius: itemHeightWithoutScale * 0.15,
-            backgroundColor: 'orange',
+            backgroundColor: '#ffb908',
             flexDirection: 'row',
             alignItems: 'center',
           }}>
@@ -143,6 +143,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
               await AsyncStorage.removeItem('tracks');
               await AsyncStorage.removeItem('musicSelection');
               await AsyncStorage.removeItem('savedPosition');
+              await AsyncStorage.removeItem('secPlayed');
               Alert.alert("Success!");
             } catch (e) {
               Alert.alert("Failed to delete histories");

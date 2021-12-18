@@ -75,6 +75,8 @@ export default function SearchScreen() {
 	}
 
 
+	// const Render
+
 	const RenderNoResult = () => {
 		return (
 			<View style={{ height: isKeyboardShown ? height / 2 : height * 0.7, width: width, flexDirection: 'row', alignItems: 'center' }}>
@@ -128,7 +130,7 @@ export default function SearchScreen() {
 						width: width * 0.89,
 						marginHorizontal: marginHorizontal,
 						paddingLeft: width * 0.03,
-						marginTop: layout.width * 2,
+						marginTop: layout.height * 3.5,
 						marginBottom: layout.width,
 						borderRadius: 11,
 						backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,

@@ -13,7 +13,7 @@ import { Track } from '../types';
 
 import Player from '../containers/Player';
 
-const { width } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 const listHeight = width * 0.16;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.12;
@@ -23,8 +23,17 @@ const blankTrack: Track = { url: 'loading', title: 'processing files...', artist
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
 	blurIntensity = 97;
-} else {
+} 
+else {
 	blurIntensity = 200;
+}
+
+let tabBarHeight: number;
+if ((height / width) > 2) {
+	tabBarHeight = height * 0.0935;
+}
+else {
+	tabBarHeight = height * 0.0731;
 }
 
 export default function RenderBottomBar() {
@@ -34,6 +43,7 @@ export default function RenderBottomBar() {
 	const colorScheme = useColorScheme();
 	const playbackState = usePlaybackState();
 	const { duration } = useProgress();
+	
 	const navigation = useNavigation<any>();
 
 
@@ -58,7 +68,6 @@ export default function RenderBottomBar() {
 			Player.currentDuration = duration === 0 ? 1000 : duration;
 
 			if (event.position > duration * 0.99) {
-				console.log("fire");
 				Player.handlePlayNext();
 			}
 		}
@@ -71,7 +80,19 @@ export default function RenderBottomBar() {
 
 
 	return (
-		<BlurView intensity={blurIntensity} tint={colorScheme === 'light' ? 'light' : 'dark'} style={styles.bottomBarContainer}>
+		<BlurView
+			intensity={blurIntensity}
+			tint={colorScheme === 'light' ? 'light' : 'dark'}
+			style={{
+				flexDirection: 'row',
+				alignItems: 'center',
+				height: bottomBarHeight,
+				position: 'absolute',
+				left: 0,
+				right: 0,
+				bottom: tabBarHeight,
+			}}
+		>
 			<View style={{ width: width * 0.69, backgroundColor: 'transparent' }}>
 				<TouchableOpacity
 					onPress={() => { navigation.navigate("Modal", { initialTrack: trackInfo, isPlaying: isPlaying }); }}
@@ -86,7 +107,14 @@ export default function RenderBottomBar() {
 					}}>
 						<Image
 							source={typeof trackInfo.miniArt !== "string" ? defaultMiniArt : { uri: trackInfo.miniArt }}
-							style={styles.miniArt}
+							style={{
+								width: listHeight * 0.82,
+								height: listHeight * 0.82,
+								margin: listHeight * 0.09,
+								borderRadius: 3,
+								borderWidth: 0.1,
+								borderColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
+							}}
 						/>
 					</View>
 					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
@@ -132,27 +160,3 @@ export default function RenderBottomBar() {
 		</BlurView>
 	)
 }
-
-const styles = StyleSheet.create({
-	miniArt: {
-		width: listHeight * 0.82,
-		height: listHeight * 0.82,
-		margin: listHeight * 0.09,
-		borderRadius: 4.5,
-	},
-	bottomBarContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		height: bottomBarHeight,
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		bottom: 49,
-	},
-	bottomMusic: {
-		alignItems: 'center',
-		height: listHeight,
-		flexDirection: 'row',
-		paddingLeft: width * 0.05,
-	}
-});

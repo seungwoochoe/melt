@@ -147,6 +147,9 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
               Alert.alert("Failed to delete histories");
             }
           }
+          else if (item.title === "About") {
+            console.log(RNFS.DocumentDirectoryPath);
+          }
         }}
         style={{
           flex: 1,

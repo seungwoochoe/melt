@@ -138,8 +138,6 @@ export default class Player {
 			await Player.appendMoreTracks();
 		}
 
-		console.log(Player.tracks.length);
-
 		// console.log("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️");
 		// for (const [i, track] of Player.tracks.entries()) {
 		// 	console.log(i, track.isPlayed, track.title);
@@ -222,7 +220,7 @@ export default class Player {
 	// For HomeScreen and LibraryScreen.
 
 	static async updateMusicSelection(music: Music) {
-		const musicSelectionSize = 12;
+		const musicSelectionSize = 8;
 
 		if (Player.musicSelection.length === musicSelectionSize) {
 			Player.musicSelection.pop();

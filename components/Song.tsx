@@ -29,7 +29,14 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 			<View>
 				<Image
 					source={typeof item.miniArt === "number" ? defaultMiniArt : { uri: item.miniArt }}
-					style={styles.miniArt}
+					style={{
+						width: listHeightWithoutScale * 0.83,
+						height: listHeightWithoutScale * 0.83,
+						margin: listHeightWithoutScale * 0.085,
+						borderRadius: 3,
+						borderWidth: 0.1,
+						borderColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
+					}}
 				/>
 			</View>
 			<View style={{ flex: 1, marginLeft: marginBetweenAlbumartAndText }}>
@@ -52,13 +59,3 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 		</TouchableOpacity>
 	)
 }
-
-
-const styles = StyleSheet.create({
-	miniArt: {
-		width: listHeightWithoutScale * 0.82,
-		height: listHeightWithoutScale * 0.82,
-		margin: listHeightWithoutScale * 0.09,
-		borderRadius: 4.5,
-	},
-});

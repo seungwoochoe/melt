@@ -36,13 +36,29 @@ export default function LibraryScreen({ navigation }: any) {
         onPress={() => { navigation.navigate("SongsScreen") }}
         style={{ width: width, height: width / 7, alignSelf: 'center', }}
       >
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', borderRadius: 15, backgroundColor: colorScheme === 'dark' ? Colors.dark.text3 : Colors.light.text3, marginHorizontal: marginHorizontal }}>
-          <Ionicons name='musical-note' size={layout.width * 1.5} color={colorScheme === 'light' ? Colors.dark.text : Colors.light.text} />
+        <View style={{
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderRadius: 15,
+          backgroundColor: colorScheme === 'dark' ? Colors.dark.text3 : Colors.light.text3,
+          marginHorizontal: marginHorizontal,
+        }}
+        >
+          <Ionicons
+            name='musical-note'
+            size={layout.width * 1.5}
+            color={colorScheme === 'light' ? Colors.dark.text : Colors.light.text}
+          />
           <Text style={{ fontSize: layout.width * 1.1 }}>
             Songs
           </Text>
           <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight: width * 0.03 }}>
-            <Ionicons name='chevron-forward-outline' size={layout.width * 1.5} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
+            <Ionicons
+              name='chevron-forward-outline'
+              size={layout.width * 1.5}
+              color={colorScheme === 'light' ? '#d0d0d0' : '#555'}
+            />
           </View>
         </View>
       </TouchableOpacity>

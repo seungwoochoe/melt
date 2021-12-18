@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State, useProgress } from 'react-native-track-player';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -39,12 +40,29 @@ else {
 export default function RenderBottomBar() {
 	const [trackInfo, setTrackInfo] = useState<Track>(blankTrack);
 	const [isPlaying, setIsPlaying] = useState(false);
+	
+	const savedPosition = useRef(0);
 
 	const colorScheme = useColorScheme();
 	const playbackState = usePlaybackState();
-	const { duration } = useProgress();
+	const { position, duration } = useProgress();
 	
 	const navigation = useNavigation<any>();
+
+
+	useEffect(() => {
+		async function getSavedPosition() {
+			try {
+				const jsonValue = await AsyncStorage.getItem('savedPosition');
+				savedPosition.current = jsonValue != null ? Number(JSON.parse(jsonValue)) : 0;
+			} catch (e) {
+				// console.log(e);
+			}
+
+			await TrackPlayer.seekTo(savedPosition.current);
+		}
+		getSavedPosition();
+	}, []);
 
 
 	useEffect(() => {
@@ -77,6 +95,22 @@ export default function RenderBottomBar() {
 			await TrackPlayer.play();
 		}
 	});
+
+
+	useEffect(() => {
+		async function savePosition() {
+			savedPosition.current = position;
+
+			try {
+				const jsonValue = JSON.stringify(savedPosition.current);
+				await AsyncStorage.setItem('savedPosition', jsonValue);
+			} catch (e) {
+				// console.log(e);
+			}
+		}
+		savePosition();
+	});
+
 
 
 	return (

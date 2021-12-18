@@ -21,9 +21,6 @@ const bottomBarHeight = listHeightWithoutScale * 1.2;
 
 
 export default function SongsScreen({ navigation }: any) {
-  const [query, setQuery] = useState('');
-  const [filteredMusicList, setFilteredMusicList] = useState<Music[]>([]);
-  const [isKeyboardShown, setIsKeyboardShown] = useState(false);
   const [isScrolled, setIsScrelled] = useState(false);
 
   const colorScheme = useColorScheme();
@@ -32,46 +29,7 @@ export default function SongsScreen({ navigation }: any) {
   const keyExtractor = useCallback((item) => item.id, []);
 
 
-  useEffect(() => {
-    const keyboardShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setIsKeyboardShown(true);
-    });
-
-    const keyboardHideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setIsKeyboardShown(false);
-    });
-
-    return () => {
-      keyboardShowSubscription.remove();
-      keyboardHideSubscription.remove();
-    }
-  }, []);
-
-
-  function handleSearch(query: string) {
-    let safeQuery = query;
-    const blacklist = ['^', '.', '[', ']', '$', '(', ')', '\\', '*', '{', '}', '?', '+',];
-
-    for (const item of blacklist) {
-      safeQuery = safeQuery.replaceAll(item, '');
-    }
-
-    const filteredData = filter(Player.musicList, music => {
-      return search(music, safeQuery.toLowerCase());
-    })
-    setFilteredMusicList(filteredData);
-    setQuery(query);
-  }
-
-  function search({ title, artist }: { title: string, artist: string }, query: string) {
-    const condition = new RegExp(`^${query}| ${query}|\\(${query}`);
-    if (title.toLowerCase().match(condition) || artist.toLowerCase().match(condition)) {
-      return true;
-    }
-    return false;
-  }
-
-
+  
 
   const RenderNoResult = () => {
     return (
@@ -99,17 +57,12 @@ export default function SongsScreen({ navigation }: any) {
 
   const RenderBottomMargin = () => {
     return (
-      <>
-        {(Player.musicList.length !== 0 && (query.length === 0 || filteredMusicList.length !== 0)) &&
-          <RenderSeparator />
-        }
-
-        <View style={{ height: isKeyboardShown ? 0 : bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }}>
-          <Text style={{ fontSize: layout.width * 0.95, fontWeight: '400', color: colorScheme === 'light' ? '#b7b7b7' : '#666' }}>
-            {/* - {Player.musicList.length} songs - */}
-          </Text>
-        </View>
-      </>
+      <View style={{
+        height:bottomBarHeight * 0.99,
+        alignItems: 'center',
+        paddingTop: bottomBarHeight * 0.1,
+      }}
+      />
     )
   }
 
@@ -121,11 +74,11 @@ export default function SongsScreen({ navigation }: any) {
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
-          data={query.length === 0 ? Player.musicList : filteredMusicList}
+          data={Player.musicList}
           ListEmptyComponent={RenderNoResult}
           // stickyHeaderIndices={[0]}
           ListHeaderComponent={
-            <View style={{marginBottom: layout.width}}>
+            <View style={{ marginBottom: layout.width }}>
               <RenderTitle title='Songs' />
             </View>
           }
@@ -150,9 +103,7 @@ export default function SongsScreen({ navigation }: any) {
             }
           }}
           showsVerticalScrollIndicator={true}
-          scrollIndicatorInsets={{top: layout.ratio * 2.9 * useWindowDimensions().fontScale , left: 0, bottom: isKeyboardShown ? 0 : bottomBarHeight * 0.99, right: 0}}
-          keyboardShouldPersistTaps='handled'
-          scrollEnabled={query.length !== 0 && filteredMusicList.length === 0 ? false : true}
+          scrollIndicatorInsets={{ top: layout.ratio * 2.9 * useWindowDimensions().fontScale, left: 0, bottom: 0 , right: 0 }}
           keyExtractor={keyExtractor}
           getItemLayout={(data, index) => (
             { length: listHeight + 1, offset: (listHeight + 1) * index, index }

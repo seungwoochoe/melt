@@ -21,9 +21,12 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 		<TouchableOpacity
 			onPress={async () => {
 				Keyboard.dismiss();
-				await Player.createNewTracks(item);
-				await Player.play();
-				Player.updateMusicSelection(item);
+
+				if (Player.tracks[Player.currentIndex].id !== item.id) {
+					await Player.createNewTracks(item);
+					await Player.play();
+					Player.updateMusicSelection(item);
+				}
 			}}
 			style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 		>

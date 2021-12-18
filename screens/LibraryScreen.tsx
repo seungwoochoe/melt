@@ -34,21 +34,23 @@ export default function LibraryScreen({ navigation }: any) {
     return (
       <TouchableOpacity
         onPress={() => { navigation.navigate("SongsScreen") }}
-        style={{ width: width, height: width / 7, alignSelf: 'center', }}
+        style={{ width: width - marginHorizontal, height: width / 7, marginLeft: width * 0.05, marginVertical: height * 0.01}}
       >
         <View style={{
           flex: 1,
           flexDirection: 'row',
           alignItems: 'center',
-          borderRadius: 11,
-          backgroundColor: 'rgba(255, 186, 8, .85)',
-          marginHorizontal: marginHorizontal,
+          backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
+          borderTopWidth: .5,
+          borderBottomWidth: .5,
+          borderColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
         }}
         >
           <Ionicons
             name='musical-note'
             size={layout.width * 1.5}
-            color={colorScheme === 'light' ? Colors.dark.text : Colors.light.text}
+            color={colorScheme === 'dark' ? Colors.dark.text : Colors.light.text}
+            style={{ marginLeft: width * 0.05 }}
           />
           <Text style={{ fontSize: layout.width * 1.1 }}>
             Songs
@@ -57,7 +59,7 @@ export default function LibraryScreen({ navigation }: any) {
             <Ionicons
               name='chevron-forward-outline'
               size={layout.width * 1.5}
-              color={colorScheme === 'light' ? '#fff' : '#555'}
+              color={colorScheme === 'dark' ? '#fff' : '#555'}
             />
           </View>
         </View>
@@ -92,13 +94,7 @@ export default function LibraryScreen({ navigation }: any) {
 
   const RenderBottomMargin = () => {
     return (
-      <>
-        {Player.musicList.length !== 0 &&
-          <RenderSeparator />
-        }
-
-        <View style={{ height: bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }} />
-      </>
+      <View style={{ height: bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }} />
     )
   }
 
@@ -123,7 +119,7 @@ export default function LibraryScreen({ navigation }: any) {
                   flexDirection: 'row',
                   alignItems: 'center',
                   height: layout.width * 2.4,
-                  width: width * 0.89,
+                  width: width - marginHorizontal * 2,
                   marginHorizontal: marginHorizontal,
                   paddingLeft: width * 0.03,
                   marginTop: layout.width * 0.5,
@@ -146,7 +142,7 @@ export default function LibraryScreen({ navigation }: any) {
             </View>
           }
 
-          ListEmptyComponent={<RenderNoResult text="Welcome!" />}
+          // ListEmptyComponent={<RenderNoResult text="Welcome!" />}
           renderItem={({ item }) => <RenderSong item={item} colorScheme={colorScheme} />}
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderBottomMargin}

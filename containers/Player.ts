@@ -230,7 +230,7 @@ export default class Player {
 	// For HomeScreen and LibraryScreen.
 
 	static async updateMusicSelection(music: Music) {
-		const musicSelectionSize = 8;
+		const musicSelectionSize = 12;
 
 		if (Player.musicSelection.length === musicSelectionSize) {
 			Player.musicSelection.pop();

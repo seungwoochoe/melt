@@ -14,7 +14,7 @@ export default {
     headerBackground: '#f8f8f8',
   },
   dark: {
-    text: 'rgba(255, 255, 255, 0.77)',
+    text: 'rgba(255, 255, 255, 0.85)',
     text2: 'rgba(255, 255, 255, 0.5)',
     text3: 'rgba(255, 255, 255, 0.35)',
     text4: 'rgba(255, 255, 255, 0.08)',

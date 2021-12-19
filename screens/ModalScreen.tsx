@@ -159,7 +159,12 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               }}
               style={{ padding: isPlaying ? layout.width * 0.2 : layout.width * 0.4 }}
             >
-              <Ionicons name={isPlaying ? "pause" : "play"} size={isPlaying ? layout.width * 2.8 : layout.width * 2.4} color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme} />
+              <Ionicons 
+              name={isPlaying ? "pause" : "play"}
+               size={isPlaying ? layout.width * 2.8 : layout.width * 2.4} 
+               color={trackInfo.text.url === 'loading' ? Colors.dark.text2 : theme}
+               style={{marginLeft: isPlaying ? 0 : layout.width * 0.2}}
+               />
             </TouchableOpacity>
             <TouchableOpacity
               disabled={trackInfo.text.url === 'loading'}

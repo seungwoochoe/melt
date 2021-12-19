@@ -20,6 +20,10 @@ module.exports = async function setup() {
 		Player.skipToPrevious(0);
 	});
 
+	TrackPlayer.addEventListener(Event.RemoteSeek, e => {
+		Player.seekTo(e.position);
+	});
+
 	TrackPlayer.addEventListener(Event.RemoteDuck, async e => {
 		if (e.permanent === true) {
 			TrackPlayer.stop();

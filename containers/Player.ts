@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import TrackPlayer, { Capability } from 'react-native-track-player';
+import TrackPlayer, { Capability, Event } from 'react-native-track-player';
 
 import { Music, WeightedMusic, Track, History } from "../types";
 import { complementTracks, getMoreTracks } from './Creater';
+
 
 export default class Player {
 	static musicList: Music[] = [];
@@ -17,8 +18,6 @@ export default class Player {
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";
 	static currentDuration = 10000;
-	static currentSecPlayed = 0;
-	static currentPlayStartTime = 0;
 	static isPlaying = false;
 
 
@@ -38,11 +37,14 @@ export default class Player {
 				Capability.SkipToNext,
 				Capability.SkipToPrevious,
 			],
-			compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SkipToPrevious, Capability.SeekTo],
+			compactCapabilities: [
+				Capability.Play,
+				Capability.Pause,
+				Capability.SkipToNext,
+				Capability.SkipToPrevious,
+				Capability.SeekTo
+			],
 		});
-
-
-
 		await TrackPlayer.add(Player.tracks);
 	}
 
@@ -66,7 +68,6 @@ export default class Player {
 			}
 		}
 
-		Player.currentReasonEnd = "normal";
 		Player.currentIndex = 0;
 		await TrackPlayer.reset();
 		await TrackPlayer.add(Player.tracks);
@@ -88,7 +89,6 @@ export default class Player {
 	// Functions regarding playback.
 
 	static async play() {
-		Player.currentPlayStartTime = Date.now();
 		await TrackPlayer.play();
 		Player.isPlaying = true;
 	}
@@ -101,13 +101,12 @@ export default class Player {
 
 
 	static async handlePlayNext() {
+		Player.currentReasonEnd = "normal"
 		await Player.storeHistory();
 
 		Player.tracks[Player.currentIndex].isPlayed = true;
 		Player.currentIndex += 1;
 		Player.currentReasonStart = "normal";
-		Player.currentReasonEnd = "normal";
-		Player.currentPlayStartTime = Date.now();
 
 		if (!!Player.tracks[Player.currentIndex].isTrigger) {
 			await Player.appendMoreTracks();
@@ -122,8 +121,6 @@ export default class Player {
 		Player.tracks[Player.currentIndex].isPlayed = true;
 		Player.currentIndex += 1;
 		Player.currentReasonStart = "normal";
-		Player.currentReasonEnd = "normal";
-		Player.currentPlayStartTime = Date.now();
 		await TrackPlayer.skipToNext();
 		Player.isPlaying = true;
 
@@ -160,8 +157,6 @@ export default class Player {
 				Player.currentIndex -= 1;
 				Player.tracks[Player.currentIndex].isPlayed = false;
 				Player.currentReasonStart = "returned"
-				Player.currentReasonEnd = "normal";
-				Player.currentPlayStartTime = Date.now();
 				await TrackPlayer.skipToPrevious();
 			}
 			else {
@@ -173,7 +168,14 @@ export default class Player {
 	}
 
 
-	static async storeTracks() {
+	static async seekTo(position: number) {
+		await TrackPlayer.seekTo(position);
+		await TrackPlayer.pause();
+		await TrackPlayer.play();
+	}
+
+
+	static async storeTracksStatus() {
 		try {
 			const jsonValue = JSON.stringify(Player.tracks);
 			await AsyncStorage.setItem('tracks', jsonValue);
@@ -191,6 +193,11 @@ export default class Player {
 			// console.log(e);
 		}
 
+		let playedRatio = secPlayed / Player.currentDuration;
+		if (0.95 < playedRatio && playedRatio < 1.05) {
+			playedRatio = 1;
+		}
+
 		Player.histories.push({
 			endTime: Date.now(),
 			url: Player.tracks[Player.currentIndex].url,
@@ -201,7 +208,7 @@ export default class Player {
 			id: Player.tracks[Player.currentIndex].id,
 			reasonStart: Player.currentReasonStart,
 			reasonEnd: Player.currentReasonEnd,
-			playedRatio: secPlayed / Player.currentDuration,
+			playedRatio: playedRatio,
 		});
 
 		try {
@@ -214,12 +221,14 @@ export default class Player {
 		const log = Player.histories.map((element) => (
 			{
 				title: element.title,
-				reasonStart: element.reasonStart,
-				reasonEnd: element.reasonEnd,
+				// reasonStart: element.reasonStart,
+				// reasonEnd: element.reasonEnd,
 				playedRatio: element.playedRatio,
+				secPlayed: secPlayed,
+				duration: Player.currentDuration,
 			}
-			));
-		console.table(log);
+		));
+		console.table(log.slice(-5));
 	}
 
 
@@ -227,7 +236,7 @@ export default class Player {
 
 
 	// --------------------------------------------------------------------
-	// For HomeScreen and LibraryScreen.
+	// For Search srceen.
 
 	static async updateMusicSelection(music: Music) {
 		const musicSelectionSize = 12;

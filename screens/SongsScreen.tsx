@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Dimensions, StatusBar, Platform, TextInput, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import filter from 'lodash.filter';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import layout from '../constants/layout';
-import { Music } from '../types';
 import RenderHeader from '../components/Header';
 import RenderTitle from '../components/Title';
 import Player from '../containers/Player';
@@ -16,8 +13,8 @@ import RenderSong from '../components/Song';
 
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
-const listHeightWithoutScale = width * 0.149;
-const bottomBarHeight = listHeightWithoutScale * 1.2;
+const listHeightWithoutScale = width * 0.16;
+const bottomBarHeight = listHeightWithoutScale * 1.121;
 
 
 export default function SongsScreen({ navigation }: any) {
@@ -29,7 +26,7 @@ export default function SongsScreen({ navigation }: any) {
   const keyExtractor = useCallback((item) => item.id, []);
 
 
-  
+
 
   const RenderNoResult = () => {
     return (
@@ -56,9 +53,22 @@ export default function SongsScreen({ navigation }: any) {
   }
 
   const RenderBottomMargin = () => {
+    if (Player.musicList.length !== 0) {
+      return (
+        <>
+          <RenderSeparator />
+
+          <View style={{
+            height: bottomBarHeight * 0.99,
+            alignItems: 'center',
+            paddingTop: bottomBarHeight * 0.1,
+          }} />
+        </>
+      )
+    }
     return (
       <View style={{
-        height:bottomBarHeight * 0.99,
+        height: bottomBarHeight * 0.99,
         alignItems: 'center',
         paddingTop: bottomBarHeight * 0.1,
       }}
@@ -103,7 +113,7 @@ export default function SongsScreen({ navigation }: any) {
             }
           }}
           showsVerticalScrollIndicator={true}
-          scrollIndicatorInsets={{ top: layout.ratio * 2.9 * useWindowDimensions().fontScale, left: 0, bottom: 0 , right: 0 }}
+          scrollIndicatorInsets={{ top: layout.ratio * 2.9 * useWindowDimensions().fontScale, left: 0, bottom: bottomBarHeight, right: 0 }}
           keyExtractor={keyExtractor}
           getItemLayout={(data, index) => (
             { length: listHeight + 1, offset: (listHeight + 1) * index, index }

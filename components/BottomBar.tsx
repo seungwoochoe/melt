@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Platform, Image } from 'react-native';
+import { TouchableOpacity, Dimensions, Platform, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State, useProgress } from 'react-native-track-player';
@@ -37,31 +37,35 @@ else {
 	tabBarHeight = height * 0.0731;
 }
 
+
 export default function RenderBottomBar() {
 	const [trackInfo, setTrackInfo] = useState<Track>(blankTrack);
 	const [isPlaying, setIsPlaying] = useState(false);
 
-	const savedPosition = useRef(0);
+	const storedPosition = useRef(0);
 	const secPlayed = useRef(0);
 
 	const colorScheme = useColorScheme();
 	const playbackState = usePlaybackState();
 	const { position, duration } = useProgress();
-
 	const navigation = useNavigation<any>();
 
+
 	useEffect(() => {
-		async function getSavedPosition() {
+		async function getStoredPlaybackStatus() {
+			await getStoredPosition();
+			await getStoredSecPlayed();;
+		}
+		async function getStoredPosition() {
 			try {
-				const jsonValue = await AsyncStorage.getItem('savedPosition');
-				savedPosition.current = jsonValue != null ? Number(JSON.parse(jsonValue)) : 0;
+				const jsonValue = await AsyncStorage.getItem('storedPosition');
+				storedPosition.current = jsonValue != null ? Number(JSON.parse(jsonValue)) : 0;
 			} catch (e) {
 				// console.log(e);
 			}
-			await TrackPlayer.seekTo(savedPosition.current);
+			await TrackPlayer.seekTo(storedPosition.current);
 		}
-
-		async function getSavedSecPlayed() {
+		async function getStoredSecPlayed() {
 			try {
 				const jsonValue = await AsyncStorage.getItem('secPlayed');
 				secPlayed.current = jsonValue != null ? Number(JSON.parse(jsonValue)) : 0;
@@ -69,62 +73,48 @@ export default function RenderBottomBar() {
 				// console.log(e);
 			}
 		}
-
-		getSavedPosition();
-		getSavedSecPlayed();
+		getStoredPlaybackStatus();
 	}, []);
 
 
-	useEffect(() => {
+	useEffect(() => { // UI update.
 		if (playbackState === State.Playing) {
 			setIsPlaying(true);
 		}
 		else if (playbackState === State.Paused) {
 			setIsPlaying(false)
 		}
-		else if (playbackState === State.Ready) {
-			setTimeout(() => { // Is it okay to code like this..? useTrackPlayerEvents belew is a bit slower I guess, and because of that, I have to wait for Player.handlePlayNext(); to be fired.
-				setTrackInfo(Player.tracks[Player.currentIndex]);
-				Player.storeTracks();
-				secPlayed.current = 0;
-			}, 70);
-		}
 	}, [playbackState]);
 
 
-	useTrackPlayerEvents([Event.RemoteSeek, Event.PlaybackTrackChanged], async event => {
-		if (event.type === Event.PlaybackTrackChanged) {
-			Player.currentDuration = duration === 0 ? 1000 : Math.floor(duration);
+	useEffect(() => { // Fired when a new track is ready.
+		async function handlePlayNext() {
+			secPlayed.current = 0;
+			const trackPlayerIndex = await TrackPlayer.getCurrentTrack();
 
-			if (event.position > duration * 0.99) {
-				Player.handlePlayNext();
+			if (trackPlayerIndex > Player.currentIndex) {
+				if (Player.histories.length === 0 || Player.histories[Player.histories.length - 1].id !== trackInfo.id) {
+					await Player.handlePlayNext();
+				}
 			}
+
+			Player.currentDuration = duration; // Update a new track duration.
+			setTrackInfo(Player.tracks[Player.currentIndex]);
+			Player.storeTracksStatus();
 		}
-		else if (event.type === Event.RemoteSeek) {
-			await TrackPlayer.seekTo(event.position);
-			await TrackPlayer.pause();
-			await TrackPlayer.play();
-		}
-	});
+
+		handlePlayNext();
+	}, [duration]);
 
 
 	useEffect(() => {
-		async function savePosition() {
-			savedPosition.current = position;
-
-			try {
-				const jsonValue = JSON.stringify(savedPosition.current);
-				await AsyncStorage.setItem('savedPosition', jsonValue);
-			} catch (e) {
-				// console.log(e);
-			}
+		async function storeSecPlayedAndPosition() {
+			await storeSecPlayed();
+			await storePosition();
 		}
-
-		async function saveSecPlayed() {
+		async function storeSecPlayed() {
 			if (isPlaying === true) {
 				secPlayed.current++;
-				console.log("Bottom bar", secPlayed.current);
-
 				try {
 					const jsonValue = JSON.stringify(secPlayed.current);
 					await AsyncStorage.setItem('secPlayed', jsonValue);
@@ -133,10 +123,17 @@ export default function RenderBottomBar() {
 				}
 			}
 		}
-
-		savePosition();
-		saveSecPlayed();
-	}, [position]);
+		async function storePosition() {
+			storedPosition.current = position;
+			try {
+				const jsonValue = JSON.stringify(storedPosition.current);
+				await AsyncStorage.setItem('storedPosition', jsonValue);
+			} catch (e) {
+				// console.log(e);
+			}
+		}
+		storeSecPlayedAndPosition();
+	}, [Math.floor(position)]);
 
 
 

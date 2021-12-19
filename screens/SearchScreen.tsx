@@ -23,7 +23,6 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 	const [query, setQuery] = useState('');
 	const [filteredMusicList, setFilteredMusicList] = useState<Music[]>([]);
 	const [isKeyboardShown, setIsKeyboardShown] = useState(false);
-	const [isScrolled, setIsScrelled] = useState(false);
 
 	const colorScheme = useColorScheme();
 	const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
@@ -97,7 +96,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 							<View>
 								<Text style={{
 									width: width,
-									fontSize: layout.width * 1.2,
+									fontSize: layout.width * 1.28,
 									fontWeight: 'bold',
 									marginLeft: width * 0.06,
 									marginTop: layout.height * 0.3,

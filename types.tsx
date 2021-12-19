@@ -59,6 +59,8 @@ export type History = Music & {
   reasonStart: "normal" | "selected" | "returned",
   reasonEnd: "normal" | "skipped",
   playedRatio: number,
+  secPlayed: number,
+  duration: number,
 }
 
 export type LibraryItem = {

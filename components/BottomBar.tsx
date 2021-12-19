@@ -42,6 +42,7 @@ export default function RenderBottomBar() {
 	const [trackInfo, setTrackInfo] = useState<Track>(blankTrack);
 	const [isPlaying, setIsPlaying] = useState(false);
 
+	const currentIndex = useRef(0);
 	const storedPosition = useRef(0);
 	const secPlayed = useRef(0);
 
@@ -89,7 +90,6 @@ export default function RenderBottomBar() {
 
 	useEffect(() => { // Fired when a new track is ready.
 		async function handlePlayNext() {
-			secPlayed.current = 0;
 			const trackPlayerIndex = await TrackPlayer.getCurrentTrack();
 
 			if (trackPlayerIndex > Player.currentIndex) {
@@ -98,7 +98,17 @@ export default function RenderBottomBar() {
 				}
 			}
 
-			Player.currentDuration = duration; // Update a new track duration.
+
+			if (trackPlayerIndex > currentIndex.current) {
+				currentIndex.current = trackPlayerIndex;
+				secPlayed.current = 0; // Update a new track duration.
+			}
+			else {
+				currentIndex.current = trackPlayerIndex;
+				secPlayed.current = 0;
+			}
+
+			Player.currentDuration = duration; 
 			setTrackInfo(Player.tracks[Player.currentIndex]);
 			Player.storeTracksStatus();
 		}

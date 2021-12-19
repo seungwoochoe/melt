@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, SectionList, useWindowDimensions, Alert } from 'react-native';
+import { TouchableOpacity, Dimensions, StatusBar, SectionList, useWindowDimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNFS from 'react-native-fs';
@@ -142,7 +142,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
               await AsyncStorage.removeItem('histories');
               await AsyncStorage.removeItem('tracks');
               await AsyncStorage.removeItem('musicSelection');
-              await AsyncStorage.removeItem('savedPosition');
+              await AsyncStorage.removeItem('storedPosition');
               await AsyncStorage.removeItem('secPlayed');
               Alert.alert("Success!");
             } catch (e) {

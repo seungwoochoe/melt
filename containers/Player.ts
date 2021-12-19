@@ -209,6 +209,8 @@ export default class Player {
 			reasonStart: Player.currentReasonStart,
 			reasonEnd: Player.currentReasonEnd,
 			playedRatio: playedRatio,
+			secPlayed: secPlayed,
+			duration: Player.currentDuration,
 		});
 
 		try {
@@ -224,11 +226,11 @@ export default class Player {
 				// reasonStart: element.reasonStart,
 				// reasonEnd: element.reasonEnd,
 				playedRatio: element.playedRatio,
-				secPlayed: secPlayed,
-				duration: Player.currentDuration,
+				secPlayed: element.secPlayed,
+				duration: element.duration,
 			}
 		));
-		console.table(log.slice(-5));
+		console.table(log);
 	}
 
 
@@ -259,4 +261,20 @@ export default class Player {
 			// console.log(e);
 		}
 	}
+
+
+
+
+	// -------------------------------------------------------------------------
+	// For Libraray screen
+	// static updateMostListenedMusic() {
+	// 	Player.histories.reduce((previousValue, currentValue) => {
+	// 		return (
+	// 			previousValue[currentValue.id] ? previousValue[currentValue.id] = "10" : "r"
+	// 		)
+	// 	}, {})
+
+
+	// }
+
 }

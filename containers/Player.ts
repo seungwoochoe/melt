@@ -243,9 +243,9 @@ export default class Player {
 	// For Search srceen.
 
 	static async updateMusicSelection(music: Music) {
-		const musicSelectionSize = 12;
+		const musicSelectionSize = Math.max(12, Math.floor(Player.musicList.length / 10));
 
-		if (Player.musicSelection.length === musicSelectionSize) {
+		while (Player.musicSelection.length > musicSelectionSize) {
 			Player.musicSelection.pop();
 		}
 

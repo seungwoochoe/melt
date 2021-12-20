@@ -139,7 +139,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
             }
             else if (item.title === "Delete history") {
               try {
-                await AsyncStorage.removeItem('histories');
+                await AsyncStorage.removeItem('historyList');
                 await AsyncStorage.removeItem('tracks');
                 await AsyncStorage.removeItem('musicSelection');
                 await AsyncStorage.removeItem('storedPosition');
@@ -147,7 +147,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
                 await AsyncStorage.removeItem('likedSongs');
                 Alert.alert("Success!");
               } catch (e) {
-                Alert.alert("Failed to delete histories");
+                Alert.alert("Failed to delete historyList");
               }
             }
             else if (item.title === "About") {

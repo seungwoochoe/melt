@@ -7,7 +7,7 @@ import Player from './containers/Player';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
-import { readMusicFiles, pruneStoredTracks, getStoredHistories, getStoredMusicSelection } from './containers/Reader';
+import { readMusicFiles, pruneStoredTracks, getStoredHistoryList, getStoredMusicSelection } from './containers/Reader';
 import { initializeWeights, complementTracks } from './containers/Creater';
 
 

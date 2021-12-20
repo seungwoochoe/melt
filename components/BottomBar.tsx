@@ -93,7 +93,7 @@ export default function RenderBottomBar() {
 			const trackPlayerIndex = await TrackPlayer.getCurrentTrack();
 
 			if (trackPlayerIndex > Player.currentIndex) {
-				if (Player.histories.length === 0 || Player.histories[Player.histories.length - 1].id !== trackInfo.id) {
+				if (Player.historyList.length === 0 || Player.historyList[Player.historyList.length - 1].id !== trackInfo.id) {
 					await Player.handlePlayNext();
 				}
 			}
@@ -111,6 +111,7 @@ export default function RenderBottomBar() {
 			Player.currentDuration = duration; 
 			setTrackInfo(Player.tracks[Player.currentIndex]);
 			Player.storeTracksStatus();
+			Player.updateMostPlayedMusic();
 		}
 
 		handlePlayNext();

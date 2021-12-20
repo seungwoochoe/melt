@@ -12,9 +12,11 @@ export default class Player {
 	static tracks: Track[] = [];
 	static currentIndex = 0;
 
-	static histories: History[] = [];
+	static historyList: History[] = [];
 	static musicSelection: Music[] = [];
 	static likedSongs: Music[] = [];
+	static mostPlayedSongs: Music[] = [];
+	static libraryItemsListSize = Math.max(12, Math.floor(Player.musicList.length / 10));
 
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";
@@ -144,12 +146,12 @@ export default class Player {
 			const skipToPreviousTrackThreshold = 5;
 
 			if (currentPosition < skipToPreviousTrackThreshold) {
-				if (Player.histories[Player.histories.length - 1].reasonEnd === "skipped") {
-					Player.histories.pop();
+				if (Player.historyList[Player.historyList.length - 1].reasonEnd === "skipped") {
+					Player.historyList.pop();
 
 					try { // Save pruned history.
-						const jsonValue = JSON.stringify(Player.histories);
-						await AsyncStorage.setItem('histories', jsonValue);
+						const jsonValue = JSON.stringify(Player.historyList);
+						await AsyncStorage.setItem('historyList', jsonValue);
 					} catch (e) {
 						// console.log(e);
 					}
@@ -199,7 +201,7 @@ export default class Player {
 			playedRatio = 1;
 		}
 
-		Player.histories.push({
+		Player.historyList.push({
 			endTime: Date.now(),
 			url: Player.tracks[Player.currentIndex].url,
 			title: Player.tracks[Player.currentIndex].title,
@@ -215,13 +217,13 @@ export default class Player {
 		});
 
 		try {
-			const jsonValue = JSON.stringify(Player.histories);
-			await AsyncStorage.setItem('histories', jsonValue);
+			const jsonValue = JSON.stringify(Player.historyList);
+			await AsyncStorage.setItem('historyList', jsonValue);
 		} catch (e) {
 			// console.log(e);
 		}
 
-		const log = Player.histories.map((element) => (
+		const log = Player.historyList.map((element) => (
 			{
 				title: element.title,
 				// reasonStart: element.reasonStart,
@@ -242,9 +244,7 @@ export default class Player {
 	// For Search srceen.
 
 	static async updateMusicSelection(music: Music) {
-		const musicSelectionSize = Math.max(12, Math.floor(Player.musicList.length / 10));
-
-		while (Player.musicSelection.length > musicSelectionSize) {
+		while (Player.musicSelection.length > Player.libraryItemsListSize) {
 			Player.musicSelection.pop();
 		}
 
@@ -268,14 +268,34 @@ export default class Player {
 
 	// -------------------------------------------------------------------------
 	// For Libraray screen
-	// static updateMostListenedMusic() {
-	// 	Player.histories.reduce((previousValue, currentValue) => {
-	// 		return (
-	// 			previousValue[currentValue.id] ? previousValue[currentValue.id] = "10" : "r"
-	// 		)
-	// 	}, {})
+	static updateMostPlayedMusic() {
+		const mostPlayedSongs: Music[] = [];
+		const stats: { id: string, playedAmount: number }[] = [];
 
+		for (const history of Player.historyList) {
+			const targetIndex = stats.findIndex(element => element.id === history.id)
 
-	// }
+			if (targetIndex === -1) {
+				stats.push({
+					id: history.id,
+					playedAmount: history.playedRatio,
+				})
+			}
+			else {
+				stats[targetIndex].playedAmount += history.playedRatio;
+			}
+		}
 
+		const sortedStats = stats.sort((a, b) => b.playedAmount - a.playedAmount);
+
+		for (let i = 0; i < Math.min(sortedStats.length, Player.libraryItemsListSize); i++) {
+			const targetMusic = Player.musicList.find((element) => element.id === sortedStats[i].id);
+
+			if (targetMusic != null) {
+				mostPlayedSongs.push(targetMusic);
+			}
+		}
+
+		Player.mostPlayedSongs = mostPlayedSongs;
+	}
 }

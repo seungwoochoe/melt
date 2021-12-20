@@ -202,7 +202,7 @@ export default function LibraryScreen({ navigation }: any) {
                   )
                 }}
 
-                data={Player.musicSelection}
+                data={Player.mostPlayedSongs}
                 renderItem={({ item }) => {
                   return (
                     <RenderSong item={item} colorScheme={colorScheme} />

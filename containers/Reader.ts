@@ -64,7 +64,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 							artist: metadata.tags.artist ?? "",
 							artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
 							miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
-							lyrics: metadata.tags.lyrics ?? "",
+							lyrics: metadata.tags.lyrics.lyrics ?? "",
 							isLiked: false,
 							id: id ?? file.path,
 						});
@@ -98,7 +98,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 						artist: metadata.tags.artist ?? "",
 						artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
 						miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
-						lyrics: metadata.tags.lyrics ?? "",
+						lyrics: metadata.tags.lyrics.lyrics ?? "",
 						isLiked: false,
 						id: id ?? file.path,
 					});
@@ -195,16 +195,16 @@ function pruneTracks(tracks: Track[]) {
 }
 
 
-export async function getStoredHistories() {
-	let histories: History[] = [];
+export async function getStoredHistoryList() {
+	let historyList: History[] = [];
 
 	try {
-		const jsonValue = await AsyncStorage.getItem('histories');
-		histories = jsonValue != null ? JSON.parse(jsonValue) : [];
+		const jsonValue = await AsyncStorage.getItem('historyList');
+		historyList = jsonValue != null ? JSON.parse(jsonValue) : [];
 	} catch (e) {
 		// console.log(e);
 	}
-	return histories;
+	return historyList;
 }
 
 

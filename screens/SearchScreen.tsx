@@ -11,12 +11,9 @@ import layout from '../constants/layout';
 import { Music } from '../types';
 import Player from '../containers/Player';
 import RenderSong from '../components/Song';
+import RenderSeparator from '../components/Separator';
 
 const { width, height } = Dimensions.get('screen');
-const marginBetweenAlbumartAndText = width * 0.029;
-const listHeightWithoutScale = width * 0.149;
-const bottomBarHeight = listHeightWithoutScale * 1.2;
-const marginHorizontal = width * 0.05;
 
 
 export default function SearchScreen({ navigation }: { navigation: any }) {
@@ -25,7 +22,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 	const [isKeyboardShown, setIsKeyboardShown] = useState(false);
 
 	const colorScheme = useColorScheme();
-	const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
+	const listHeight = layout.listHeightWithoutScale * useWindowDimensions().fontScale;
 
 	const keyExtractor = useCallback((item) => item.id, []);
 
@@ -140,26 +137,13 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 		)
 	};
 
-	const RenderSeparator = () => {
-		return (
-			<View
-				style={{
-					height: 1,
-					marginLeft: listHeightWithoutScale + marginBetweenAlbumartAndText + width * 0.045,
-					marginRight: width * 0.06,
-				}}
-				lightColor='#dfdfdf'
-				darkColor='#343434'
-			/>
-		)
-	};
 
 	const RenderBottomMargin = () => {
 		return (
 			<View style={{
-				height: isKeyboardShown ? 0 : bottomBarHeight * 0.99,
+				height: isKeyboardShown ? 0 : layout.bottomBarHeight * 0.99,
 				alignItems: 'center',
-				paddingTop: bottomBarHeight * 0.1
+				paddingTop: layout.bottomBarHeight * 0.1
 			}}
 			/>
 		)
@@ -186,7 +170,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 						alignItems: 'center',
 						height: layout.width * 2.15,
 						width: width * 0.72,
-						marginLeft: marginHorizontal,
+						marginLeft: layout.marginHorizontal,
 						paddingLeft: width * 0.03,
 						borderRadius: 11,
 						backgroundColor: colorScheme === 'light' ? Colors.light.searchbarBackground : Colors.dark.searchbarBackground,
@@ -284,9 +268,9 @@ const styles = StyleSheet.create({
 		width: width,
 	},
 	miniArt: {
-		width: listHeightWithoutScale * 0.88,
-		height: listHeightWithoutScale * 0.88,
-		margin: listHeightWithoutScale * 0.06,
+		width: layout.listHeightWithoutScale * 0.88,
+		height: layout.listHeightWithoutScale * 0.88,
+		margin: layout.listHeightWithoutScale * 0.06,
 		borderRadius: 4.5,
 	},
 	separator: {

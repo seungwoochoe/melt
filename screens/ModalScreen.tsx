@@ -172,7 +172,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
         {(height / width) > 2 &&
           <>
-            <View style={{ flex: .7, flexDirection: 'row' }}>
+            <View style={{ flex: .6, flexDirection: 'row' }}>
               <View style={{
                 width: width * 0.67,
                 flexDirection: 'row',

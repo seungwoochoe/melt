@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, Image, StatusBar, Animated, Platform, FlatList } from 'react-native';
+import { TouchableOpacity, Dimensions, Image, StatusBar, Animated, Platform, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { View, Text } from '../components/Themed';
@@ -19,7 +19,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
   const colorScheme = useColorScheme();
 
   return (
-    <View style={styles.container}>
+    <View style={{
+      flex: 1,
+      width: width,
+    }}>
 
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
@@ -50,10 +53,3 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: width,
-  },
-});

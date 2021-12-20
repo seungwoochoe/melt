@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import TrackPlayer, { Capability, Event } from 'react-native-track-player';
+import TrackPlayer, { Capability } from 'react-native-track-player';
 
 import { Music, WeightedMusic, Track, History } from "../types";
 import { complementTracks, getMoreTracks } from './Creater';
@@ -271,8 +271,11 @@ export default class Player {
 	static updateMostPlayedMusic() {
 		const mostPlayedSongs: Music[] = [];
 		const stats: { id: string, playedAmount: number }[] = [];
+		const historyList = Player.historyList;
+		
+		historyList.reverse(); // In order to dispaly recently songs first if there are songs with same playedAmount.
 
-		for (const history of Player.historyList) {
+		for (const history of historyList) {
 			const targetIndex = stats.findIndex(element => element.id === history.id)
 
 			if (targetIndex === -1) {

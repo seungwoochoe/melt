@@ -12,12 +12,10 @@ import Player from '../containers/Player';
 import RenderSong from '../components/Song';
 import { Music } from '../types';
 import { useIsFocused } from '@react-navigation/native';
+import RenderSeparator from '../components/Separator';
 
 const { width, height } = Dimensions.get('screen');
-const marginBetweenAlbumartAndText = width * 0.029;
-const listHeightWithoutScale = width * 0.149;
-const bottomBarHeight = listHeightWithoutScale * 1.2;
-const marginHorizontal = width * 0.05;
+
 
 
 export default function LibraryScreen({ navigation }: any) {
@@ -26,7 +24,7 @@ export default function LibraryScreen({ navigation }: any) {
 
   const colorScheme = useColorScheme();
   const isFocused = useIsFocused();
-  const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
+  const listHeight = layout.listHeightWithoutScale * useWindowDimensions().fontScale;
 
 
   const keyExtractor = useCallback((item) => item.title, []);
@@ -36,7 +34,7 @@ export default function LibraryScreen({ navigation }: any) {
     return (
       <TouchableOpacity
         onPress={() => { navigation.navigate(item.destination, item.data) }}
-        style={{ width: width - marginHorizontal, height: width / 7, marginLeft: width * 0.05 }}
+        style={{ width: width - layout.marginHorizontal, height: width / 7, marginLeft: width * 0.05 }}
       >
         <View style={{
           flex: 1,
@@ -77,7 +75,7 @@ export default function LibraryScreen({ navigation }: any) {
   }
 
 
-  const RenderSeparator = () => {
+  const RenderTopSeparator = () => {
     return (
       <View
         style={{
@@ -92,10 +90,19 @@ export default function LibraryScreen({ navigation }: any) {
   }
 
   const RenderBottomMargin = () => {
+    if (Player.mostPlayedSongs.length !== 0) {
+      return (
+        <>
+          <RenderSeparator />
+          <View style={{ height: layout.bottomBarHeight * 0.99, alignItems: 'center', paddingTop: layout.bottomBarHeight * 0.1 }} />
+        </>
+      )
+    }
     return (
-      <View style={{ height: bottomBarHeight * 0.99, alignItems: 'center', paddingTop: bottomBarHeight * 0.1 }} />
+      <View style={{ height: layout.bottomBarHeight * 0.99, alignItems: 'center', paddingTop: layout.bottomBarHeight * 0.1 }} />
     )
   }
+
 
 
   return (
@@ -138,8 +145,8 @@ export default function LibraryScreen({ navigation }: any) {
                     flexDirection: 'row',
                     alignItems: 'center',
                     height: layout.width * 2.6,
-                    width: width - marginHorizontal * 2,
-                    marginHorizontal: marginHorizontal,
+                    width: width - layout.marginHorizontal * 2,
+                    marginHorizontal: layout.marginHorizontal,
                     paddingLeft: width * 0.03,
                     borderRadius: 11,
                     backgroundColor: colorScheme === 'light' ? Colors.light.searchbarBackground : Colors.dark.searchbarBackground,
@@ -169,14 +176,14 @@ export default function LibraryScreen({ navigation }: any) {
           }
 
           renderItem={RenderTopLists}
-          ItemSeparatorComponent={RenderSeparator}
+          ItemSeparatorComponent={RenderTopSeparator}
           ListFooterComponent={() => {
             return (
               <FlatList
                 ListHeaderComponent={() => {
                   return (
                     <>
-                      <RenderSeparator />
+                      <RenderTopSeparator />
 
                       <Text style={{
                         width: width * 0.94,
@@ -208,6 +215,7 @@ export default function LibraryScreen({ navigation }: any) {
                     <RenderSong item={item} colorScheme={colorScheme} />
                   )
                 }}
+                ItemSeparatorComponent={RenderSeparator}
 
                 ListFooterComponent={RenderBottomMargin}
 
@@ -249,9 +257,9 @@ const styles = StyleSheet.create({
     width: width,
   },
   miniArt: {
-    width: listHeightWithoutScale * 0.88,
-    height: listHeightWithoutScale * 0.88,
-    margin: listHeightWithoutScale * 0.06,
+    width: layout.listHeightWithoutScale * 0.88,
+    height: layout.listHeightWithoutScale * 0.88,
+    margin: layout.listHeightWithoutScale * 0.06,
     borderRadius: 4.5,
   },
   separator: {

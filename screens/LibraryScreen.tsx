@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { View, Text } from '../components/Themed';
@@ -11,8 +11,8 @@ import RenderTitle from '../components/Title';
 import Player from '../containers/Player';
 import RenderSong from '../components/Song';
 import { Music } from '../types';
-import { useIsFocused } from '@react-navigation/native';
 import RenderSeparator from '../components/Separator';
+import { usePlaybackState } from 'react-native-track-player';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -20,12 +20,12 @@ const { width, height } = Dimensions.get('screen');
 
 export default function LibraryScreen({ navigation }: any) {
 
-  const [isScrolled, setIsScrelled] = useState(false);
-
+  const [isScrolled, setIsScrolled] = useState(false);
   const colorScheme = useColorScheme();
-  const isFocused = useIsFocused();
-  const listHeight = layout.listHeightWithoutScale * useWindowDimensions().fontScale;
 
+
+  const playbackState = usePlaybackState();
+  console.log("bbb");
 
   const keyExtractor = useCallback((item) => item.title, []);
   const keyExtractorForTheMostPlayedSongs = useCallback((item) => item.id, []);
@@ -94,12 +94,12 @@ export default function LibraryScreen({ navigation }: any) {
       return (
         <>
           <RenderSeparator />
-          <View style={{ height: layout.bottomBarHeight * 0.99, alignItems: 'center', paddingTop: layout.bottomBarHeight * 0.1 }} />
+          <View style={{ height: layout.bottomBarHeight * 0.975, alignItems: 'center', paddingTop: layout.bottomBarHeight * 0.1 }} />
         </>
       )
     }
     return (
-      <View style={{ height: layout.bottomBarHeight * 0.99, alignItems: 'center', paddingTop: layout.bottomBarHeight * 0.1 }} />
+      <View style={{ height: layout.bottomBarHeight * 0.975, alignItems: 'center', paddingTop: layout.bottomBarHeight * 0.1 }} />
     )
   }
 
@@ -170,13 +170,13 @@ export default function LibraryScreen({ navigation }: any) {
                 lightColor='#dfdfdf'
                 darkColor='#343434'
               />
-
-
             </View>
           }
 
           renderItem={RenderTopLists}
           ItemSeparatorComponent={RenderTopSeparator}
+
+
           ListFooterComponent={() => {
             return (
               <FlatList
@@ -203,7 +203,7 @@ export default function LibraryScreen({ navigation }: any) {
                   return (
                     <View style={{ height: height * 0.26, width: width, flexDirection: 'row', alignItems: 'center' }}>
                       <Text style={{ flex: 1, textAlign: 'center', fontSize: layout.width * 1.1, fontWeight: '400', color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
-                        Play your favourite songs
+                        Play the songs you love.
                       </Text>
                     </View>
                   )
@@ -216,6 +216,7 @@ export default function LibraryScreen({ navigation }: any) {
                   )
                 }}
                 ItemSeparatorComponent={RenderSeparator}
+                initialNumToRender={20}
 
                 ListFooterComponent={RenderBottomMargin}
 
@@ -230,11 +231,11 @@ export default function LibraryScreen({ navigation }: any) {
 
             if (scrollOffset < layout.width * 2.05) {
               if (isScrolled === true) {
-                setIsScrelled(false);
+                setIsScrolled(false);
               }
             } else {
               if (isScrolled === false) {
-                setIsScrelled(true);
+                setIsScrolled(true);
               }
             }
           }}

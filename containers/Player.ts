@@ -17,7 +17,7 @@ export default class Player {
 	static musicSelection: Music[] = [];
 	static likedSongs: Music[] = [];
 	static mostPlayedSongs: Music[] = [];
-	static libraryItemsListSize = Math.max(12, Math.floor(Player.musicList.length / 10));
+	static libraryItemsListSize = Math.min(20, Math.max(12, Math.floor(Player.musicList.length / 10)));
 
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";

@@ -32,7 +32,7 @@ export default function LikedSongsScreen({ navigation, route }: any) {
   const RenderNoResult = () => {
     return (
       <View style={{ height: height * 0.55, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
-        <Text style={{textAlign: 'center', lineHeight: layout.width * 1.5, fontSize: layout.width * 1.1, fontWeight: '500', color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
+        <Text style={{textAlign: 'center', lineHeight: layout.width * 1.5, fontSize: layout.width * 1.1, color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
           Songs that you marked{'\n'}with heart will appear here.
         </Text>
       </View>

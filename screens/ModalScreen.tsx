@@ -224,9 +224,9 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               >
                 <View style={{ alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', margin: layout.width * 0.7 }}>
-                    <Ionicons name='list-outline' size={bottomIconsSize} color={dullTheme} />
+                    <Ionicons name='repeat-outline' size={bottomIconsSize} color={dullTheme} />
                     <Text style={{ fontSize: layout.width * 0.9, color: dullTheme, marginLeft: layout.width * 0.3 }}>
-                      Up next
+                      Repeat
                     </Text>
                   </View>
                 </View>
@@ -261,7 +261,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 onPress={() => { }}
                 style={{ padding: layout.width * 0.6, }}
               >
-                <Ionicons name='list-outline' size={bottomIconsSize * 0.92} color={dullTheme} />
+                <Ionicons name='repeat-outline' size={bottomIconsSize * 0.95} color={dullTheme} />
               </TouchableOpacity>
 
               <TouchableOpacity

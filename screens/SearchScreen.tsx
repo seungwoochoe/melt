@@ -79,8 +79,8 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 				ListEmptyComponent={() => {
 					return (
 						<View style={{ height: height * 0.5, width: width, flexDirection: 'row', alignItems: 'center' }}>
-							<Text style={{ flex: 1, textAlign: 'center', fontSize: layout.width * 1.1, fontWeight: '400', color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text }}>
-								Search for songs and artists
+							<Text style={{ flex: 1, textAlign: 'center', fontSize: layout.width * 1.1, color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
+								Search for songs and artists.
 							</Text>
 						</View>
 					)

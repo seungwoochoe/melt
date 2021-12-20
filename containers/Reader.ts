@@ -52,6 +52,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 							artist: "",
 							artwork: defaultArtwork,
 							miniArt: defaultArtwork,
+							isLiked: false,
 							id: id ?? file.path,
 						});
 					}
@@ -62,6 +63,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 							artist: metadata.tags.artist ?? "",
 							artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
 							miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
+							isLiked: false,
 							id: id ?? file.path,
 						});
 					}
@@ -82,6 +84,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 						artist: "",
 						artwork: defaultArtwork,
 						miniArt: defaultArtwork,
+						isLiked: false,
 						id: id ?? file.path,
 					});
 				}
@@ -92,6 +95,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 						artist: metadata.tags.artist ?? "",
 						artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
 						miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
+						isLiked: false,
 						id: id ?? file.path,
 					});
 				}
@@ -210,4 +214,16 @@ export async function getStoredMusicSelection() {
 		// console.log(e);
 	}
 	return musicSelection;
+}
+
+export async function getStoredLikedSongs() {
+	let likedSongs: Music[] = [];
+
+	try {
+		const jsonValue = await AsyncStorage.getItem('likedSongs');
+		likedSongs = jsonValue != null ? JSON.parse(jsonValue) : [];
+	} catch (e) {
+		// console.log(e);
+	}
+	return likedSongs;
 }

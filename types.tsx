@@ -42,6 +42,7 @@ export type Music = {
   artist: string,
   artwork: string,
   miniArt: string,
+  isLiked: boolean,
   id: string,
 }
 

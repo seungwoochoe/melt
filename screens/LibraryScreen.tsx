@@ -10,6 +10,7 @@ import RenderHeader from '../components/Header';
 import RenderTitle from '../components/Title';
 import Player from '../containers/Player';
 import RenderSong from '../components/Song';
+import { Music } from '../types';
 
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
@@ -29,10 +30,10 @@ export default function LibraryScreen({ navigation }: any) {
   const keyExtractor = useCallback((item) => item.id, []);
 
 
-  const RenderTopLists = ({ title, iconName, iconScale, isTop, destination }: { title: string, iconName: string, iconScale: number, isTop: boolean, destination: string }) => {
+  const RenderTopLists = ({ title, iconName, iconScale, isTop, destination, data }: { title: string, iconName: string, iconScale: number, isTop: boolean, destination: string, data: Music[] }) => {
     return (
       <TouchableOpacity
-        onPress={() => { navigation.navigate(destination) }}
+        onPress={() => { navigation.navigate(destination, data) }}
         style={{ width: width - marginHorizontal, height: width / 7, marginLeft: width * 0.05 }}
       >
         <View style={{
@@ -133,8 +134,8 @@ export default function LibraryScreen({ navigation }: any) {
               </TouchableOpacity>
 
 
-              <RenderTopLists title='All songs' iconName='musical-note' iconScale={1.6} isTop={true} destination='AllSongsScreen' />
-              <RenderTopLists title='Liked songs' iconName='heart' iconScale={1.3} isTop={false} destination='LikedSongsScreen' />
+              <RenderTopLists title='All songs' iconName='musical-note' iconScale={1.6} isTop={true} destination='AllSongsScreen' data={Player.musicList} />
+              <RenderTopLists title='Liked songs' iconName='heart' iconScale={1.3} isTop={false} destination='LikedSongsScreen' data={Player.likedSongs} />
             </View>
           }
 

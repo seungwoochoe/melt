@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 
 import Player from '../containers/Player';
-import { readMusicFiles, pruneStoredTracks, getStoredHistories, getStoredMusicSelection } from '../containers/Reader';
+import { readMusicFiles, pruneStoredTracks, getStoredHistories, getStoredMusicSelection, getStoredLikedSongs } from '../containers/Reader';
 import { initializeWeights, complementTracks } from '../containers/Creater';
 
 const { width } = Dimensions.get('screen');
@@ -31,6 +31,7 @@ export default function useCachedResources() {
         Player.musicList = await readMusicFiles(artworkSize, miniArtSize);
         Player.histories = await getStoredHistories();
         Player.musicSelection = await getStoredMusicSelection();
+        Player.likedSongs = await getStoredLikedSongs();
         Player.weightedMusicList = initializeWeights(Player.musicList);
 
         if (Player.musicList.length === 0) {

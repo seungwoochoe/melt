@@ -18,10 +18,8 @@ const defaultMiniArt = require('../assets/images/blank.png');
 export default function RenderSong({ item, colorScheme }: { item: Music, colorScheme: string }) {
 
 	const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
-	const route = useRoute();
 
-	console.log(route.name);
-
+	
 	return (
 		<TouchableOpacity
 			onPress={async () => {

@@ -19,7 +19,7 @@ const listHeight = width * 0.16;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.1;
 const defaultMiniArt = require('../assets/images/blank.png');
-const blankTrack: Track = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, id: 'blankTrack', isPlayed: false, isTrigger: false };
+const blankTrack: Track = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, isLiked: false, id: 'blankTrack', isPlayed: false, isTrigger: false };
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {

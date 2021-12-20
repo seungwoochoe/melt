@@ -206,6 +206,7 @@ export default class Player {
 			artist: Player.tracks[Player.currentIndex].artist,
 			artwork: Player.tracks[Player.currentIndex].artwork,
 			miniArt: Player.tracks[Player.currentIndex].miniArt,
+			isLiked: Player.tracks[Player.currentIndex].isLiked,
 			id: Player.tracks[Player.currentIndex].id,
 			reasonStart: Player.currentReasonStart,
 			reasonEnd: Player.currentReasonEnd,

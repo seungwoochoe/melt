@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Dimensions, StatusBar, Platform, TextInput, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -7,8 +7,8 @@ import Colors from '../constants/Colors';
 import layout from '../constants/layout';
 import RenderHeader from '../components/Header';
 import RenderTitle from '../components/Title';
-import Player from '../containers/Player';
 import RenderSong from '../components/Song';
+import { useIsFocused } from '@react-navigation/native';
 
 
 const { width, height } = Dimensions.get('screen');
@@ -16,14 +16,15 @@ const marginBetweenAlbumartAndText = width * 0.029;
 const listHeightWithoutScale = width * 0.16;
 const bottomBarHeight = listHeightWithoutScale * 1.121;
 
-const data = Player.likedSongs;
 
+export default function LikedSongsScreen({ navigation, route }: any) {
+  const data = route.params;
+  const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
 
-export default function LikedSongsScreen({ navigation }: any) {
   const [isScrolled, setIsScrelled] = useState(false);
 
   const colorScheme = useColorScheme();
-  const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
+  const isFocused = useIsFocused();
 
   const keyExtractor = useCallback((item) => item.id, []);
 

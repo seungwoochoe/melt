@@ -14,6 +14,7 @@ export default class Player {
 
 	static histories: History[] = [];
 	static musicSelection: Music[] = [];
+	static likedSongs: Music[] = [];
 
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";
@@ -194,7 +195,7 @@ export default class Player {
 		}
 
 		let playedRatio = secPlayed / Player.currentDuration;
-		if (0.95 < playedRatio && playedRatio < 1.05) {
+		if (Math.abs(secPlayed - Player.currentDuration) < 7) {
 			playedRatio = 1;
 		}
 

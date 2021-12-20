@@ -16,7 +16,7 @@ const darkFilter = 'rgba(0, 0, 0, 0.5)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
 // const blurRadius = 16700000 / Math.pow(height, 1.8);
-const blurRadius = 11000000 / Math.pow(height, 1.8);
+const blurRadius = 16000000 / Math.pow(height, 1.8);
 const defaultArtwork = require('../assets/images/blank.png');
 
 

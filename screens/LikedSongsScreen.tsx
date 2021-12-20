@@ -16,8 +16,10 @@ const marginBetweenAlbumartAndText = width * 0.029;
 const listHeightWithoutScale = width * 0.16;
 const bottomBarHeight = listHeightWithoutScale * 1.121;
 
+const data = Player.likedSongs;
 
-export default function SongsScreen({ navigation }: any) {
+
+export default function LikedSongsScreen({ navigation }: any) {
   const [isScrolled, setIsScrelled] = useState(false);
 
   const colorScheme = useColorScheme();
@@ -30,9 +32,9 @@ export default function SongsScreen({ navigation }: any) {
 
   const RenderNoResult = () => {
     return (
-      <View style={{ height: height * 0.35, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
-        <Text style={{ fontSize: layout.width * 1.2, color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
-          No results
+      <View style={{ height: height * 0.55, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
+        <Text style={{textAlign: 'center', lineHeight: layout.width * 1.5, fontSize: layout.width * 1.1, fontWeight: '500', color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
+          Songs that you marked{'\n'}with heart will appear here.
         </Text>
       </View>
     )
@@ -53,7 +55,7 @@ export default function SongsScreen({ navigation }: any) {
   }
 
   const RenderBottomMargin = () => {
-    if (Player.musicList.length !== 0) {
+    if (data.length !== 0) {
       return (
         <>
           <RenderSeparator />
@@ -84,12 +86,12 @@ export default function SongsScreen({ navigation }: any) {
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
-          data={Player.musicList}
+          data={data}
           ListEmptyComponent={RenderNoResult}
           // stickyHeaderIndices={[0]}
           ListHeaderComponent={
             <View style={{ marginBottom: layout.width }}>
-              <RenderTitle title='Songs' />
+              <RenderTitle title='Liked songs' />
             </View>
           }
           ItemSeparatorComponent={RenderSeparator}
@@ -121,7 +123,7 @@ export default function SongsScreen({ navigation }: any) {
         />
       </View>
 
-      <RenderHeader title='Songs' blur={isScrolled} />
+      <RenderHeader title='Liked songs' blur={isScrolled} />
 
     </KeyboardAvoidingView>
   );

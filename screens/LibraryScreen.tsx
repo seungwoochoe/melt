@@ -29,7 +29,7 @@ export default function LibraryScreen({ navigation }: any) {
   const keyExtractor = useCallback((item) => item.id, []);
 
 
-  const RenderTopLists = ({title, iconName, iconScale, isTop, destination}: {title: string, iconName: string, iconScale: number, isTop: boolean, destination: string}) => {
+  const RenderTopLists = ({ title, iconName, iconScale, isTop, destination }: { title: string, iconName: string, iconScale: number, isTop: boolean, destination: string }) => {
     return (
       <TouchableOpacity
         onPress={() => { navigation.navigate(destination) }}
@@ -42,7 +42,7 @@ export default function LibraryScreen({ navigation }: any) {
           backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
           borderTopWidth: isTop ? .5 : 0,
           borderBottomWidth: .5,
-          borderColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
+          borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,
         }}
         >
           <Ionicons
@@ -66,16 +66,6 @@ export default function LibraryScreen({ navigation }: any) {
     )
   }
 
-
-  const RenderNoResult = ({ text }: { text: string }) => {
-    return (
-      <View style={{ height: height * 0.35, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
-        <Text style={{ fontSize: layout.width * 1.2, color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
-          {text}
-        </Text>
-      </View>
-    )
-  }
 
   const RenderSeparator = () => {
     return (
@@ -114,35 +104,40 @@ export default function LibraryScreen({ navigation }: any) {
               <TouchableOpacity
                 onPress={() => { navigation.navigate("SearchScreen") }}
                 style={{
-                  alignSelf: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: layout.width * 2.4,
-                  width: width - marginHorizontal * 2,
-                  marginHorizontal: marginHorizontal,
-                  paddingLeft: width * 0.03,
                   marginTop: layout.width * 0.5,
-                  marginBottom: layout.width,
-                  borderRadius: 11,
-                  backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
+                    paddingBottom: layout.width,
+                    // marginBottom: layout.width,
                 }}>
-                <Ionicons name="search-outline" size={layout.width * 1.15} color={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3} />
-                <Text style={{
-                  marginLeft: width * 0.02,
-                  fontSize: layout.width * 1.03,
-                  color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
-                }}
-                >
-                  Songs or artists
-                </Text>
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    height: layout.width * 2.6,
+                    width: width - marginHorizontal * 2,
+                    marginHorizontal: marginHorizontal,
+                    paddingLeft: width * 0.03,
+                    borderRadius: 11,
+                    backgroundColor: colorScheme === 'light' ? Colors.light.searchbarBackground : Colors.dark.searchbarBackground,
+                  }}>
+                  <Ionicons name="search-outline" size={layout.width * 1.2} color={colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor} />
+                  <Text style={{
+                    marginLeft: width * 0.02,
+                    fontSize: layout.width * 1.1,
+                    color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
+                  }}
+                  >
+                    Songs or artists
+                  </Text>
+                </View>
               </TouchableOpacity>
 
-              <RenderTopLists title='Songs' iconName='musical-note' iconScale={1.6} isTop={true} destination='SongsScreen'/>
-              <RenderTopLists title='Liked' iconName='heart' iconScale={1.3} isTop={false} destination='SongsScreen'/>
+
+              <RenderTopLists title='All songs' iconName='musical-note' iconScale={1.6} isTop={true} destination='AllSongsScreen' />
+              <RenderTopLists title='Liked songs' iconName='heart' iconScale={1.3} isTop={false} destination='LikedSongsScreen' />
             </View>
           }
 
-          // ListEmptyComponent={<RenderNoResult text="Welcome!" />}
           renderItem={({ item }) => <RenderSong item={item} colorScheme={colorScheme} />}
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderBottomMargin}

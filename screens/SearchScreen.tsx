@@ -191,15 +191,15 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 						marginLeft: marginHorizontal,
 						paddingLeft: width * 0.03,
 						borderRadius: 11,
-						backgroundColor: colorScheme === 'light' ? Colors.light.text4 : Colors.dark.text4,
+						backgroundColor: colorScheme === 'light' ? Colors.light.searchbarBackground : Colors.dark.searchbarBackground,
 					}}>
-						<Ionicons name="search-outline" size={layout.width * 1.15} color={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3} />
+						<Ionicons name="search-outline" size={layout.width * 1.15} color={colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor} />
 						<TextInput
 							autoFocus={true}
 							autoCapitalize='none'
 							autoCorrect={false}
 							placeholder="Search"
-							placeholderTextColor={colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3}
+							placeholderTextColor={colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor}
 							clearButtonMode='always'
 							underlineColorAndroid='transparent'
 							value={query}

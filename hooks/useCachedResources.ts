@@ -10,7 +10,7 @@ import { initializeWeights, complementTracks } from '../containers/Creater';
 
 const { width } = Dimensions.get('screen');
 const artworkSize = Math.floor(width * 1.8);
-const miniArtSize = width * 0.26;
+const miniArtSize = width * 0.4;
 
 
 export default function useCachedResources() {

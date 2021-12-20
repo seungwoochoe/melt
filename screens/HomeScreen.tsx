@@ -35,7 +35,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
           width: width * 0.9,
           alignSelf: 'center',
           alignItems: 'center',
-          backgroundColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
+          backgroundColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,
           borderRadius: 12,
           marginTop: 20,
         }}

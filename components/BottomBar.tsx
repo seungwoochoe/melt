@@ -17,7 +17,7 @@ import Player from '../containers/Player';
 const { width, height } = Dimensions.get('screen');
 const listHeight = width * 0.16;
 const marginBetweenAlbumartAndText = width * 0.029;
-const bottomBarHeight = listHeight * 1.12;
+const bottomBarHeight = listHeight * 1.1;
 const defaultMiniArt = require('../assets/images/blank.png');
 const blankTrack: Track = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, id: 'blankTrack', isPlayed: false, isTrigger: false };
 
@@ -103,7 +103,7 @@ export default function RenderBottomBar() {
 				currentIndex.current = trackPlayerIndex;
 				secPlayed.current = 0; // Update a new track duration.
 			}
-			else {
+			else if (trackPlayerIndex < currentIndex.current) {
 				currentIndex.current = trackPlayerIndex;
 				secPlayed.current = 0;
 			}
@@ -159,6 +159,8 @@ export default function RenderBottomBar() {
 				left: 0,
 				right: 0,
 				bottom: tabBarHeight,
+				borderTopWidth: 0.5,
+				borderTopColor: colorScheme === 'light' ? Colors.light.borderLightColor : Colors.dark.borderLightColor,
 			}}
 		>
 			<View style={{ width: width * 0.69, backgroundColor: 'transparent' }}>
@@ -181,7 +183,7 @@ export default function RenderBottomBar() {
 								margin: listHeight * 0.09,
 								borderRadius: 3,
 								borderWidth: 0.1,
-								borderColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
+								borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,
 							}}
 						/>
 					</View>
@@ -220,7 +222,7 @@ export default function RenderBottomBar() {
 				>
 					<Ionicons
 						name="play-forward"
-						size={layout.width * 1.75}
+						size={layout.width * 1.74}
 						color={colorScheme === "light" ? (trackInfo.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (trackInfo.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
 					/>
 				</TouchableOpacity>

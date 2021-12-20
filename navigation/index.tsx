@@ -17,7 +17,8 @@ import ModalScreen from '../screens/ModalScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LibraryScreen from '../screens/LibraryScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import SongsScreen from '../screens/SongsScreen';
+import AllSongsScreen from '../screens/AllSongsScreen';
+import LikedSongsScreen from '../screens/LikedSongsScreen';
 import RenderBottomBar from '../components/BottomBar';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -145,7 +146,8 @@ function LibraryScreenNavigator() {
     <Stack.Navigator  
     screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LibraryScreen" component={LibraryScreen} />
-      <Stack.Screen name="SongsScreen" component={SongsScreen} />
+      <Stack.Screen name="AllSongsScreen" component={AllSongsScreen} />
+      <Stack.Screen name="LikedSongsScreen" component={LikedSongsScreen} />
       <Stack.Screen name="SearchScreen" component={SearchScreen} options={{cardStyleInterpolator: forFade}} />
     </Stack.Navigator >
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Keyboard, Dimensions, Image, useWindowDimensions } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
 import { View, Text } from '../components/Themed';
 import Colors from '../constants/Colors';
@@ -13,9 +14,13 @@ const listHeightWithoutScale = width * 0.16;
 const marginHorizontal = width * 0.05;
 const defaultMiniArt = require('../assets/images/blank.png');
 
+
 export default function RenderSong({ item, colorScheme }: { item: Music, colorScheme: string }) {
 
 	const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
+	const route = useRoute();
+
+	console.log(route.name);
 
 	return (
 		<TouchableOpacity
@@ -39,7 +44,7 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 						margin: listHeightWithoutScale * 0.085,
 						borderRadius: 3,
 						borderWidth: 0.15,
-						borderColor: colorScheme === 'light' ? Colors.light.text3 : Colors.dark.text3,
+						borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,
 					}}
 				/>
 			</View>

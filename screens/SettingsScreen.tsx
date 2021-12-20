@@ -68,13 +68,13 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
           position: '',
         },
         {
-          title: 'Delete histories',
+          title: 'Delete history',
           iconName: 'lock-closed',
           iconBackgroundColor: '#63c065',
           position: '',
         },
         {
-          title: 'Remove stored music list',
+          title: 'Delete image data',
           iconName: 'download',
           iconBackgroundColor: 'grey',
           position: 'bottom',
@@ -128,7 +128,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
       >
         <TouchableOpacity 
         onPress={async () => {
-          if (item.title === "Remove stored music list") {
+          if (item.title === "Delete image data") {
             try {
               await AsyncStorage.removeItem('musicList');
               await RNFS.unlink(RNFS.DocumentDirectoryPath + '/assets');
@@ -137,7 +137,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
               Alert.alert("Failed to remove the folder");
             }
           }
-          else if (item.title === "Delete histories") {
+          else if (item.title === "Delete history") {
             try {
               await AsyncStorage.removeItem('histories');
               await AsyncStorage.removeItem('tracks');

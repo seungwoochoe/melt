@@ -204,7 +204,6 @@ export default class Player {
 			url: Player.tracks[Player.currentIndex].url,
 			title: Player.tracks[Player.currentIndex].title,
 			artist: Player.tracks[Player.currentIndex].artist,
-			artwork: Player.tracks[Player.currentIndex].artwork,
 			miniArt: Player.tracks[Player.currentIndex].miniArt,
 			isLiked: Player.tracks[Player.currentIndex].isLiked,
 			id: Player.tracks[Player.currentIndex].id,

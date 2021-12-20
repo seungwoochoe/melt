@@ -52,6 +52,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 							artist: "",
 							artwork: defaultArtwork,
 							miniArt: defaultArtwork,
+							lyrics: "",
 							isLiked: false,
 							id: id ?? file.path,
 						});
@@ -63,6 +64,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 							artist: metadata.tags.artist ?? "",
 							artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
 							miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
+							lyrics: metadata.tags.lyrics ?? "",
 							isLiked: false,
 							id: id ?? file.path,
 						});
@@ -84,6 +86,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 						artist: "",
 						artwork: defaultArtwork,
 						miniArt: defaultArtwork,
+						lyrics: "",
 						isLiked: false,
 						id: id ?? file.path,
 					});
@@ -95,6 +98,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 						artist: metadata.tags.artist ?? "",
 						artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
 						miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
+						lyrics: metadata.tags.lyrics ?? "",
 						isLiked: false,
 						id: id ?? file.path,
 					});

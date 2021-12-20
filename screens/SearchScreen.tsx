@@ -93,19 +93,17 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 				ListHeaderComponent={() => {
 					if (Player.musicSelection.length !== 0) {
 						return (
-							<View>
-								<Text style={{
-									width: width,
-									fontSize: layout.width * 1.28,
-									fontWeight: 'bold',
-									marginLeft: width * 0.06,
-									marginTop: layout.height * 0.3,
-									marginBottom: layout.height * 0.6,
-									color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text,
-								}}>
-									Your recent selections
-								</Text>
-							</View>
+							<Text style={{
+								width: width,
+								fontSize: layout.width * 1.28,
+								fontWeight: 'bold',
+								marginLeft: width * 0.06,
+								marginTop: layout.height * 0.3,
+								marginBottom: layout.height * 0.6,
+								color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text,
+							}}>
+								Your recent selections
+							</Text>
 						)
 					}
 					else {
@@ -239,7 +237,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 
 					ListHeaderComponent={() => {
 						return (
-							<View style={{height: layout.height}} />
+							<View style={{ height: layout.height }} />
 						)
 					}}
 

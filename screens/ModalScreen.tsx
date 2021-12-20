@@ -130,11 +130,11 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 // console.log(e);
               }
             }}
-            style={{ padding: layout.width * 0.4 }}
+            style={{ padding: Player.musicList.find(element => element.id === track.current.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3, }}
           >
             <Ionicons
               name={Player.musicList.find(element => element.id === track.current.id)?.isLiked ? 'heart' : 'heart-outline'}
-              size={bottomIconsSize * 0.98}
+              size={Player.musicList.find(element => element.id === track.current.id)?.isLiked ? bottomIconsSize * 0.9 : bottomIconsSize * 0.98}
               color={dullTheme}
             />
           </TouchableOpacity>

@@ -19,7 +19,7 @@ const listHeight = width * 0.16;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.1;
 const defaultMiniArt = require('../assets/images/blank.png');
-const blankTrack: Track = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, isLiked: false, id: 'blankTrack', isPlayed: false, isTrigger: false };
+const blankTrack: Track = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, lyrics: "", isLiked: false, id: 'blankTrack', isPlayed: false, isTrigger: false };
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -178,9 +178,9 @@ export default function RenderBottomBar() {
 						<Image
 							source={typeof trackInfo.miniArt !== "string" ? defaultMiniArt : { uri: trackInfo.miniArt }}
 							style={{
-								width: listHeight * 0.82,
-								height: listHeight * 0.82,
-								margin: listHeight * 0.09,
+								width: listHeight * 0.83,
+								height: listHeight * 0.83,
+								margin: listHeight * 0.085,
 								borderRadius: 3,
 								borderWidth: 0.1,
 								borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,

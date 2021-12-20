@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions, Alert } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { View, Text } from '../components/Themed';
@@ -11,6 +11,7 @@ import RenderTitle from '../components/Title';
 import Player from '../containers/Player';
 import RenderSong from '../components/Song';
 import { Music } from '../types';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
@@ -24,16 +25,17 @@ export default function LibraryScreen({ navigation }: any) {
   const [isScrolled, setIsScrelled] = useState(false);
 
   const colorScheme = useColorScheme();
+  const isFocused = useIsFocused();
   const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
 
 
-  const keyExtractor = useCallback((item) => item.id, []);
+  const keyExtractor = useCallback((item) => item.title, []);
+  const keyExtractorForTheMostPlayedSongs = useCallback((item) => item.id, []);
 
-
-  const RenderTopLists = ({ title, iconName, iconScale, isTop, destination, data }: { title: string, iconName: string, iconScale: number, isTop: boolean, destination: string, data: Music[] }) => {
+  const RenderTopLists = ({ item }: { item: { title: string, iconName: string, iconScale: number, destination: string, data: Music[] } }) => {
     return (
       <TouchableOpacity
-        onPress={() => { navigation.navigate(destination, data) }}
+        onPress={() => { navigation.navigate(item.destination, item.data) }}
         style={{ width: width - marginHorizontal, height: width / 7, marginLeft: width * 0.05 }}
       >
         <View style={{
@@ -41,26 +43,33 @@ export default function LibraryScreen({ navigation }: any) {
           flexDirection: 'row',
           alignItems: 'center',
           backgroundColor: colorScheme === 'light' ? Colors.light.background : Colors.dark.background,
-          borderTopWidth: isTop ? .5 : 0,
-          borderBottomWidth: .5,
-          borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,
         }}
         >
           <Ionicons
-            name={iconName}
-            size={layout.width * iconScale}
-            color={colorScheme === 'dark' ? Colors.dark.text : Colors.light.text}
-            style={{ marginLeft: width * 0.03 }}
+            name={item.iconName}
+            size={layout.width * item.iconScale}
+            // color={colorScheme === 'dark' ? Colors.dark.text : Colors.light.text}
+            color='#145da0'
+            style={{ width: width * 0.1, marginLeft: width * 0.03 }}
           />
-          <Text style={{ fontSize: layout.width * 1.1, marginLeft: layout.width * 0.5 }}>
-            {title}
+          <Text style={{ fontSize: layout.width * 1.1, }}>
+            {item.title}
           </Text>
           <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight: width * 0.03 }}>
-            <Ionicons
-              name='chevron-forward-outline'
-              size={layout.width * 1.5}
-              color={colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2}
-            />
+            <View style={{ flex: .99, flexDirection: 'row', alignItems: 'center', }}>
+              <Text style={{
+                fontSize: layout.width * 0.85,
+                color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
+                marginRight: layout.width * 0.2,
+              }}>
+                {item.data.length}
+              </Text>
+              <Ionicons
+                name='chevron-forward-outline'
+                size={layout.width * 1.32}
+                color={colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor}
+              />
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -73,8 +82,8 @@ export default function LibraryScreen({ navigation }: any) {
       <View
         style={{
           height: 1,
-          marginLeft: listHeightWithoutScale + marginBetweenAlbumartAndText + width * 0.045,
-          marginRight: width * 0.06,
+          marginLeft: width * 0.05,
+          width: width * 0.95,
         }}
         lightColor='#dfdfdf'
         darkColor='#343434'
@@ -96,7 +105,22 @@ export default function LibraryScreen({ navigation }: any) {
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <FlatList
-          data={Player.musicSelection}
+          data={[
+            {
+              title: "All songs",
+              iconName: 'musical-note',
+              iconScale: 1.6,
+              destination: 'AllSongsScreen',
+              data: Player.musicList,
+            },
+            {
+              title: "Liked songs",
+              iconName: 'heart',
+              iconScale: 1.3,
+              destination: 'LikedSongsScreen',
+              data: Player.likedSongs,
+            }
+          ]}
 
           ListHeaderComponent={
             <View>
@@ -106,8 +130,7 @@ export default function LibraryScreen({ navigation }: any) {
                 onPress={() => { navigation.navigate("SearchScreen") }}
                 style={{
                   marginTop: layout.width * 0.5,
-                    paddingBottom: layout.width,
-                    // marginBottom: layout.width,
+                  paddingBottom: layout.width,
                 }}>
                 <View
                   style={{
@@ -126,22 +149,73 @@ export default function LibraryScreen({ navigation }: any) {
                     marginLeft: width * 0.02,
                     fontSize: layout.width * 1.1,
                     color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
-                  }}
-                  >
+                  }}>
                     Songs or artists
                   </Text>
                 </View>
               </TouchableOpacity>
+              <View
+                style={{
+                  height: 1,
+                  marginLeft: width * 0.05,
+                  width: width * 0.95,
+                }}
+                lightColor='#dfdfdf'
+                darkColor='#343434'
+              />
 
 
-              <RenderTopLists title='All songs' iconName='musical-note' iconScale={1.6} isTop={true} destination='AllSongsScreen' data={Player.musicList} />
-              <RenderTopLists title='Liked songs' iconName='heart' iconScale={1.3} isTop={false} destination='LikedSongsScreen' data={Player.likedSongs} />
             </View>
           }
 
-          renderItem={({ item }) => <RenderSong item={item} colorScheme={colorScheme} />}
+          renderItem={RenderTopLists}
           ItemSeparatorComponent={RenderSeparator}
-          ListFooterComponent={RenderBottomMargin}
+          ListFooterComponent={() => {
+            return (
+              <FlatList
+                ListHeaderComponent={() => {
+                  return (
+                    <>
+                      <RenderSeparator />
+
+                      <Text style={{
+                        width: width * 0.94,
+                        fontSize: layout.width * 1.28,
+                        fontWeight: 'bold',
+                        marginLeft: width * 0.06,
+                        marginTop: layout.height * 1.5,
+                        marginBottom: layout.height * 0.6,
+                        color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text,
+                      }}>
+                        Most played songs
+                      </Text>
+                    </>
+                  )
+                }}
+                ListEmptyComponent={() => {
+                  return (
+                    <View style={{ height: height * 0.26, width: width, flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={{ flex: 1, textAlign: 'center', fontSize: layout.width * 1.1, fontWeight: '400', color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
+                        Play your favourite songs
+                      </Text>
+                    </View>
+                  )
+                }}
+
+                data={Player.musicSelection}
+                renderItem={({ item }) => {
+                  return (
+                    <RenderSong item={item} colorScheme={colorScheme} />
+                  )
+                }}
+
+                ListFooterComponent={RenderBottomMargin}
+
+                keyExtractor={keyExtractorForTheMostPlayedSongs}
+              />
+            )
+          }}
+
 
           onScroll={(event) => {
             const scrollOffset = event.nativeEvent.contentOffset.y;
@@ -158,12 +232,8 @@ export default function LibraryScreen({ navigation }: any) {
           }}
 
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps='handled'
           scrollEnabled={true}
           keyExtractor={keyExtractor}
-          getItemLayout={(data, index) => (
-            { length: listHeight + 1, offset: (listHeight + 1) * index, index }
-          )}
         />
       </View>
 

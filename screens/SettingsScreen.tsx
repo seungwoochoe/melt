@@ -126,44 +126,45 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
       <View
         style={{ width: width, height: itemHeight, backgroundColor: 'transparent' }}
       >
-        <TouchableOpacity 
-        onPress={async () => {
-          if (item.title === "Delete image data") {
-            try {
-              await AsyncStorage.removeItem('musicList');
-              await RNFS.unlink(RNFS.DocumentDirectoryPath + '/assets');
-              Alert.alert("Success!");
-            } catch (e) {
-              Alert.alert("Failed to remove the folder");
+        <TouchableOpacity
+          onPress={async () => {
+            if (item.title === "Delete image data") {
+              try {
+                await AsyncStorage.removeItem('musicList');
+                await RNFS.unlink(RNFS.DocumentDirectoryPath + '/assets');
+                Alert.alert("Success!");
+              } catch (e) {
+                Alert.alert("Failed to remove the folder");
+              }
             }
-          }
-          else if (item.title === "Delete history") {
-            try {
-              await AsyncStorage.removeItem('histories');
-              await AsyncStorage.removeItem('tracks');
-              await AsyncStorage.removeItem('musicSelection');
-              await AsyncStorage.removeItem('storedPosition');
-              await AsyncStorage.removeItem('secPlayed');
-              Alert.alert("Success!");
-            } catch (e) {
-              Alert.alert("Failed to delete histories");
+            else if (item.title === "Delete history") {
+              try {
+                await AsyncStorage.removeItem('histories');
+                await AsyncStorage.removeItem('tracks');
+                await AsyncStorage.removeItem('musicSelection');
+                await AsyncStorage.removeItem('storedPosition');
+                await AsyncStorage.removeItem('secPlayed');
+                await AsyncStorage.removeItem('likedSongs');
+                Alert.alert("Success!");
+              } catch (e) {
+                Alert.alert("Failed to delete histories");
+              }
             }
-          }
-          else if (item.title === "About") {
-            console.log(RNFS.DocumentDirectoryPath);
-          }
-        }}
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          marginHorizontal: marginHorizontal,
-          alignItems: 'center',
-          backgroundColor: colorScheme === 'light' ? '#fff' : '#1a1a1c',
-          borderTopLeftRadius: item.position === 'top' ? borderRadius : 0,
-          borderTopRightRadius: item.position === 'top' ? borderRadius : 0,
-          borderBottomLeftRadius: item.position === 'bottom' ? borderRadius : 0,
-          borderBottomRightRadius: item.position === 'bottom' ? borderRadius : 0,
-        }}
+            else if (item.title === "About") {
+              console.log(RNFS.DocumentDirectoryPath);
+            }
+          }}
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            marginHorizontal: marginHorizontal,
+            alignItems: 'center',
+            backgroundColor: colorScheme === 'light' ? '#fff' : '#1a1a1c',
+            borderTopLeftRadius: item.position === 'top' ? borderRadius : 0,
+            borderTopRightRadius: item.position === 'top' ? borderRadius : 0,
+            borderBottomLeftRadius: item.position === 'bottom' ? borderRadius : 0,
+            borderBottomRightRadius: item.position === 'bottom' ? borderRadius : 0,
+          }}
         >
           <View style={{
             width: itemHeightWithoutScale * 0.65,
@@ -206,14 +207,16 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
     return (
       <View style={{ backgroundColor: 'transparent', flexDirection: 'row' }}>
         <View style={{
-          height: .55,
+          height: .52,
           marginLeft: marginHorizontal,
           width: itemHeightWithoutScale * 0.95 + marginBetweenIconAndText,
-          backgroundColor: colorScheme === 'light' ? '#fff' : '#1e1e22',
-        }} />
+        }}
+          lightColor='#fff'
+          darkColor='#1e1e22'
+        />
         <View
           style={{
-            height: .55,
+            height: .51,
             width: width - (itemHeightWithoutScale * 0.95 + marginBetweenIconAndText * 0.9 + marginHorizontal * 2),
           }}
           lightColor='#ccc'
@@ -230,7 +233,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
   }
 
   return (
-    <View style={{ flex: 1,  width: width, backgroundColor: colorScheme === 'light' ? '#f2f2f7' : '#000' }}>
+    <View style={{ flex: 1, width: width, backgroundColor: colorScheme === 'light' ? '#f2f2f7' : '#000' }}>
 
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 

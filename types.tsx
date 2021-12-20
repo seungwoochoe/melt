@@ -42,6 +42,7 @@ export type Music = {
   artist: string,
   artwork: string,
   miniArt: string,
+  lyrics: string,
   isLiked: boolean,
   id: string,
 }
@@ -55,8 +56,15 @@ export type Track = Music & {
   isTrigger: boolean,
 }
 
-export type History = Music & {
+export type History = {
   endTime: number,
+  url: string,
+  title: string,
+  artist: string,
+  miniArt: string,
+  isLiked: boolean,
+  id: string,
+
   reasonStart: "normal" | "selected" | "returned",
   reasonEnd: "normal" | "skipped",
   playedRatio: number,

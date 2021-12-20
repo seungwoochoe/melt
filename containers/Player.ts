@@ -5,6 +5,7 @@ import { Music, WeightedMusic, Track, History } from "../types";
 import { complementTracks, getMoreTracks } from './Creater';
 
 
+
 export default class Player {
 	static musicList: Music[] = [];
 	static weightedMusicList: WeightedMusic[] = [];
@@ -20,8 +21,7 @@ export default class Player {
 
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";
-	static currentDuration = 10000;
-	static isPlaying = false;
+	static currentDuration = 0;
 
 
 	static async setupPlayer() {
@@ -93,13 +93,11 @@ export default class Player {
 
 	static async play() {
 		await TrackPlayer.play();
-		Player.isPlaying = true;
 	}
 
 
 	static async pause() {
 		await TrackPlayer.pause();
-		Player.isPlaying = false;
 	}
 
 
@@ -119,13 +117,12 @@ export default class Player {
 
 	static async skipToNext() {
 		Player.currentReasonEnd = "skipped";
+		Player.tracks[Player.currentIndex].isPlayed = true;
 		await Player.storeHistory();
 
-		Player.tracks[Player.currentIndex].isPlayed = true;
 		Player.currentIndex += 1;
 		Player.currentReasonStart = "normal";
 		await TrackPlayer.skipToNext();
-		Player.isPlaying = true;
 
 		if (!!Player.tracks[Player.currentIndex].isTrigger) {
 			await Player.appendMoreTracks();
@@ -166,8 +163,6 @@ export default class Player {
 				await TrackPlayer.seekTo(0);
 			}
 		}
-
-		Player.isPlaying = true;
 	}
 
 
@@ -186,6 +181,7 @@ export default class Player {
 			// console.log(e);
 		}
 	}
+
 
 	static async storeHistory() {
 		let secPlayed = 0;
@@ -222,20 +218,7 @@ export default class Player {
 		} catch (e) {
 			// console.log(e);
 		}
-
-		const log = Player.historyList.map((element) => (
-			{
-				title: element.title,
-				// reasonStart: element.reasonStart,
-				// reasonEnd: element.reasonEnd,
-				playedRatio: element.playedRatio,
-				secPlayed: element.secPlayed,
-				duration: element.duration,
-			}
-		));
-		console.table(log);
 	}
-
 
 
 
@@ -249,7 +232,7 @@ export default class Player {
 		}
 
 		const duplicateIndex = Player.musicSelection.findIndex(element => element.title === music.title);
-		if (duplicateIndex !== -1) {
+		if (duplicateIndex !== -1) { // There is already selected song on the list.
 			Player.musicSelection.splice(duplicateIndex, 1);
 		}
 
@@ -271,8 +254,8 @@ export default class Player {
 	static updateMostPlayedMusic() {
 		const mostPlayedSongs: Music[] = [];
 		const stats: { id: string, playedAmount: number }[] = [];
-		const historyList = Player.historyList;
-		
+		const historyList = [...Player.historyList];  // 🤦 Deep vs shallow copy!! I spent 1-2 hours because of this..
+
 		historyList.reverse(); // In order to dispaly recently songs first if there are songs with same playedAmount.
 
 		for (const history of historyList) {

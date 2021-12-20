@@ -55,7 +55,7 @@ export default function RenderBottomBar() {
 	useEffect(() => {
 		async function getStoredPlaybackStatus() {
 			await getStoredPosition();
-			await getStoredSecPlayed();;
+			await getStoredSecPlayed();
 		}
 		async function getStoredPosition() {
 			try {
@@ -93,25 +93,32 @@ export default function RenderBottomBar() {
 			const trackPlayerIndex = await TrackPlayer.getCurrentTrack();
 
 			if (trackPlayerIndex > Player.currentIndex) {
-				if (Player.historyList.length === 0 || Player.historyList[Player.historyList.length - 1].id !== trackInfo.id) {
-					await Player.handlePlayNext();
-				}
+				// if (Player.historyList.length === 0 || Player.historyList[Player.historyList.length - 1].id !== trackInfo.id) {
+				await Player.handlePlayNext();
+				// }
 			}
 
-
-			if (trackPlayerIndex > currentIndex.current) {
-				currentIndex.current = trackPlayerIndex;
-				secPlayed.current = 0; // Update a new track duration.
-			}
-			else if (trackPlayerIndex < currentIndex.current) {
+			if (trackPlayerIndex !== currentIndex.current) {
 				currentIndex.current = trackPlayerIndex;
 				secPlayed.current = 0;
 			}
 
-			Player.currentDuration = duration; 
+			Player.currentDuration = duration;
 			setTrackInfo(Player.tracks[Player.currentIndex]);
 			Player.storeTracksStatus();
 			Player.updateMostPlayedMusic();
+
+			console.table(Player.historyList.map(element => (
+				{
+					title: element.title,
+					reasonStart: element.reasonStart,
+					reasonEnd: element.reasonEnd,
+					secPlayed: element.secPlayed,
+					duration: element.duration,
+					playedRatio: element.playedRatio,
+				}
+			)
+			));
 		}
 
 		handlePlayNext();

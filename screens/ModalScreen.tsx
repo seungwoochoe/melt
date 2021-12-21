@@ -6,6 +6,7 @@ import TrackPlayer, { useProgress, usePlaybackState, State, RepeatMode } from 'r
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import LinearGradient from 'react-native-linear-gradient';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
@@ -16,7 +17,7 @@ import Colors from '../constants/Colors';
 const { width, height } = Dimensions.get("window");
 const statusBarHeight = getStatusBarHeight();
 
-const lightFilter = 'rgba(0, 0, 0, 0.4)';
+const lightFilter = 'rgba(0, 0, 0, 0.35)';
 const darkFilter = 'rgba(0, 0, 0, 0.5)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
@@ -92,6 +93,15 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
       <StatusBar barStyle="light-content" animated={true} />
 
       <View style={{ flex: 1, transform: [{ rotate: '180deg' }], alignItems: 'center', backgroundColor: colorScheme === 'light' ? lightFilter : darkFilter }}>
+        <LinearGradient
+          colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, .18)']}
+          locations={[0, 1]}
+          style={{
+            position: 'absolute',
+            height: '100%',
+            width: '100%',
+          }}
+        />
 
         <View style={styles.artworkWrapper}>
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>

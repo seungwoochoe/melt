@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Keyboard, Dimensions, Image, useWindowDimensions } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { TouchableOpacity, Keyboard, Dimensions, useWindowDimensions } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { View, Text } from '../components/Themed';
 import Colors from '../constants/Colors';
@@ -34,12 +34,12 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 			style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 		>
 			<View>
-				<Image
+				<FastImage
 					source={typeof item.miniArt === "number" ? defaultMiniArt : { uri: item.miniArt }}
 					style={{
-						width: listHeightWithoutScale * 0.83,
-						height: listHeightWithoutScale * 0.83,
-						margin: listHeightWithoutScale * 0.085,
+						width: listHeightWithoutScale * 0.82,
+						height: listHeightWithoutScale * 0.82,
+						margin: listHeightWithoutScale * 0.09,
 						borderRadius: 3,
 						borderWidth: 0.15,
 						borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,

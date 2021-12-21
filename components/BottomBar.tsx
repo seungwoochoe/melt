@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TouchableOpacity, Dimensions, Platform, Image } from 'react-native';
+import { TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State, useProgress } from 'react-native-track-player';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import FastImage from 'react-native-fast-image';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -85,6 +86,9 @@ export default function RenderBottomBar() {
 		else if (playbackState === State.Paused) {
 			setIsPlaying(false)
 		}
+		else if (playbackState === State.Ready) {
+			setTrackInfo(Player.tracks[Player.currentIndex]);
+		}
 	}, [playbackState]);
 
 
@@ -104,7 +108,6 @@ export default function RenderBottomBar() {
 			}
 
 			Player.currentDuration = duration;
-			setTrackInfo(Player.tracks[Player.currentIndex]);
 			Player.storeTracksStatus();
 			Player.updateMostPlayedMusic();
 
@@ -183,12 +186,12 @@ export default function RenderBottomBar() {
 						shadowOffset: { width: -bottomBarHeight * 0.02, height: bottomBarHeight * 0.003 },
 						backgroundColor: 'transparent',
 					}}>
-						<Image
+						<FastImage
 							source={typeof trackInfo.miniArt !== "string" ? defaultMiniArt : { uri: trackInfo.miniArt }}
 							style={{
-								width: listHeight * 0.83,
-								height: listHeight * 0.83,
-								margin: listHeight * 0.085,
+								width: listHeight * 0.82,
+								height: listHeight * 0.82,
+								margin: listHeight * 0.09,
 								borderRadius: 3,
 								borderWidth: 0.1,
 								borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,

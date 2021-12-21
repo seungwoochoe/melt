@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions } from 'react-native';
+import DraggableFlatlist from 'react-native-draggable-flatlist';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';

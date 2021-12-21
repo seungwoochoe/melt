@@ -5,6 +5,7 @@ import Slider from '@react-native-community/slider';
 import TrackPlayer, { useProgress, usePlaybackState, State } from 'react-native-track-player';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
@@ -32,6 +33,11 @@ else {
 const defaultArtwork = require('../assets/images/blank.png');
 
 const bottomIconsSize = layout.width * 1.6;
+
+const hapticOptions = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false,
+};
 
 
 export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean } }, navigation: any }) {
@@ -102,12 +108,15 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
           </View>
           <TouchableOpacity
             onPress={async () => {
+
               const targetIndex = Player.musicList.findIndex(element => element.id === track.current.id);
 
               if (Player.musicList[targetIndex].isLiked === false) {
+                ReactNativeHapticFeedback.trigger("notificationSuccess", hapticOptions);
                 Player.musicList[targetIndex].isLiked = true;
                 Player.likedSongs.unshift(Player.musicList[targetIndex]);
               } else {
+                ReactNativeHapticFeedback.trigger("rigid", hapticOptions);
                 Player.musicList[targetIndex].isLiked = false;
 
                 const likedSongsTarget = Player.likedSongs.findIndex(element => element.id === track.current.id)
@@ -224,9 +233,9 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               >
                 <View style={{ alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', margin: layout.width * 0.7 }}>
-                    <Ionicons name='repeat-outline' size={bottomIconsSize} color={dullTheme} />
+                    <Ionicons name='shuffle-outline' size={bottomIconsSize} color={dullTheme} />
                     <Text style={{ fontSize: layout.width * 0.9, color: dullTheme, marginLeft: layout.width * 0.3 }}>
-                      Repeat
+                      Shuffle
                     </Text>
                   </View>
                 </View>
@@ -261,7 +270,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 onPress={() => { }}
                 style={{ padding: layout.width * 0.6, }}
               >
-                <Ionicons name='repeat-outline' size={bottomIconsSize * 0.95} color={dullTheme} />
+                <Ionicons name='shuffle-outline' size={bottomIconsSize * 0.95} color={dullTheme} />
               </TouchableOpacity>
 
               <TouchableOpacity

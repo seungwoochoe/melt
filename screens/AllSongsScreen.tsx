@@ -78,7 +78,7 @@ export default function AllSongsScreen({ navigation, route }: any) {
           // stickyHeaderIndices={[0]}
           ListHeaderComponent={
             <View style={{ marginBottom: layout.width }}>
-              <RenderTitle title='Songs' />
+              <RenderTitle title='All songs' />
             </View>
           }
           ItemSeparatorComponent={RenderSeparator}

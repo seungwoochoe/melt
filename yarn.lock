@@ -6203,6 +6203,11 @@ react-native-codegen@^0.0.6:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
+react-native-draggable-flatlist@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-draggable-flatlist/-/react-native-draggable-flatlist-3.0.3.tgz#e85503585253be01ad251f78d5b341ac22f9d952"
+  integrity sha512-bDro6aqQMvvTm/CuHre9dAjSBKosAfZRLDx3nmrjOz799kxcn0bq+uCB6yF6m+g1Xd/gVPl7E3Ss4uX+oPUlHg==
+
 react-native-fast-image@^8.5.11:
   version "8.5.11"
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.5.11.tgz#e3dc969d0e4e8df026646bf18194465aa55cbc2b"
@@ -6226,6 +6231,11 @@ react-native-gesture-handler@~1.10.2:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-haptic-feedback@^1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/react-native-haptic-feedback/-/react-native-haptic-feedback-1.13.0.tgz#e4974fc465a38548be262748e73098dc9dd3a0fb"
+  integrity sha512-g8G5QURitDeC/zRlobDvUXLxKYfMlIM2HQNWJKbHPSu61qfs0djnK4s1NZuQzihkeAO0KJ4AS2XWvKBzUmlXtA==
 
 react-native-image-resizer@^1.4.5:
   version "1.4.5"

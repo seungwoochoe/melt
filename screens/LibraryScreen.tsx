@@ -13,6 +13,7 @@ import RenderSong from '../components/Song';
 import { Music } from '../types';
 import RenderSeparator from '../components/Separator';
 import { usePlaybackState } from 'react-native-track-player';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -23,10 +24,10 @@ export default function LibraryScreen({ navigation }: any) {
   const [isScrolled, setIsScrolled] = useState(false);
   const colorScheme = useColorScheme();
 
-
   const playbackState = usePlaybackState();
-  console.log("bbb");
+  const isFocused = useIsFocused();
 
+  
   const keyExtractor = useCallback((item) => item.title, []);
   const keyExtractorForTheMostPlayedSongs = useCallback((item) => item.id, []);
 

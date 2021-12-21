@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import TrackPlayer, { Capability } from 'react-native-track-player';
+import TrackPlayer, { Capability, RepeatMode } from 'react-native-track-player';
 
 import { Music, WeightedMusic, Track, History } from "../types";
 import { complementTracks, getMoreTracks } from './Creater';
@@ -7,6 +7,8 @@ import { complementTracks, getMoreTracks } from './Creater';
 
 
 export default class Player {
+	static isSetup = false;
+
 	static musicList: Music[] = [];
 	static weightedMusicList: WeightedMusic[] = [];
 
@@ -25,8 +27,7 @@ export default class Player {
 
 
 	static async setupPlayer() {
-		const currentTrack = await TrackPlayer.getCurrentTrack();
-		if (currentTrack !== null) {
+		if (Player.isSetup) {
 			return;
 		}
 
@@ -48,6 +49,8 @@ export default class Player {
 				Capability.SeekTo
 			],
 		});
+
+		Player.isSetup = true;
 		await TrackPlayer.add(Player.tracks);
 	}
 
@@ -124,6 +127,11 @@ export default class Player {
 		Player.currentReasonStart = "normal";
 		await TrackPlayer.skipToNext();
 
+		const isRepeating = await TrackPlayer.getRepeatMode(); // Don't know why this is needed, but it is.
+		if (isRepeating === RepeatMode.Track) {
+			await TrackPlayer.play();
+		}
+
 		if (!!Player.tracks[Player.currentIndex].isTrigger) {
 			await Player.appendMoreTracks();
 		}
@@ -158,6 +166,11 @@ export default class Player {
 				Player.tracks[Player.currentIndex].isPlayed = false;
 				Player.currentReasonStart = "returned"
 				await TrackPlayer.skipToPrevious();
+
+				const isRepeating = await TrackPlayer.getRepeatMode(); // Don't know why this is needed, but it is.
+				if (isRepeating === RepeatMode.Track) {
+					await TrackPlayer.play();
+				}
 			}
 			else {
 				await TrackPlayer.seekTo(0);

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ImageBackground, StatusBar, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import TrackPlayer, { useProgress, usePlaybackState, State } from 'react-native-track-player';
+import TrackPlayer, { useProgress, usePlaybackState, State, RepeatMode } from 'react-native-track-player';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
@@ -40,11 +40,13 @@ const hapticOptions = {
 };
 
 
-export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean } }, navigation: any }) {
+export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean, isRepeat: boolean } }, navigation: any }) {
   const track = useRef<Track>(route.params.initialTrack);
   const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
   const { position, duration } = useProgress();
   const [count, setCount] = useState(0);
+
+  const isRepeat = useRef(route.params.isRepeat);
 
   const colorScheme = useColorScheme();
   const [isSliding, setIsSliding] = useState(false);
@@ -184,7 +186,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
         </View>
 
 
-        {(height / width) > 2 &&
+        {(height / width) > 2 && // For iPhone X and above.
           <>
             <View style={{ flex: .6, flexDirection: 'row' }}>
               <View style={{
@@ -195,7 +197,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               }}>
                 <TouchableOpacity
                   disabled={trackInfo.info.url === 'loading'}
-                  onPress={async () => { Player.skipToPrevious(position); }}
+                  onPress={async () => { await Player.skipToPrevious(position); }}
                   style={{ padding: layout.width * 0.5 }}
                 >
                   <Ionicons name="play-back" size={layout.width * 2} color={trackInfo.info.url === 'loading' ? Colors.dark.text2 : theme} />
@@ -235,20 +237,40 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
             <View style={{ flex: .7, width: width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', paddingBottom: layout.height * 1.4, }}>
               <TouchableOpacity
-                onPress={() => { }}
+                onPress={async () => {
+                  if (isRepeat.current) {
+                    await TrackPlayer.setRepeatMode(RepeatMode.Off);
+                    isRepeat.current = false;
+                  }
+                  else {
+                    await TrackPlayer.setRepeatMode(RepeatMode.Track);
+                    isRepeat.current = true;
+                  }
+
+                  setCount(c => c + 1);
+
+                  try {
+                    const jsonValue = JSON.stringify(isRepeat.current);
+                    await AsyncStorage.setItem('isRepeat', jsonValue);
+                  } catch (e) {
+                    // console.log(e);
+                  }
+                }}
                 style={{ width: width * 0.3, }}
               >
                 <View style={{ alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', margin: layout.width * 0.7 }}>
-                    <Ionicons name='shuffle-outline' size={bottomIconsSize} color={dullTheme} />
+                    <Ionicons name={isRepeat.current ? 'reload-outline' : 'shuffle-outline'} size={isRepeat.current ? bottomIconsSize * 0.8 : bottomIconsSize} color={dullTheme} />
                     <Text style={{ fontSize: layout.width * 0.9, color: dullTheme, marginLeft: layout.width * 0.3 }}>
-                      Shuffle
+                      {isRepeat.current ? 'Repeat' : 'Shuffle'}
                     </Text>
                   </View>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => { }}
+                onPress={async () => {
+
+                }}
                 style={{ width: width * 0.3 }}
               >
                 <View style={{ alignItems: 'center' }}>

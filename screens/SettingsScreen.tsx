@@ -145,6 +145,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
                 await AsyncStorage.removeItem('storedPosition');
                 await AsyncStorage.removeItem('secPlayed');
                 await AsyncStorage.removeItem('likedSongs');
+                await AsyncStorage.removeItem('isRepeat');
                 Alert.alert("Success!");
               } catch (e) {
                 Alert.alert("Failed to delete historyList");

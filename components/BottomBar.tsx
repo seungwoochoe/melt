@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State, useProgress } from 'react-native-track-player';
+import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State, useProgress, RepeatMode } from 'react-native-track-player';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import FastImage from 'react-native-fast-image';
@@ -46,6 +46,7 @@ export default function RenderBottomBar() {
 	const currentIndex = useRef(0);
 	const storedPosition = useRef(0);
 	const secPlayed = useRef(0);
+	const isRepeat = useRef(false);
 
 	const colorScheme = useColorScheme();
 	const playbackState = usePlaybackState();
@@ -57,6 +58,7 @@ export default function RenderBottomBar() {
 		async function getStoredPlaybackStatus() {
 			await getStoredPosition();
 			await getStoredSecPlayed();
+			await getAndSetIsRepeat();
 		}
 		async function getStoredPosition() {
 			try {
@@ -73,6 +75,17 @@ export default function RenderBottomBar() {
 				secPlayed.current = jsonValue != null ? Number(JSON.parse(jsonValue)) : 0;
 			} catch (e) {
 				// console.log(e);
+			}
+		}
+		async function getAndSetIsRepeat() {
+			try {
+				const jsonValue = await AsyncStorage.getItem('isRepeat');
+				isRepeat.current = jsonValue != null ? JSON.parse(jsonValue) : false;
+			} catch (e) {
+				// console.log(e);
+			}
+			if (isRepeat.current) {
+				await TrackPlayer.setRepeatMode(RepeatMode.Track);
 			}
 		}
 		getStoredPlaybackStatus();
@@ -174,7 +187,11 @@ export default function RenderBottomBar() {
 		>
 			<View style={{ width: width * 0.69, backgroundColor: 'transparent' }}>
 				<TouchableOpacity
-					onPress={() => { navigation.navigate("Modal", { initialTrack: trackInfo, isPlaying: isPlaying }); }}
+					onPress={async () => {
+						const repeatMode = await TrackPlayer.getRepeatMode();
+						isRepeat.current = repeatMode === RepeatMode.Track;
+						navigation.navigate("Modal", { initialTrack: trackInfo, isPlaying: isPlaying, isRepeat: isRepeat.current });
+					}}
 					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
 					<View style={{
 						width: listHeight,

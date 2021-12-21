@@ -86,9 +86,6 @@ export default function RenderBottomBar() {
 		else if (playbackState === State.Paused) {
 			setIsPlaying(false)
 		}
-		else if (playbackState === State.Ready) {
-			setTrackInfo(Player.tracks[Player.currentIndex]);
-		}
 	}, [playbackState]);
 
 
@@ -108,6 +105,7 @@ export default function RenderBottomBar() {
 			}
 
 			Player.currentDuration = duration;
+			setTrackInfo(Player.tracks[Player.currentIndex]);
 			Player.storeTracksStatus();
 			Player.updateMostPlayedMusic();
 

@@ -19,7 +19,7 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 
 	const listHeight = listHeightWithoutScale * useWindowDimensions().fontScale;
 
-	
+
 	return (
 		<TouchableOpacity
 			onPress={async () => {
@@ -30,6 +30,7 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 					await Player.play();
 					Player.updateMusicSelection(item);
 				}
+
 			}}
 			style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 		>

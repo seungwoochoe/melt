@@ -112,11 +112,9 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               const targetIndex = Player.musicList.findIndex(element => element.id === track.current.id);
 
               if (Player.musicList[targetIndex].isLiked === false) {
-                ReactNativeHapticFeedback.trigger("notificationSuccess", hapticOptions);
                 Player.musicList[targetIndex].isLiked = true;
                 Player.likedSongs.unshift(Player.musicList[targetIndex]);
               } else {
-                ReactNativeHapticFeedback.trigger("rigid", hapticOptions);
                 Player.musicList[targetIndex].isLiked = false;
 
                 const likedSongsTarget = Player.likedSongs.findIndex(element => element.id === track.current.id)
@@ -124,6 +122,13 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               }
 
               setCount(c => c + 1);
+
+              if (Player.musicList[targetIndex].isLiked === true) {
+                ReactNativeHapticFeedback.trigger("notificationSuccess", hapticOptions);
+              }
+              else {
+                ReactNativeHapticFeedback.trigger("rigid", hapticOptions);
+              }
 
               try {
                 const jsonValue = JSON.stringify(Player.musicList);
@@ -199,9 +204,11 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                   disabled={trackInfo.info.url === 'loading'}
                   onPress={async () => {
                     if (isPlaying) {
+                      ReactNativeHapticFeedback.trigger("rigid");
                       await Player.pause();
                       setIsPlaying(false);
                     } else {
+                      ReactNativeHapticFeedback.trigger("impactMedium");
                       await Player.play();
                       setIsPlaying(true);
                     }

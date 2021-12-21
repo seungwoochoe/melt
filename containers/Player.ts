@@ -254,8 +254,10 @@ export default class Player {
 	static updateMostPlayedMusic() {
 		const mostPlayedSongs: Music[] = [];
 		const stats: { id: string, playedAmount: number }[] = [];
-		const historyList = [...Player.historyList];  // 🤦 Deep vs shallow copy!! I spent 1-2 hours because of this..
+		let historyList = [...Player.historyList];  // 🤦 Deep vs shallow copy!! I spent 1-2 hours because of this..
 
+		const aWeekEarlier = Date.now() - 7 * 24 * 60 * 60 * 1000;
+		historyList = historyList.filter(element => element.endTime > aWeekEarlier)
 		historyList.reverse(); // In order to dispaly recently songs first if there are songs with same playedAmount.
 
 		for (const history of historyList) {

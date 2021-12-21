@@ -20,6 +20,7 @@ const lightFilter = 'rgba(0, 0, 0, 0.4)';
 const darkFilter = 'rgba(0, 0, 0, 0.5)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
+const progressBarDullTheme = 'rgba(255, 255, 255, 0.25)';
 
 // const blurRadius = 16700000 / Math.pow(height, 1.8);
 let blurRadius = 0;
@@ -164,9 +165,9 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               value={isSliding === true ? slidingValue.current : (duration === 0 ? 0 : (position / duration))}
               minimumValue={0}
               maximumValue={1}
-              thumbTintColor='#ccc'
-              minimumTrackTintColor={theme}
-              maximumTrackTintColor='#aaa'
+              thumbTintColor='#d2d2d2'
+              minimumTrackTintColor={dullTheme}
+              maximumTrackTintColor={progressBarDullTheme}
               onSlidingStart={() => { setIsSliding(true); }}
               onValueChange={(value) => { slidingValue.current = value; }}
               onSlidingComplete={async (value) => {
@@ -175,10 +176,10 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               }}
             />
             <View style={styles.progressLabelContainer}>
-              <Text style={{ color: '#bbb', fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
+              <Text style={{ color: dullTheme, fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
                 {position > 0 ? Math.floor(position / 60).toString() : '0'}:{position > 0 ? Math.floor(position % 60).toString().padStart(2, '0') : '00'}
               </Text>
-              <Text style={{ color: '#bbb', fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
+              <Text style={{ color: dullTheme, fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
                 -{Math.floor((duration - position) / 60).toString()}:{Math.floor((duration - position) % 60).toString().padStart(2, '0')}
               </Text>
             </View>
@@ -269,7 +270,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-
+                  navigation.navigate('LyricsScreen', { initialTrack: track.current, isPlaying: isPlaying, isRepeat: isRepeat.current });
                 }}
                 style={{ width: width * 0.3 }}
               >
@@ -288,7 +289,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
 
         {(height / width) <= 2 &&
-          <View style={{ flex: .7, flexDirection: 'row', marginBottom: height * 0.085 }}>
+          <View style={{ flex: .7, flexDirection: 'row', marginBottom: height * 0.07 }}>
             <View style={{
               width: width * 0.92,
               flexDirection: 'row',
@@ -296,10 +297,32 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               justifyContent: 'space-between',
             }}>
               <TouchableOpacity
-                onPress={() => { }}
-                style={{ padding: layout.width * 0.6, }}
+                onPress={async () => {
+                  if (isRepeat.current) {
+                    await TrackPlayer.setRepeatMode(RepeatMode.Off);
+                    isRepeat.current = false;
+                  }
+                  else {
+                    await TrackPlayer.setRepeatMode(RepeatMode.Track);
+                    isRepeat.current = true;
+                  }
+
+                  setCount(c => c + 1);
+
+                  try {
+                    const jsonValue = JSON.stringify(isRepeat.current);
+                    await AsyncStorage.setItem('isRepeat', jsonValue);
+                  } catch (e) {
+                    // console.log(e);
+                  }
+                }}
+                style={{ width: width * 0.12, padding: layout.width * 0.6, }}
               >
-                <Ionicons name='shuffle-outline' size={bottomIconsSize * 0.95} color={dullTheme} />
+                <Ionicons
+                  name={isRepeat.current ? 'reload-outline' : 'shuffle-outline'}
+                  size={isRepeat.current ? bottomIconsSize * 0.8 : bottomIconsSize}
+                  color={dullTheme}
+                />
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -340,8 +363,10 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => { }}
-                style={{ padding: layout.width * 0.6, }}
+                onPress={() => {
+                  navigation.navigate('LyricsScreen', { initialTrack: track.current, isPlaying: isPlaying, isRepeat: isRepeat.current });
+                }}
+                style={{ width: width * 0.12, padding: layout.width * 0.6, }}
               >
                 <Ionicons name='chatbox-ellipses-outline' size={bottomIconsSize * 0.85} color={dullTheme} style={{ marginRight: layout.width * 0.15 }} />
 

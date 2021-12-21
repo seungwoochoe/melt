@@ -23,8 +23,10 @@ import RenderBottomBar from '../components/BottomBar';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import SearchScreen from '../screens/SearchScreen';
+import LyricsScreen from '../screens/LyricsScreen';
 
 const { height } = Dimensions.get('screen');
+
 
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
@@ -71,6 +73,11 @@ function RootNavigator() {
           //   close: config,
           // },
         }} />
+      <Stack.Screen
+        name="LyricsScreen"
+        component={LyricsScreen}
+        options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid, gestureEnabled: false }}
+      />
     </Stack.Navigator >
   );
 }
@@ -135,20 +142,20 @@ function BottomTabNavigator() {
   );
 }
 
-const forFade = ({ current }: {current: any}) => ({
-  cardStyle: {
-    opacity: current.progress,
-  },
-});
+
 
 function LibraryScreenNavigator() {
   return (
-    <Stack.Navigator  
-    screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LibraryScreen" component={LibraryScreen} />
       <Stack.Screen name="AllSongsScreen" component={AllSongsScreen} />
       <Stack.Screen name="LikedSongsScreen" component={LikedSongsScreen} />
-      <Stack.Screen name="SearchScreen" component={SearchScreen} options={{cardStyleInterpolator: forFade}} />
+      <Stack.Screen
+        name="SearchScreen"
+        component={SearchScreen}
+        options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid, gestureEnabled: false }}
+      />
     </Stack.Navigator >
   );
 }

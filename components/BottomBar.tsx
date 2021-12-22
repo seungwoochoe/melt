@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import TrackPlayer, { Event, useTrackPlayerEvents, usePlaybackState, State, useProgress, RepeatMode } from 'react-native-track-player';
+import TrackPlayer, { usePlaybackState, State, useProgress, RepeatMode } from 'react-native-track-player';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import FastImage from 'react-native-fast-image';
@@ -190,7 +190,18 @@ export default function RenderBottomBar() {
 					onPress={async () => {
 						const repeatMode = await TrackPlayer.getRepeatMode();
 						isRepeat.current = repeatMode === RepeatMode.Track;
-						navigation.navigate("Modal", { initialTrack: trackInfo, isPlaying: isPlaying, isRepeat: isRepeat.current });
+						navigation.navigate("Modal", {
+							initialMusic: {
+								url: trackInfo.url,
+								title: trackInfo.title,
+								artist: trackInfo.artist,
+								artwork: trackInfo.artwork,
+								miniArt: trackInfo.miniArt,
+								lyrics: trackInfo.lyrics,
+								isLiked: trackInfo.isLiked,
+								id: trackInfo.id,
+							}
+						})
 					}}
 					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
 					<View style={{
@@ -207,8 +218,8 @@ export default function RenderBottomBar() {
 								width: listHeight * 0.82,
 								height: listHeight * 0.82,
 								margin: listHeight * 0.09,
-								borderRadius: 3,
-								borderWidth: 0.1,
+								borderRadius: layout.width * 0.18,
+								borderWidth: 0.15,
 								borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,
 							}}
 						/>

@@ -10,15 +10,16 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
-import { Track } from '../types';
+import { Music } from '../types';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get("window");
 const statusBarHeight = getStatusBarHeight();
 
 const lightFilter = 'rgba(0, 0, 0, 0.35)';
-const darkFilter = 'rgba(0, 0, 0, 0.5)';
+const darkFilter = 'rgba(0, 0, 0, 0.4)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
 const progressBarDullTheme = 'rgba(255, 255, 255, 0.25)';
@@ -42,8 +43,8 @@ const hapticOptions = {
 };
 
 
-export default function ModalScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean, isRepeat: boolean } }, navigation: any }) {
-  const track = useRef<Track>(route.params.initialTrack);
+export default function ModalScreen({ route, navigation }: { route: { params: { initialMusic: Music, isPlaying: boolean, isRepeat: boolean } }, navigation: any }) {
+  const music = useRef<Music>(route.params.initialMusic);
   const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
   const { position, duration } = useProgress();
   const [count, setCount] = useState(0);
@@ -56,21 +57,23 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
   const playbackState = usePlaybackState();
   const [trackInfo, setTrackInfo] = useState<any>({
-    info: track.current,
-    artwork: typeof route.params.initialTrack.artwork !== "string" ? defaultArtwork : { uri: route.params.initialTrack.artwork },
-    miniArt: typeof route.params.initialTrack.miniArt !== "string" ? defaultArtwork : { uri: route.params.initialTrack.miniArt },
+		info: music.current,
+		artwork: typeof route.params.initialMusic.artwork !== "string" ? defaultArtwork : { uri: route.params.initialMusic.artwork },
+		miniArt: typeof route.params.initialMusic.miniArt !== "string" ? defaultArtwork : { uri: route.params.initialMusic.miniArt },
   });
 
 
   useEffect(() => {
     async function updateTrack() {
       const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-      const currentTrackPlayerTrack = Player.tracks[currentTrackPlayerIndex ?? 0];
-      track.current = currentTrackPlayerTrack;
-      setTrackInfo({
-        info: track.current,
-        artwork: typeof track.current.artwork !== "string" ? defaultArtwork : { uri: track.current.artwork },
-        miniArt: typeof track.current.miniArt !== "string" ? defaultArtwork : { uri: track.current.miniArt },
+			const currentTrackMusic = Player.musicList.find(element => element.id === Player.tracks[currentTrackPlayerIndex].id);
+			if (currentTrackMusic != null) {
+				music.current = currentTrackMusic;
+			}
+			setTrackInfo({
+				info: music.current,
+				artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
+				miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
       });
     }
 
@@ -94,7 +97,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
       <View style={{ flex: 1, transform: [{ rotate: '180deg' }], alignItems: 'center', backgroundColor: colorScheme === 'light' ? lightFilter : darkFilter }}>
         <LinearGradient
-          colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, .18)']}
+          colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, .15)']}
           locations={[0, 1]}
           style={{
             position: 'absolute',
@@ -122,7 +125,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
           <TouchableOpacity
             onPress={async () => {
 
-              const targetIndex = Player.musicList.findIndex(element => element.id === track.current.id);
+              const targetIndex = Player.musicList.findIndex(element => element.id === music.current.id);
 
               if (Player.musicList[targetIndex].isLiked === false) {
                 Player.musicList[targetIndex].isLiked = true;
@@ -130,7 +133,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               } else {
                 Player.musicList[targetIndex].isLiked = false;
 
-                const likedSongsTarget = Player.likedSongs.findIndex(element => element.id === track.current.id)
+                const likedSongsTarget = Player.likedSongs.findIndex(element => element.id === music.current.id)
                 Player.likedSongs.splice(likedSongsTarget, 1);
               }
 
@@ -157,11 +160,11 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 // console.log(e);
               }
             }}
-            style={{ padding: Player.musicList.find(element => element.id === track.current.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3, }}
+            style={{ padding: Player.musicList.find(element => element.id === music.current.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3, }}
           >
             <Ionicons
-              name={Player.musicList.find(element => element.id === track.current.id)?.isLiked ? 'heart' : 'heart-outline'}
-              size={Player.musicList.find(element => element.id === track.current.id)?.isLiked ? bottomIconsSize * 0.9 : bottomIconsSize * 0.98}
+              name={Player.musicList.find(element => element.id === music.current.id)?.isLiked ? 'heart' : 'heart-outline'}
+              size={Player.musicList.find(element => element.id === music.current.id)?.isLiked ? bottomIconsSize * 0.9 : bottomIconsSize * 0.98}
               color={dullTheme}
             />
           </TouchableOpacity>
@@ -209,7 +212,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 <TouchableOpacity
                   disabled={trackInfo.info.url === 'loading'}
                   onPress={async () => { await Player.skipToPrevious(position); }}
-                  style={{ padding: layout.width * 0.5 }}
+                  style={{ padding: layout.width * 0.5, }}
                 >
                   <Ionicons name="play-back" size={layout.width * 2} color={trackInfo.info.url === 'loading' ? Colors.dark.text2 : theme} />
                 </TouchableOpacity>
@@ -280,7 +283,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-                  navigation.navigate('LyricsScreen', { initialTrack: track.current, isPlaying: isPlaying, isRepeat: isRepeat.current });
+                  navigation.navigate('LyricsScreen', { initialMusic: music.current, isPlaying: isPlaying, isRepeat: isRepeat.current });
                 }}
                 style={{ width: width * 0.3 }}
               >
@@ -301,7 +304,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
         {(height / width) <= 2 &&
           <View style={{ flex: .7, flexDirection: 'row', marginBottom: height * 0.07 }}>
             <View style={{
-              width: width * 0.92,
+              width: width,
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -326,7 +329,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                     // console.log(e);
                   }
                 }}
-                style={{ width: width * 0.12, padding: layout.width * 0.6, }}
+                style={{ flex: 1, paddingVertical: layout.width, alignItems: 'center' }}
               >
                 <Ionicons
                   name={isRepeat.current ? 'reload-outline' : 'shuffle-outline'}
@@ -338,7 +341,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               <TouchableOpacity
                 disabled={trackInfo.info.url === 'loading'}
                 onPress={async () => { Player.skipToPrevious(position); }}
-                style={{ padding: layout.width * 0.5 }}
+                style={{ flex: 1, paddingVertical: layout.width, alignItems: 'center' }}
               >
                 <Ionicons name="play-back" size={layout.width * 2} color={trackInfo.info.url === 'loading' ? Colors.dark.text2 : theme} />
               </TouchableOpacity>
@@ -354,31 +357,31 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                     setIsPlaying(true);
                   }
                 }}
-                style={{ padding: isPlaying ? layout.width * 0.2 : layout.width * 0.4 }}
+                style={{ flex: 1, paddingVertical: layout.width, alignItems: 'center' }}
               >
                 <Ionicons
                   name={isPlaying ? "pause" : "play"}
                   size={isPlaying ? layout.width * 2.8 : layout.width * 2.4}
                   color={trackInfo.info.url === 'loading' ? Colors.dark.text2 : theme}
-                  style={{ marginLeft: isPlaying ? 0 : layout.width * 0 }}
+                  style={{ marginLeft: isPlaying ? 0 : layout.width * .2, paddingBottom: isPlaying ? layout.width * 3.1 : 0 }}
                 />
               </TouchableOpacity>
 
               <TouchableOpacity
                 disabled={trackInfo.info.url === 'loading'}
                 onPress={() => { Player.skipToNext(); }}
-                style={{ padding: layout.width * 0.5, }}
+                style={{ flex: 1, paddingVertical: layout.width, alignItems: 'center' }}
               >
                 <Ionicons name="play-forward" size={layout.width * 2} color={trackInfo.info.url === 'loading' ? Colors.dark.text2 : theme} />
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('LyricsScreen', { initialTrack: track.current, isPlaying: isPlaying, isRepeat: isRepeat.current });
+                  navigation.navigate('LyricsScreen', { initialMusic: music.current, isPlaying: isPlaying, isRepeat: isRepeat.current });
                 }}
-                style={{ width: width * 0.12, padding: layout.width * 0.6, }}
+                style={{ flex: 1, paddingVertical: layout.width, alignItems: 'center' }}
               >
-                <Ionicons name='chatbox-ellipses-outline' size={bottomIconsSize * 0.85} color={dullTheme} style={{ marginRight: layout.width * 0.15 }} />
+                <Ionicons name='chatbox-ellipses-outline' size={bottomIconsSize * 0.87} color={dullTheme} style={{ marginRight: layout.width * 0.15 }} />
 
               </TouchableOpacity>
             </View>

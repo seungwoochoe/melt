@@ -8,10 +8,6 @@ import Player from '../containers/Player';
 import { readMusicFiles, pruneStoredTracks, getStoredHistoryList, getStoredMusicSelection, getStoredLikedSongs } from '../containers/Reader';
 import { initializeWeights, complementTracks } from '../containers/Creater';
 
-const { width } = Dimensions.get('screen');
-const artworkSize = Math.floor(width * 1.8);
-const miniArtSize = width * 0.4;
-
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -28,7 +24,7 @@ export default function useCachedResources() {
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         });
 
-        Player.musicList = await readMusicFiles(artworkSize, miniArtSize);
+        Player.musicList = await readMusicFiles();
         Player.historyList = await getStoredHistoryList();
         Player.musicSelection = await getStoredMusicSelection();
         Player.likedSongs = await getStoredLikedSongs();

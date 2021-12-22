@@ -3,13 +3,20 @@ import * as jsmediatags from 'jsmediatags'
 import base64 from 'react-native-base64';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
+import React from 'react';
+import { Dimensions } from 'react-native';
 
 import { Music, Track, History } from '../types';
+
+const { width } = Dimensions.get('screen');
+const artworkSize = Math.floor(width * 1.8);
+const miniArtSize = width * 0.4;
 
 const defaultArtwork = require('../assets/images/blank.png');
 const documentDirectory = RNFS.DocumentDirectoryPath;
 
-export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
+
+export async function readMusicFiles() {
 	let isThereAnyChangeOnMusicList = false;
 	let storedMusicList: Music[] | null = null;
 
@@ -40,7 +47,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 				else {
 					let metadata: any;
 					try {
-						metadata = await readMetadata(file);
+						metadata = await readMetadata(file.path);
 					} catch {
 						metadata = false;
 					}
@@ -74,7 +81,7 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 			else { // There is no stored music data.
 				let metadata: any;
 				try {
-					metadata = await readMetadata(file);
+					metadata = await readMetadata(file.path);
 				} catch {
 					metadata = false;
 				}
@@ -120,9 +127,9 @@ export async function readMusicFiles(artworkSize: number, miniArtSize: number) {
 }
 
 
-function readMetadata(file: any) {
+function readMetadata(path: string) {
 	return new Promise((resolve, reject) => {
-		new jsmediatags.Reader(file.path)
+		new jsmediatags.Reader(path)
 			.read({
 				onSuccess: (metadata: any) => {
 					resolve(metadata);
@@ -230,4 +237,39 @@ export async function getStoredLikedSongs() {
 		// console.log(e);
 	}
 	return likedSongs;
+}
+
+
+
+
+
+export async function getMetadata(music: Music) {
+
+	const targetUri = RNFS.DocumentDirectoryPath + '/' + music.id;
+
+	let metadata: any;
+	try {
+		metadata = await readMetadata(targetUri);
+	} catch (e) {
+		metadata = false;
+	}
+
+
+	if (metadata === false) {
+		return music;
+	}
+	else {
+		return (
+			{
+				url: music.url,
+				title: metadata.tags.title,
+				artist: metadata.tags.artist,
+				artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
+				miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
+				lyrics: metadata.tags.lyrics?.lyrics ?? "",
+				isLiked: music.isLiked,
+				id: music.id,
+			}
+		)
+	}
 }

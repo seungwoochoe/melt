@@ -5,10 +5,12 @@ import Slider from '@react-native-community/slider';
 import TrackPlayer, { useProgress, usePlaybackState, State } from 'react-native-track-player';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import LinearGradient from 'react-native-linear-gradient';
+import { getMetadata } from '../containers/Reader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
-import { Track } from '../types';
+import { Music } from '../types';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 
@@ -16,7 +18,7 @@ const { width, height } = Dimensions.get("window");
 const statusBarHeight = getStatusBarHeight();
 
 const lightFilter = 'rgba(0, 0, 0, 0.35)';
-const darkFilter = 'rgba(0, 0, 0, 0.5)';
+const darkFilter = 'rgba(0, 0, 0, 0.4)';
 const theme = 'rgba(255, 255, 255, 0.8)';
 const dullTheme = 'rgba(255, 255, 255, 0.65)';
 const progressBarDullTheme = 'rgba(255, 255, 255, 0.25)';
@@ -37,8 +39,8 @@ const hasNotch = (height / width) > 2 ? true : false;
 const defaultArtwork = require('../assets/images/blank.png');
 
 
-export default function LyricsScreen({ route, navigation }: { route: { params: { initialTrack: Track, isPlaying: boolean, isRepeat: boolean } }, navigation: any }) {
-	const track = useRef<Track>(route.params.initialTrack);
+export default function LyricsScreen({ route, navigation }: { route: { params: { initialMusic: Music, isPlaying: boolean, isRepeat: boolean } }, navigation: any }) {
+	const music = useRef<Music>(route.params.initialMusic);
 	const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
 	const { position, duration } = useProgress();
 
@@ -49,21 +51,23 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 
 	const playbackState = usePlaybackState();
 	const [trackInfo, setTrackInfo] = useState<any>({
-		info: track.current,
-		artwork: typeof route.params.initialTrack.artwork !== "string" ? defaultArtwork : { uri: route.params.initialTrack.artwork },
-		miniArt: typeof route.params.initialTrack.miniArt !== "string" ? defaultArtwork : { uri: route.params.initialTrack.miniArt },
+		info: music.current,
+		artwork: typeof route.params.initialMusic.artwork !== "string" ? defaultArtwork : { uri: route.params.initialMusic.artwork },
+		miniArt: typeof route.params.initialMusic.miniArt !== "string" ? defaultArtwork : { uri: route.params.initialMusic.miniArt },
 	});
 
 
 	useEffect(() => {
 		async function updateTrack() {
 			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			const currentTrackPlayerTrack = Player.tracks[currentTrackPlayerIndex ?? 0];
-			track.current = currentTrackPlayerTrack;
+			const currentTrackMusic = Player.musicList.find(element => element.id === Player.tracks[currentTrackPlayerIndex].id);
+			if (currentTrackMusic != null) {
+				music.current = currentTrackMusic;
+			}
 			setTrackInfo({
-				info: track.current,
-				artwork: typeof track.current.artwork !== "string" ? defaultArtwork : { uri: track.current.artwork },
-				miniArt: typeof track.current.miniArt !== "string" ? defaultArtwork : { uri: track.current.miniArt },
+				info: music.current,
+				artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
+				miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
 			});
 
 			scrollView.current?.scrollTo({ y: 0, animated: false })
@@ -89,7 +93,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 			<View style={{ flex: 1, transform: [{ rotate: '180deg' }], alignItems: 'center', backgroundColor: colorScheme === 'light' ? lightFilter : darkFilter }}>
 
 				<LinearGradient
-					colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, .2)']}
+					colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, .15)']}
 					locations={[0, 1]}
 					style={{
 						position: 'absolute',
@@ -98,13 +102,12 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 					}}
 				/>
 
-
 				<View style={{
 					height: layout.ratio * 7.5,
 					width: width,
 					flexDirection: 'row',
 					alignItems: 'flex-end',
-					marginVertical: width * 0.02,
+					marginTop: width * 0.02,
 				}}>
 					<View style={{ flexDirection: 'row', alignItems: 'center', }}>
 
@@ -120,7 +123,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 							shadowOffset: { width: -artworkSize * 0.015, height: artworkSize * 0.01 },
 						}}>
 							<Image
-								source={{ uri: track.current.artwork }}
+								source={trackInfo.artwork}
 								style={{ height: '80%', width: '80%', margin: '10%', borderRadius: layout.width * 0.2 }}
 							/>
 						</View>
@@ -135,9 +138,9 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 
 						<TouchableOpacity
 							onPress={() => { navigation.goBack(); }}
-							style={{ padding: layout.width, marginRight: layout.width * 0.2 }}
+							style={{ padding: layout.width * 1.4, marginRight: layout.width * 0.2 }}
 						>
-							<Ionicons name='close-circle-outline' size={layout.width * 2.2} color={dullTheme} />
+							<Ionicons name='close-outline' size={layout.width * 2.3} color={theme} />
 						</TouchableOpacity>
 					</View>
 				</View>
@@ -146,19 +149,48 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 
 				<ScrollView
 					fadingEdgeLength={10}
-					style={{ height: height * 0.5, width: width, paddingHorizontal: hasNotch ? width * 0.1 : width * 0.08, paddingVertical: width * 0.06 }}
+					style={{ height: height * 0.5, width: width, paddingHorizontal: hasNotch ? width * 0.1 : width * 0.08, paddingTop: width * 0.06, marginBottom: width * 0.03 }}
 					showsVerticalScrollIndicator={false}
 					ref={scrollView}
 				>
 
-					{track.current.lyrics.length === 0 &&
-						<Text style={{ fontSize: layout.width * 1.25, fontWeight: '600', lineHeight: layout.width * 2, color: dullTheme, textAlign: 'center', marginTop: height * 0.24 }}>
-							Couldn't find lyrics.
-						</Text>
+					{music.current.lyrics.length === 0 &&
+						<>
+							<Text style={{ fontSize: layout.width * 1.25, fontWeight: '600', lineHeight: layout.width * 2, color: dullTheme, textAlign: 'center', marginTop: height * 0.24 }}>
+								No lyrics
+							</Text>
+							<TouchableOpacity
+								onPress={async () => {
+									const targetIndex = Player.musicList.findIndex(element => element.id === music.current.id);
+									const updatedMetadata = await getMetadata(music.current);
+
+									Player.musicList.splice(targetIndex, 1, updatedMetadata);
+									music.current = Player.musicList[targetIndex];
+
+									setTrackInfo({
+										info: music.current,
+										artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
+										miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
+									});
+
+									try {
+										const jsonValue = JSON.stringify(Player.musicList);
+										await AsyncStorage.setItem('musicList', jsonValue);
+									} catch (e) {
+										// console.log(e);
+									}								
+								}}
+								style={{ alignSelf: 'center', marginTop: layout.width * 4, borderWidth: 1, padding: layout.width * 0.4, borderColor: progressBarDullTheme, borderRadius: 4 }}
+							>
+								<Text style={{ fontSize: layout.width * 0.8, color: progressBarDullTheme }}>
+									Update metadata
+								</Text>
+							</TouchableOpacity>
+						</>
 					}
-					{track.current.lyrics.length !== 0 &&
-						<Text style={{ fontSize: layout.width * 1.25, fontWeight: '600', lineHeight: layout.width * 2.2, color: theme }}>
-							{track.current.lyrics}
+					{music.current.lyrics.length !== 0 &&
+						<Text style={{ fontSize: layout.width * 1.2, fontWeight: '600', lineHeight: layout.width * 2.2, color: theme }}>
+							{music.current.lyrics}
 						</Text>
 					}
 					<View style={{ height: height * 0.12 }} />
@@ -273,12 +305,12 @@ const styles = StyleSheet.create({
 		borderRadius: width / 32,
 	},
 	title: {
-		fontSize: layout.width * 1.1,
+		fontSize: layout.width * 1.05,
 		color: theme,
 		fontWeight: '600',
 	},
 	artist: {
-		fontSize: layout.width * 1,
+		fontSize: layout.width * .95,
 		color: dullTheme,
 		fontWeight: '300',
 	},

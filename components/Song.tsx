@@ -41,7 +41,7 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 						width: listHeightWithoutScale * 0.82,
 						height: listHeightWithoutScale * 0.82,
 						margin: listHeightWithoutScale * 0.09,
-						borderRadius: 3,
+						borderRadius: layout.width * 0.18,
 						borderWidth: 0.15,
 						borderColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,
 					}}

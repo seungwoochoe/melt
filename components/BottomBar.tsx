@@ -126,17 +126,17 @@ export default function RenderBottomBar() {
 			Player.storeTracksStatus();
 			Player.updateMostPlayedMusic();
 
-			console.table(Player.historyList.map(element => (
-				{
-					title: element.title,
-					reasonStart: element.reasonStart,
-					reasonEnd: element.reasonEnd,
-					secPlayed: element.secPlayed,
-					duration: element.duration,
-					playedRatio: element.playedRatio,
-				}
-			)
-			));
+			// console.table(Player.historyList.map(element => (
+			// 	{
+			// 		title: element.title,
+			// 		reasonStart: element.reasonStart,
+			// 		reasonEnd: element.reasonEnd,
+			// 		secPlayed: element.secPlayed,
+			// 		duration: element.duration,
+			// 		playedRatio: element.playedRatio,
+			// 	}
+			// )
+			// ));
 		}
 
 		handlePlayNext();
@@ -195,16 +195,9 @@ export default function RenderBottomBar() {
 						const repeatMode = await TrackPlayer.getRepeatMode();
 						isRepeat.current = repeatMode === RepeatMode.Track;
 						navigation.navigate("Modal", {
-							initialMusic: {
-								url: trackInfo.url,
-								title: trackInfo.title,
-								artist: trackInfo.artist,
-								artwork: trackInfo.artwork,
-								miniArt: trackInfo.miniArt,
-								lyrics: trackInfo.lyrics,
-								isLiked: trackInfo.isLiked,
-								id: trackInfo.id,
-							}
+							id: trackInfo.id,
+							isPlaying: isPlaying,
+							isRepeat: isRepeat.current,
 						})
 					}}
 					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
@@ -238,7 +231,7 @@ export default function RenderBottomBar() {
 								style={{ fontSize: layout.width * 0.98, paddingLeft: width * 0.02, paddingRight: width * 0.02, color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text }}
 								scrollSpeed={50}
 								bounce={false}
-								marqueeDelay={3000}
+								marqueeDelay={5000}
 								scroll={false}
 								easing={Easing.linear}
 							>

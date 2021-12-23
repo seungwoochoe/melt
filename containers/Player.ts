@@ -4,11 +4,13 @@ import TrackPlayer, { Capability, RepeatMode } from 'react-native-track-player';
 import { Music, WeightedMusic, Track, History } from "../types";
 import { complementTracks, getMoreTracks } from './Creater';
 
+const defaultMiniArt = require('../assets/images/blank.png');
 
 
 export default class Player {
 	static isSetup = false;
 
+	static defaultMusic: Music = {url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, lyrics: "", isLiked: false, id: 'blankTrack'}
 	static musicList: Music[] = [];
 	static weightedMusicList: WeightedMusic[] = [];
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, ImageBackground, StatusBar, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ImageBackground, StatusBar, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import TrackPlayer, { useProgress, usePlaybackState, State } from 'react-native-track-player';
@@ -43,8 +43,8 @@ const hasNotch = (height / width) > 2 ? true : false;
 const defaultArtwork = require('../assets/images/blank.png');
 
 
-export default function LyricsScreen({ route, navigation }: { route: { params: { initialMusic: Music, isPlaying: boolean, isRepeat: boolean } }, navigation: any }) {
-	const music = useRef<Music>(route.params.initialMusic);
+export default function LyricsScreen({ route, navigation }: { route: { params: { id: string, isPlaying: boolean } }, navigation: any }) {
+	const [currentMusic, setCurrentMusic] = useState<Music>(Player.musicList.find(elemnet => elemnet.id === route.params.id) ?? Player.defaultMusic);
 	const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
 	const { position, duration } = useProgress();
 
@@ -54,26 +54,12 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 	const scrollView = useRef<ScrollView>(null);
 
 	const playbackState = usePlaybackState();
-	const [trackInfo, setTrackInfo] = useState<any>({
-		info: music.current,
-		artwork: typeof route.params.initialMusic.artwork !== "string" ? defaultArtwork : { uri: route.params.initialMusic.artwork },
-		miniArt: typeof route.params.initialMusic.miniArt !== "string" ? defaultArtwork : { uri: route.params.initialMusic.miniArt },
-	});
 
 
 	useEffect(() => {
 		async function updateTrack() {
 			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			const currentTrackMusic = Player.musicList.find(element => element.id === Player.tracks[currentTrackPlayerIndex].id);
-			if (currentTrackMusic != null) {
-				music.current = currentTrackMusic;
-			}
-			setTrackInfo({
-				info: music.current,
-				artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
-				miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
-			});
-
+			setCurrentMusic(Player.musicList.find(element => element.id === Player.tracks[currentTrackPlayerIndex].id) ?? Player.defaultMusic);
 			scrollView.current?.scrollTo({ y: 0, animated: false })
 		}
 
@@ -89,7 +75,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 
 	return (
 		<ImageBackground
-			source={trackInfo.miniArt}
+			source={typeof currentMusic.miniArt !== "string" ? defaultArtwork : { uri: currentMusic.miniArt }}
 			blurRadius={blurRadius}
 			style={{ flex: 1, transform: [{ rotate: '180deg' }] }}
 		>
@@ -127,7 +113,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 							shadowOffset: { width: -artworkSize * 0.015, height: artworkSize * 0.01 },
 						}}>
 							<FastImage
-								source={trackInfo.artwork}
+								source={typeof currentMusic.miniArt !== "string" ? defaultArtwork : { uri: currentMusic.miniArt }}
 								style={{ height: '80%', width: '80%', margin: '10%', borderRadius: layout.width * 0.2, }}
 							/>
 						</View>
@@ -158,7 +144,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 									scroll={false}
 									easing={Easing.linear}
 								>
-									{trackInfo.info.title}
+									{currentMusic.title}
 								</TextTicker>
 							</View>
 
@@ -175,7 +161,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 								scroll={false}
 								easing={Easing.linear}
 							>
-								{trackInfo.info.artist}
+								{currentMusic.artist}
 							</TextTicker>
 						</MaskedView>
 
@@ -206,24 +192,18 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 						ref={scrollView}
 					>
 
-						{music.current.lyrics.length === 0 &&
+						{currentMusic.lyrics.length === 0 &&
 							<>
 								<Text style={{ fontSize: layout.width * 1.25, fontWeight: '600', lineHeight: layout.width * 2, color: dullTheme, textAlign: 'center', marginTop: height * 0.24 }}>
 									No lyrics
 								</Text>
 								<TouchableOpacity
 									onPress={async () => {
-										const targetIndex = Player.musicList.findIndex(element => element.id === music.current.id);
-										const updatedMetadata = await getMetadata(music.current);
+										const targetIndex = Player.musicList.findIndex(element => element.id === currentMusic.id);
+										const updatedMetadata = await getMetadata(currentMusic);
 
 										Player.musicList.splice(targetIndex, 1, updatedMetadata);
-										music.current = Player.musicList[targetIndex];
-
-										setTrackInfo({
-											info: music.current,
-											artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
-											miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
-										});
+										setCurrentMusic(Player.musicList[targetIndex])
 
 										try {
 											const jsonValue = JSON.stringify(Player.musicList);
@@ -231,6 +211,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 										} catch (e) {
 											// console.log(e);
 										}
+
 									}}
 									style={{ alignSelf: 'center', marginTop: layout.width * 4, borderWidth: 1, padding: layout.width * 0.4, borderColor: progressBarDullTheme, borderRadius: 4 }}
 								>
@@ -240,9 +221,9 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 								</TouchableOpacity>
 							</>
 						}
-						{music.current.lyrics.length !== 0 &&
+						{currentMusic.lyrics.length !== 0 &&
 							<Text style={{ fontSize: layout.width * 1.2, fontWeight: '600', lineHeight: layout.width * 2.2, color: theme }}>
-								{music.current.lyrics}
+								{currentMusic.lyrics}
 							</Text>
 						}
 						<View style={{ height: height * 0.1 }} />
@@ -290,7 +271,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 							justifyContent: 'space-between',
 						}}>
 							<TouchableOpacity
-								disabled={trackInfo.info.url === 'loading'}
+								disabled={currentMusic.url === 'loading'}
 								onPress={async () => {
 									await Player.skipToPrevious(position);
 
@@ -301,10 +282,10 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 								}}
 								style={{ padding: layout.width * 0.5 }}
 							>
-								<Ionicons name="play-back" size={layout.width * 2} color={trackInfo.info.url === 'loading' ? Colors.dark.text2 : theme} />
+								<Ionicons name="play-back" size={layout.width * 2} color={currentMusic.url === 'loading' ? Colors.dark.text2 : theme} />
 							</TouchableOpacity>
 							<TouchableOpacity
-								disabled={trackInfo.info.url === 'loading'}
+								disabled={currentMusic.url === 'loading'}
 								onPress={async () => {
 									if (isPlaying) {
 										await Player.pause();
@@ -319,19 +300,19 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 								<Ionicons
 									name={isPlaying ? "pause" : "play"}
 									size={isPlaying ? layout.width * 2.8 : layout.width * 2.4}
-									color={trackInfo.info.url === 'loading' ? Colors.dark.text2 : theme}
+									color={currentMusic.url === 'loading' ? Colors.dark.text2 : theme}
 									style={{ marginLeft: isPlaying ? 0 : layout.width * 0.2 }}
 								/>
 							</TouchableOpacity>
 							<TouchableOpacity
-								disabled={trackInfo.info.url === 'loading'}
+								disabled={currentMusic.url === 'loading'}
 								onPress={async () => {
 									await Player.skipToNext();
 									scrollView.current?.scrollTo({ y: 0, animated: false })
 								}}
 								style={{ padding: layout.width * 0.5 }}
 							>
-								<Ionicons name="play-forward" size={layout.width * 2} color={trackInfo.info.url === 'loading' ? Colors.dark.text2 : theme} />
+								<Ionicons name="play-forward" size={layout.width * 2} color={currentMusic.url === 'loading' ? Colors.dark.text2 : theme} />
 							</TouchableOpacity>
 						</View>
 					</View>

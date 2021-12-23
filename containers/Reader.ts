@@ -3,7 +3,7 @@ import * as jsmediatags from 'jsmediatags'
 import base64 from 'react-native-base64';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
-import React from 'react';
+import React from 'react'; // Needed if you want to use react-native.
 import { Dimensions } from 'react-native';
 
 import { Music, Track, History } from '../types';
@@ -254,7 +254,6 @@ export async function getMetadata(music: Music) {
 		metadata = false;
 	}
 
-
 	if (metadata === false) {
 		return music;
 	}
@@ -262,8 +261,8 @@ export async function getMetadata(music: Music) {
 		return (
 			{
 				url: music.url,
-				title: metadata.tags.title,
-				artist: metadata.tags.artist,
+				title: metadata.tags.title ?? music.title,
+				artist: metadata.tags.artist ?? music.artist,
 				artwork: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, artworkSize),
 				miniArt: metadata.tags.picture == null ? defaultArtwork : await generateImageData(metadata, miniArtSize),
 				lyrics: metadata.tags.lyrics?.lyrics ?? "",

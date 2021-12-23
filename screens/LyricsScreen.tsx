@@ -200,13 +200,14 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 								<TouchableOpacity
 									onPress={async () => {
 										const targetIndex = Player.musicList.findIndex(element => element.id === currentMusic.id);
-										const updatedMetadata = await getMetadata(currentMusic);
-
-										Player.musicList.splice(targetIndex, 1, updatedMetadata);
+										const newMetadata = await getMetadata(currentMusic);
+										
+										Player.musicList.splice(targetIndex, 1, newMetadata);
 										setCurrentMusic(Player.musicList[targetIndex])
 
+										const newMusicList = [...Player.musicList];
 										try {
-											const jsonValue = JSON.stringify(Player.musicList);
+											const jsonValue = JSON.stringify(newMusicList);
 											await AsyncStorage.setItem('musicList', jsonValue);
 										} catch (e) {
 											// console.log(e);

@@ -15,7 +15,7 @@ import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 import layout from '../constants/layout';
-import { Track } from '../types';
+import { Music } from '../types';
 
 import Player from '../containers/Player';
 
@@ -24,7 +24,6 @@ const listHeight = width * 0.16;
 const marginBetweenAlbumartAndText = width * 0.029;
 const bottomBarHeight = listHeight * 1.1;
 const defaultMiniArt = require('../assets/images/blank.png');
-const blankTrack: Track = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, lyrics: "", isLiked: false, id: 'blankTrack', isPlayed: false, isTrigger: false };
 
 let blurIntensity: number;
 if (Platform.OS === 'ios') {
@@ -44,7 +43,7 @@ else {
 
 
 export default function RenderBottomBar() {
-	const [trackInfo, setTrackInfo] = useState<Track>(blankTrack);
+	const [currentMusic, setCurrentMusic] = useState<Music>(Player.tracks[0]);
 	const [isPlaying, setIsPlaying] = useState(false);
 
 	const currentIndex = useRef(0);
@@ -116,27 +115,14 @@ export default function RenderBottomBar() {
 				// }
 			}
 
-			if (trackPlayerIndex !== currentIndex.current) {
-				currentIndex.current = trackPlayerIndex;
+			if (currentMusic.id !== Player.tracks[trackPlayerIndex].id) { // Duration value set as 0 at first and then changes to the actual value.
 				secPlayed.current = 0;
 			}
 
 			Player.currentDuration = duration;
-			setTrackInfo(Player.tracks[Player.currentIndex]);
-			Player.storeTracksStatus();
+			setCurrentMusic(Player.musicList.find(element => element.id === Player.tracks[Player.currentIndex].id) ?? Player.defaultMusic);
+			await Player.storeTracksStatus();
 			Player.updateMostPlayedMusic();
-
-			// console.table(Player.historyList.map(element => (
-			// 	{
-			// 		title: element.title,
-			// 		reasonStart: element.reasonStart,
-			// 		reasonEnd: element.reasonEnd,
-			// 		secPlayed: element.secPlayed,
-			// 		duration: element.duration,
-			// 		playedRatio: element.playedRatio,
-			// 	}
-			// )
-			// ));
 		}
 
 		handlePlayNext();
@@ -195,7 +181,7 @@ export default function RenderBottomBar() {
 						const repeatMode = await TrackPlayer.getRepeatMode();
 						isRepeat.current = repeatMode === RepeatMode.Track;
 						navigation.navigate("Modal", {
-							id: trackInfo.id,
+							id: currentMusic.id,
 							isPlaying: isPlaying,
 							isRepeat: isRepeat.current,
 						})
@@ -210,7 +196,7 @@ export default function RenderBottomBar() {
 						backgroundColor: 'transparent',
 					}}>
 						<FastImage
-							source={typeof trackInfo.miniArt !== "string" ? defaultMiniArt : { uri: trackInfo.miniArt }}
+							source={typeof currentMusic.miniArt !== "string" ? defaultMiniArt : { uri: currentMusic.miniArt }}
 							style={{
 								width: listHeight * 0.82,
 								height: listHeight * 0.82,
@@ -235,7 +221,7 @@ export default function RenderBottomBar() {
 								scroll={false}
 								easing={Easing.linear}
 							>
-								{trackInfo.title}
+								{currentMusic.title}
 							</TextTicker>
 						</View>
 					</MaskedView>
@@ -244,7 +230,7 @@ export default function RenderBottomBar() {
 			</View>
 			<View style={{ width: width * 0.28, height: bottomBarHeight, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'transparent' }}>
 				<TouchableOpacity
-					disabled={trackInfo.url === 'loading'}
+					disabled={currentMusic.url === 'loading'}
 					onPress={async () => {
 						if (isPlaying) {
 							await Player.pause();
@@ -258,11 +244,11 @@ export default function RenderBottomBar() {
 					<Ionicons
 						name={isPlaying ? "pause" : "play"}
 						size={isPlaying ? layout.width * 2 : layout.width * 1.65}
-						color={colorScheme === "light" ? (trackInfo.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (trackInfo.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
+						color={colorScheme === "light" ? (currentMusic.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (currentMusic.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
 					/>
 				</TouchableOpacity>
 				<TouchableOpacity
-					disabled={trackInfo.url === 'loading'}
+					disabled={currentMusic.url === 'loading'}
 					onPress={async () => {
 						await Player.skipToNext();
 					}}
@@ -271,7 +257,7 @@ export default function RenderBottomBar() {
 					<Ionicons
 						name="play-forward"
 						size={layout.width * 1.74}
-						color={colorScheme === "light" ? (trackInfo.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (trackInfo.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
+						color={colorScheme === "light" ? (currentMusic.url === 'loading' ? Colors.light.text2 : Colors.light.text) : (currentMusic.url === 'loading' ? Colors.dark.text2 : Colors.dark.text)}
 					/>
 				</TouchableOpacity>
 			</View>

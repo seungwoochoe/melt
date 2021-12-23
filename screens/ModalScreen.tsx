@@ -47,7 +47,7 @@ const hapticOptions = {
 
 
 export default function ModalScreen({ route, navigation }: { route: { params: { id: string, isPlaying: boolean, isRepeat: boolean } }, navigation: any }) {
-	const [currentMusic, setCurrentMusic] = useState<Music>(Player.musicList.find(elemnet => elemnet.id === route.params.id) ?? Player.defaultMusic);
+  const [currentMusic, setCurrentMusic] = useState<Music>(Player.musicList.find(elemnet => elemnet.id === route.params.id) ?? Player.defaultMusic);
   const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
   const { position, duration } = useProgress();
   const [count, setCount] = useState(0);
@@ -60,11 +60,11 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
   const playbackState = usePlaybackState();
 
-  
+
   useEffect(() => {
     async function updateTrack() {
-			const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			setCurrentMusic(Player.musicList.find(element => element.id === Player.tracks[currentTrackPlayerIndex].id) ?? Player.defaultMusic);
+      const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
+      setCurrentMusic(Player.musicList.find(element => element.id === Player.tracks[currentTrackPlayerIndex].id) ?? Player.defaultMusic);
     }
 
     if (playbackState === State.Playing) {
@@ -75,6 +75,40 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
       updateTrack();
     }
   }, [playbackState]);
+
+
+
+  const handlePlayPauseButton = async () => {
+    if (isPlaying) {
+      await Player.pause();
+      setIsPlaying(false);
+    } else {
+      await Player.play();
+      setIsPlaying(true);
+    }
+  }
+
+  const handleShuffleRepeatButton = async () => {
+    ReactNativeHapticFeedback.trigger("rigid");
+
+    if (isRepeat.current) {
+      await TrackPlayer.setRepeatMode(RepeatMode.Off);
+      isRepeat.current = false;
+    }
+    else {
+      await TrackPlayer.setRepeatMode(RepeatMode.Track);
+      isRepeat.current = true;
+    }
+
+    setCount(c => c + 1);
+
+    try {
+      const jsonValue = JSON.stringify(isRepeat.current);
+      await AsyncStorage.setItem('isRepeat', jsonValue);
+    } catch (e) {
+      // console.log(e);
+    }
+  }
 
 
   return (
@@ -161,9 +195,11 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               const targetIndex = Player.musicList.findIndex(element => element.id === currentMusic.id);
 
               if (Player.musicList[targetIndex].isLiked === false) {
+                ReactNativeHapticFeedback.trigger("notificationSuccess", hapticOptions);
                 Player.musicList[targetIndex].isLiked = true;
                 Player.likedSongs.unshift(Player.musicList[targetIndex]);
               } else {
+                ReactNativeHapticFeedback.trigger("rigid", hapticOptions);
                 Player.musicList[targetIndex].isLiked = false;
 
                 const likedSongsTarget = Player.likedSongs.findIndex(element => element.id === currentMusic.id)
@@ -171,13 +207,6 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               }
 
               setCount(c => c + 1);
-
-              if (Player.musicList[targetIndex].isLiked === true) {
-                ReactNativeHapticFeedback.trigger("notificationSuccess", hapticOptions);
-              }
-              else {
-                ReactNativeHapticFeedback.trigger("rigid", hapticOptions);
-              }
 
               try {
                 const jsonValue = JSON.stringify(Player.musicList);
@@ -250,17 +279,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 </TouchableOpacity>
                 <TouchableOpacity
                   disabled={currentMusic.url === 'loading'}
-                  onPress={async () => {
-                    if (isPlaying) {
-                      ReactNativeHapticFeedback.trigger("rigid");
-                      await Player.pause();
-                      setIsPlaying(false);
-                    } else {
-                      ReactNativeHapticFeedback.trigger("impactMedium");
-                      await Player.play();
-                      setIsPlaying(true);
-                    }
-                  }}
+                  onPress={async () => { handlePlayPauseButton(); }}
                   style={{ padding: isPlaying ? layout.width * 0.2 : layout.width * 0.4 }}
                 >
                   <Ionicons
@@ -283,25 +302,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
             <View style={{ flex: .7, width: width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', paddingBottom: layout.height * 1.4, }}>
               <TouchableOpacity
-                onPress={async () => {
-                  if (isRepeat.current) {
-                    await TrackPlayer.setRepeatMode(RepeatMode.Off);
-                    isRepeat.current = false;
-                  }
-                  else {
-                    await TrackPlayer.setRepeatMode(RepeatMode.Track);
-                    isRepeat.current = true;
-                  }
-
-                  setCount(c => c + 1);
-
-                  try {
-                    const jsonValue = JSON.stringify(isRepeat.current);
-                    await AsyncStorage.setItem('isRepeat', jsonValue);
-                  } catch (e) {
-                    // console.log(e);
-                  }
-                }}
+                onPress={async () => { handleShuffleRepeatButton(); }}
                 style={{ width: width * 0.3, }}
               >
                 <View style={{ alignItems: 'center' }}>
@@ -342,25 +343,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               justifyContent: 'space-between',
             }}>
               <TouchableOpacity
-                onPress={async () => {
-                  if (isRepeat.current) {
-                    await TrackPlayer.setRepeatMode(RepeatMode.Off);
-                    isRepeat.current = false;
-                  }
-                  else {
-                    await TrackPlayer.setRepeatMode(RepeatMode.Track);
-                    isRepeat.current = true;
-                  }
-
-                  setCount(c => c + 1);
-
-                  try {
-                    const jsonValue = JSON.stringify(isRepeat.current);
-                    await AsyncStorage.setItem('isRepeat', jsonValue);
-                  } catch (e) {
-                    // console.log(e);
-                  }
-                }}
+                onPress={async () => { handleShuffleRepeatButton(); }}
                 style={{ flex: 1, paddingVertical: layout.width, alignItems: 'center' }}
               >
                 <Ionicons
@@ -380,15 +363,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
               <TouchableOpacity
                 disabled={currentMusic.url === 'loading'}
-                onPress={async () => {
-                  if (isPlaying) {
-                    await Player.pause();
-                    setIsPlaying(false);
-                  } else {
-                    await Player.play();
-                    setIsPlaying(true);
-                  }
-                }}
+                onPress={async () => { handlePlayPauseButton(); }}
                 style={{ flex: 1, paddingVertical: layout.width, alignItems: 'center' }}
               >
                 <Ionicons

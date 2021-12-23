@@ -9,6 +9,7 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LinearGradient from 'react-native-linear-gradient';
 import TextTicker from 'react-native-text-ticker';
 import { Easing } from 'react-native-reanimated';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
@@ -119,14 +120,25 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
         </View>
 
 
-        <View style={{ flex: .7, width: width * 0.82, flexDirection: 'row', alignItems: 'center', marginTop: width * 0.02 }}>
-          <View style={{ flex: 6, paddingRight: width * 0.032 }}>
+        <View style={{ flex: .7, width: width, flexDirection: 'row', alignItems: 'center', marginTop: width * 0.02, }}>
+          <MaskedView
+            style={{ flex: 6 }}
+            maskElement={
+              <LinearGradient
+                style={{ flex: 1 }}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                colors={['transparent', 'black', 'black', 'transparent']}
+                locations={[0, 0.1, .94, .97]}
+              />}
+          >
             <View style={{ height: layout.ratio * 2, flexDirection: 'row', alignItems: 'center', }}>
               <TextTicker
                 style={{
                   fontSize: layout.width * 1.28,
                   color: theme,
                   fontWeight: '600',
+                  paddingLeft: width * 0.09,
                 }}
                 scrollSpeed={50}
                 bounce={false}
@@ -143,6 +155,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 fontSize: layout.width * 1.1,
                 color: dullTheme,
                 fontWeight: '300',
+                paddingLeft: width * 0.09,
               }}
               scrollSpeed={55}
               bounce={false}
@@ -152,9 +165,10 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
             >
               {trackInfo.info.artist}
             </TextTicker>
+          </MaskedView>
 
-          </View>
           <TouchableOpacity
+            style={{ width: width * 0.2, padding: Player.musicList.find(element => element.id === music.current.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3,}}
             onPress={async () => {
 
               const targetIndex = Player.musicList.findIndex(element => element.id === music.current.id);
@@ -192,7 +206,6 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 // console.log(e);
               }
             }}
-            style={{ padding: Player.musicList.find(element => element.id === music.current.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3, }}
           >
             <Ionicons
               name={Player.musicList.find(element => element.id === music.current.id)?.isLiked ? 'heart' : 'heart-outline'}

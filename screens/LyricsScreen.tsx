@@ -7,6 +7,10 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import LinearGradient from 'react-native-linear-gradient';
 import { getMetadata } from '../containers/Reader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import TextTicker from 'react-native-text-ticker';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { Easing } from 'react-native-reanimated';
+import FastImage from 'react-native-fast-image';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
@@ -122,80 +126,130 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 							shadowOpacity: 0.3,
 							shadowOffset: { width: -artworkSize * 0.015, height: artworkSize * 0.01 },
 						}}>
-							<Image
+							<FastImage
 								source={trackInfo.artwork}
-								style={{ height: '80%', width: '80%', margin: '10%', borderRadius: layout.width * 0.2 }}
+								style={{ height: '80%', width: '80%', margin: '10%', borderRadius: layout.width * 0.2, }}
 							/>
 						</View>
 
 
-						<View style={{ flex: 6, marginLeft: layout.width * 0.4, }}>
+						<MaskedView
+							style={{ flex: 6, }}
+							maskElement={
+								<LinearGradient
+									style={{ flex: 1 }}
+									start={{ x: 0, y: 0 }}
+									end={{ x: 1, y: 0 }}
+									colors={['transparent', 'black', 'black', 'transparent']}
+									locations={[0, 0.04, .96, 1]}
+								/>}
+						>
 							<View style={{ height: layout.ratio * 1.6, flexDirection: 'row', alignItems: 'center', }}>
-								<Text style={styles.title} numberOfLines={1}>{trackInfo.info.title}</Text>
+								<TextTicker
+									style={{
+										fontSize: layout.width * 1.05,
+										color: theme,
+										fontWeight: '600',
+										paddingLeft: layout.width * 0.3,
+									}}
+									scrollSpeed={60}
+									bounce={false}
+									marqueeDelay={3000}
+									scroll={false}
+									easing={Easing.linear}
+								>
+									{trackInfo.info.title}
+								</TextTicker>
 							</View>
-							<Text style={styles.artist} numberOfLines={1}>{trackInfo.info.artist}</Text>
-						</View>
+
+							<TextTicker
+								style={{
+									fontSize: layout.width * .95,
+									color: dullTheme,
+									fontWeight: '300',
+									paddingLeft: layout.width * 0.3,
+								}}
+								scrollSpeed={55}
+								bounce={false}
+								marqueeDelay={3000}
+								scroll={false}
+								easing={Easing.linear}
+							>
+								{trackInfo.info.artist}
+							</TextTicker>
+						</MaskedView>
+
 
 						<TouchableOpacity
 							onPress={() => { navigation.goBack(); }}
 							style={{ padding: layout.width * 1.4, marginRight: layout.width * 0.2 }}
 						>
-							<Ionicons name='close-outline' size={layout.width * 2.3} color={theme} />
+							<Ionicons name='close-outline' size={layout.width * 2.4} color={theme} />
 						</TouchableOpacity>
 					</View>
 				</View>
 
 
-
-				<ScrollView
-					fadingEdgeLength={10}
-					style={{ height: height * 0.5, width: width, paddingHorizontal: hasNotch ? width * 0.1 : width * 0.08, paddingTop: width * 0.06, marginBottom: width * 0.03 }}
-					showsVerticalScrollIndicator={true}
-					ref={scrollView}
+				<MaskedView
+					style={{ height: height * 0.6, width: width, marginBottom: width * 0.03 }}
+					maskElement={
+						<LinearGradient
+							style={{ flex: 1 }}
+							colors={['transparent', 'black', 'black', 'transparent']}
+							locations={[0, 0.06, .94, 1]}
+						/>}
 				>
+					<ScrollView
+						fadingEdgeLength={10}
+						style={{ paddingHorizontal: hasNotch ? width * 0.1 : width * 0.08, paddingTop: width * 0.06, }}
+						showsVerticalScrollIndicator={true}
+						ref={scrollView}
+					>
 
-					{music.current.lyrics.length === 0 &&
-						<>
-							<Text style={{ fontSize: layout.width * 1.25, fontWeight: '600', lineHeight: layout.width * 2, color: dullTheme, textAlign: 'center', marginTop: height * 0.24 }}>
-								No lyrics
-							</Text>
-							<TouchableOpacity
-								onPress={async () => {
-									const targetIndex = Player.musicList.findIndex(element => element.id === music.current.id);
-									const updatedMetadata = await getMetadata(music.current);
-
-									Player.musicList.splice(targetIndex, 1, updatedMetadata);
-									music.current = Player.musicList[targetIndex];
-
-									setTrackInfo({
-										info: music.current,
-										artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
-										miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
-									});
-
-									try {
-										const jsonValue = JSON.stringify(Player.musicList);
-										await AsyncStorage.setItem('musicList', jsonValue);
-									} catch (e) {
-										// console.log(e);
-									}
-								}}
-								style={{ alignSelf: 'center', marginTop: layout.width * 4, borderWidth: 1, padding: layout.width * 0.4, borderColor: progressBarDullTheme, borderRadius: 4 }}
-							>
-								<Text style={{ fontSize: layout.width * 0.8, color: progressBarDullTheme }}>
-									Update metadata
+						{music.current.lyrics.length === 0 &&
+							<>
+								<Text style={{ fontSize: layout.width * 1.25, fontWeight: '600', lineHeight: layout.width * 2, color: dullTheme, textAlign: 'center', marginTop: height * 0.24 }}>
+									No lyrics
 								</Text>
-							</TouchableOpacity>
-						</>
-					}
-					{music.current.lyrics.length !== 0 &&
-						<Text style={{ fontSize: layout.width * 1.2, fontWeight: '600', lineHeight: layout.width * 2.2, color: theme }}>
-							{music.current.lyrics}
-						</Text>
-					}
-					<View style={{ height: height * 0.1 }} />
+								<TouchableOpacity
+									onPress={async () => {
+										const targetIndex = Player.musicList.findIndex(element => element.id === music.current.id);
+										const updatedMetadata = await getMetadata(music.current);
 
-				</ScrollView>
+										Player.musicList.splice(targetIndex, 1, updatedMetadata);
+										music.current = Player.musicList[targetIndex];
+
+										setTrackInfo({
+											info: music.current,
+											artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
+											miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
+										});
+
+										try {
+											const jsonValue = JSON.stringify(Player.musicList);
+											await AsyncStorage.setItem('musicList', jsonValue);
+										} catch (e) {
+											// console.log(e);
+										}
+									}}
+									style={{ alignSelf: 'center', marginTop: layout.width * 4, borderWidth: 1, padding: layout.width * 0.4, borderColor: progressBarDullTheme, borderRadius: 4 }}
+								>
+									<Text style={{ fontSize: layout.width * 0.8, color: progressBarDullTheme }}>
+										Update metadata
+									</Text>
+								</TouchableOpacity>
+							</>
+						}
+						{music.current.lyrics.length !== 0 &&
+							<Text style={{ fontSize: layout.width * 1.2, fontWeight: '600', lineHeight: layout.width * 2.2, color: theme }}>
+								{music.current.lyrics}
+							</Text>
+						}
+						<View style={{ height: height * 0.1 }} />
+
+					</ScrollView>
+				</MaskedView>
+
 
 				<View style={{ height: layout.ratio * 3.5, flexDirection: 'row', }}>
 					<View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -289,30 +343,10 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 }
 
 const styles = StyleSheet.create({
-	artworkWrapper: {
-		marginTop: statusBarHeight + height * 0.07,
-		height: width * 0.855,
-		width: width,
-		alignItems: 'center',
-		shadowColor: 'black',
-		shadowRadius: width * 0.075,
-		shadowOpacity: 0.3,
-		// backgroundColor: 'pink',
-	},
 	arworkImage: {
 		width: width * 0.855,
 		height: width * 0.855,
 		borderRadius: width / 32,
-	},
-	title: {
-		fontSize: layout.width * 1.05,
-		color: theme,
-		fontWeight: '600',
-	},
-	artist: {
-		fontSize: layout.width * .95,
-		color: dullTheme,
-		fontWeight: '300',
 	},
 	progressContainer: {
 		width: width * 0.82,

@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import FastImage from 'react-native-fast-image';
 import TextTicker from 'react-native-text-ticker';
 import { Easing } from 'react-native-reanimated';
+import MaskedView from '@react-native-masked-view/masked-view';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -226,18 +228,25 @@ export default function RenderBottomBar() {
 							}}
 						/>
 					</View>
-					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
-						<TextTicker
-							style={{ fontSize: layout.width * 0.98, }} numberOfLines={1}
-							scrollSpeed={50}
-							bounce={false}
-							marqueeDelay={3000}
-							scroll={false}
-							easing={Easing.linear}
-						>
-							{trackInfo.title}
-						</TextTicker>
-					</View>
+
+
+					<MaskedView
+						maskElement={<LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['transparent', 'black', 'black', 'transparent']} style={{ flex: 1 }} locations={[0.02, 0.06, 0.94, 1]} />}
+					>
+						<View style={{ width: width - listHeight * 2 - width * 0.18, backgroundColor: 'transparent', }}>
+							<TextTicker
+								style={{ fontSize: layout.width * 0.98, paddingLeft: width * 0.02, paddingRight: width * 0.02, color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text }}
+								scrollSpeed={50}
+								bounce={false}
+								marqueeDelay={3000}
+								scroll={false}
+								easing={Easing.linear}
+							>
+								{trackInfo.title}
+							</TextTicker>
+						</View>
+					</MaskedView>
+
 				</TouchableOpacity>
 			</View>
 			<View style={{ width: width * 0.28, height: bottomBarHeight, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'transparent' }}>

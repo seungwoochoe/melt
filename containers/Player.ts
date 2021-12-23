@@ -273,8 +273,8 @@ export default class Player {
 
 		const aWeekEarlier = Date.now() - 7 * 24 * 60 * 60 * 1000;
 		historyList = historyList.filter(element => element.endTime > aWeekEarlier)
+		// console.table( historyList.map(element => ({title: element.title, secPlayed: element.secPlayed, duration: element.duration, reasonStart: element.reasonStart, reasonEnd: element.reasonEnd})).slice(-5));
 		historyList.reverse(); // In order to dispaly recently songs first if there are songs with same playedAmount.
-		// console.table({title: historyList[0].title, playedRatio: historyList[0].playedRatio, sec: historyList[0].secPlayed, duration: historyList[0].duration});
 
 		for (const history of historyList) {
 			const targetIndex = stats.findIndex(element => element.id === history.id)

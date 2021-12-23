@@ -7,6 +7,7 @@ import Colors from '../constants/Colors';
 import layout from '../constants/layout';
 import { Music } from '../types';
 import Player from '../containers/Player';
+import TrackPlayer from 'react-native-track-player';
 
 const { width } = Dimensions.get('screen');
 const marginBetweenAlbumartAndText = width * 0.029;
@@ -26,9 +27,13 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 				Keyboard.dismiss();
 
 				if (Player.tracks[Player.currentIndex].id !== item.id) {
-					await Player.createNewTracks(item);
+					await Player.createNewTracks(Player.musicList.find(element => element.id === item.id));
 					await Player.play();
-					Player.updateMusicSelection(item);
+					Player.updateMusicSelection(Player.musicList.find(element => element.id === item.id) ?? Player.defaultMusic);
+				}
+				else {
+					await TrackPlayer.seekTo(0);
+					await Player.play();
 				}
 
 			}}

@@ -195,7 +195,7 @@ export default function LibraryScreen({ navigation }: any) {
                         marginBottom: layout.height * 0.6,
                         color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text,
                       }}>
-                        Most played songs
+                        Recent most played songs
                       </Text>
                     </>
                   )

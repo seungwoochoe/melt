@@ -7,6 +7,7 @@ import React from 'react'; // Needed if you want to use react-native.
 import { Dimensions } from 'react-native';
 
 import { Music, Track, History } from '../types';
+import Player from './Player';
 
 const { width } = Dimensions.get('screen');
 const artworkSize = Math.floor(width * 1.8);
@@ -217,6 +218,7 @@ export async function getStoredHistoryList() {
 
 export async function getStoredMusicSelection() {
 	let musicSelection: Music[] = [];
+	const prunedMusicSelection: Music[] = [];
 
 	try {
 		const jsonValue = await AsyncStorage.getItem('musicSelection');
@@ -224,11 +226,21 @@ export async function getStoredMusicSelection() {
 	} catch (e) {
 		// console.log(e);
 	}
-	return musicSelection;
+
+	for (const music of musicSelection) {
+		const targetIndex = Player.musicList.findIndex(element => element.id === music.id);
+
+		if (targetIndex !== -1) {
+			prunedMusicSelection.push(music);
+		}
+	}
+
+	return prunedMusicSelection;
 }
 
 export async function getStoredLikedSongs() {
 	let likedSongs: Music[] = [];
+	const prunedLikedSongs: Music[] = [];
 
 	try {
 		const jsonValue = await AsyncStorage.getItem('likedSongs');
@@ -236,7 +248,16 @@ export async function getStoredLikedSongs() {
 	} catch (e) {
 		// console.log(e);
 	}
-	return likedSongs;
+
+	for (const song of likedSongs) {
+		const targetIndex = Player.musicList.findIndex(element => element.id === song.id);
+
+		if (targetIndex !== -1) {
+			prunedLikedSongs.push(song);
+		}
+	}
+
+	return prunedLikedSongs;
 }
 
 

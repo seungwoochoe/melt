@@ -150,7 +150,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 				<ScrollView
 					fadingEdgeLength={10}
 					style={{ height: height * 0.5, width: width, paddingHorizontal: hasNotch ? width * 0.1 : width * 0.08, paddingTop: width * 0.06, marginBottom: width * 0.03 }}
-					showsVerticalScrollIndicator={false}
+					showsVerticalScrollIndicator={true}
 					ref={scrollView}
 				>
 
@@ -178,7 +178,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 										await AsyncStorage.setItem('musicList', jsonValue);
 									} catch (e) {
 										// console.log(e);
-									}								
+									}
 								}}
 								style={{ alignSelf: 'center', marginTop: layout.width * 4, borderWidth: 1, padding: layout.width * 0.4, borderColor: progressBarDullTheme, borderRadius: 4 }}
 							>
@@ -193,7 +193,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 							{music.current.lyrics}
 						</Text>
 					}
-					<View style={{ height: height * 0.12 }} />
+					<View style={{ height: height * 0.1 }} />
 
 				</ScrollView>
 

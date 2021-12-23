@@ -6,6 +6,8 @@ import TrackPlayer, { usePlaybackState, State, useProgress, RepeatMode } from 'r
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import FastImage from 'react-native-fast-image';
+import TextTicker from 'react-native-text-ticker';
+import { Easing } from 'react-native-reanimated';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -225,9 +227,16 @@ export default function RenderBottomBar() {
 						/>
 					</View>
 					<View style={{ width: width - listHeight * 2 - width * 0.25, marginLeft: marginBetweenAlbumartAndText, backgroundColor: 'transparent', }}>
-						<Text style={{ fontSize: layout.width * 0.98, }} numberOfLines={1}>
+						<TextTicker
+							style={{ fontSize: layout.width * 0.98, }} numberOfLines={1}
+							scrollSpeed={50}
+							bounce={false}
+							marqueeDelay={3000}
+							scroll={false}
+							easing={Easing.linear}
+						>
 							{trackInfo.title}
-						</Text>
+						</TextTicker>
 					</View>
 				</TouchableOpacity>
 			</View>

@@ -7,6 +7,8 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LinearGradient from 'react-native-linear-gradient';
+import TextTicker from 'react-native-text-ticker';
+import { Easing } from 'react-native-reanimated';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
@@ -57,23 +59,23 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
   const playbackState = usePlaybackState();
   const [trackInfo, setTrackInfo] = useState<any>({
-		info: music.current,
-		artwork: typeof route.params.initialMusic.artwork !== "string" ? defaultArtwork : { uri: route.params.initialMusic.artwork },
-		miniArt: typeof route.params.initialMusic.miniArt !== "string" ? defaultArtwork : { uri: route.params.initialMusic.miniArt },
+    info: music.current,
+    artwork: typeof route.params.initialMusic.artwork !== "string" ? defaultArtwork : { uri: route.params.initialMusic.artwork },
+    miniArt: typeof route.params.initialMusic.miniArt !== "string" ? defaultArtwork : { uri: route.params.initialMusic.miniArt },
   });
 
 
   useEffect(() => {
     async function updateTrack() {
       const currentTrackPlayerIndex = await TrackPlayer.getCurrentTrack();
-			const currentTrackMusic = Player.musicList.find(element => element.id === Player.tracks[currentTrackPlayerIndex].id);
-			if (currentTrackMusic != null) {
-				music.current = currentTrackMusic;
-			}
-			setTrackInfo({
-				info: music.current,
-				artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
-				miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
+      const currentTrackMusic = Player.musicList.find(element => element.id === Player.tracks[currentTrackPlayerIndex].id);
+      if (currentTrackMusic != null) {
+        music.current = currentTrackMusic;
+      }
+      setTrackInfo({
+        info: music.current,
+        artwork: typeof music.current.artwork !== "string" ? defaultArtwork : { uri: music.current.artwork },
+        miniArt: typeof music.current.miniArt !== "string" ? defaultArtwork : { uri: music.current.miniArt },
       });
     }
 
@@ -108,7 +110,11 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
 
         <View style={styles.artworkWrapper}>
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={trackInfo.artwork} style={styles.arworkImage} />
+            <Image source={trackInfo.artwork} style={{
+              width: width * 0.855,
+              height: width * 0.855,
+              borderRadius: width / 32,
+            }} />
           </View>
         </View>
 
@@ -116,10 +122,36 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
         <View style={{ flex: .7, width: width * 0.82, flexDirection: 'row', alignItems: 'center', marginTop: width * 0.02 }}>
           <View style={{ flex: 6, paddingRight: width * 0.032 }}>
             <View style={{ height: layout.ratio * 2, flexDirection: 'row', alignItems: 'center', }}>
-              <Text style={styles.title} numberOfLines={1}>{trackInfo.info.title}</Text>
+              <TextTicker
+                style={{
+                  fontSize: layout.width * 1.28,
+                  color: theme,
+                  fontWeight: '600',
+                }}
+                scrollSpeed={50}
+                bounce={false}
+                marqueeDelay={3000}
+                scroll={false}
+                easing={Easing.linear}
+              >
+                {trackInfo.info.title}
+              </TextTicker>
             </View>
 
-            <Text style={styles.artist} numberOfLines={1}>{trackInfo.info.artist}</Text>
+            <TextTicker
+              style={{
+                fontSize: layout.width * 1.1,
+                color: dullTheme,
+                fontWeight: '300',
+              }}
+              scrollSpeed={55}
+              bounce={false}
+              marqueeDelay={3000}
+              scroll={false}
+              easing={Easing.linear}
+            >
+              {trackInfo.info.artist}
+            </TextTicker>
 
           </View>
           <TouchableOpacity
@@ -404,21 +436,6 @@ const styles = StyleSheet.create({
     shadowRadius: width * 0.075,
     shadowOpacity: 0.3,
     // backgroundColor: 'pink',
-  },
-  arworkImage: {
-    width: width * 0.855,
-    height: width * 0.855,
-    borderRadius: width / 32,
-  },
-  title: {
-    fontSize: layout.width * 1.35,
-    color: theme,
-    fontWeight: '600',
-  },
-  artist: {
-    fontSize: layout.width * 1.1,
-    color: dullTheme,
-    fontWeight: '300',
   },
   progressContainer: {
     width: width * 0.82,

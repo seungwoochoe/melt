@@ -120,20 +120,20 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 
 
 						<MaskedView
-							style={{ flex: 6, }}
+							style={{ flex: 6,}}
 							maskElement={
 								<LinearGradient
 									style={{ flex: 1 }}
 									start={{ x: 0, y: 0 }}
 									end={{ x: 1, y: 0 }}
 									colors={['transparent', 'black', 'black', 'transparent']}
-									locations={[0, 0.04, .96, 1]}
+									locations={[0.01, 0.04, .91, .94]}
 								/>}
 						>
 							<View style={{ height: layout.ratio * 1.6, flexDirection: 'row', alignItems: 'center', }}>
 								<TextTicker
 									style={{
-										fontSize: layout.width * 1.05,
+										fontSize: layout.width * 1,
 										color: theme,
 										fontWeight: '600',
 										paddingLeft: layout.width * 0.3,

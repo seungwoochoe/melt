@@ -150,13 +150,13 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 colors={['transparent', 'black', 'black', 'transparent']}
-                locations={[0, 0.1, .94, .97]}
+                locations={[0.09, 0.12, .94, .97]}
               />}
           >
             <View style={{ height: layout.ratio * 2, flexDirection: 'row', alignItems: 'center', }}>
               <TextTicker
                 style={{
-                  fontSize: layout.width * 1.28,
+                  fontSize: layout.width * 1.27,
                   color: theme,
                   fontWeight: '600',
                   paddingLeft: width * 0.09,
@@ -189,7 +189,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
           </MaskedView>
 
           <TouchableOpacity
-            style={{ width: width * 0.2, padding: Player.musicList.find(element => element.id === currentMusic.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3, }}
+            style={{ width: width * 0.2, alignItems: 'center', marginRight: width * 0.035, padding: Player.musicList.find(element => element.id === currentMusic.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3, }}
             onPress={async () => {
 
               const targetIndex = Player.musicList.findIndex(element => element.id === currentMusic.id);
@@ -225,8 +225,8 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
           >
             <Ionicons
               name={Player.musicList.find(element => element.id === currentMusic.id)?.isLiked ? 'heart' : 'heart-outline'}
-              size={Player.musicList.find(element => element.id === currentMusic.id)?.isLiked ? bottomIconsSize * 0.9 : bottomIconsSize * 0.98}
-              color={dullTheme}
+              size={Player.musicList.find(element => element.id === currentMusic.id)?.isLiked ? bottomIconsSize * 0.85 : bottomIconsSize * 0.98}
+              color={'rgba(255, 255, 255, 0.67)'}
             />
           </TouchableOpacity>
         </View>

@@ -46,7 +46,6 @@ export default function RenderBottomBar() {
 	const [currentMusic, setCurrentMusic] = useState<Music>(Player.tracks[0]);
 	const [isPlaying, setIsPlaying] = useState(false);
 
-	const currentIndex = useRef(0);
 	const storedPosition = useRef(0);
 	const secPlayed = useRef(0);
 	const isRepeat = useRef(false);
@@ -214,7 +213,7 @@ export default function RenderBottomBar() {
 					>
 						<View style={{ width: width - listHeight * 2 - width * 0.18, backgroundColor: 'transparent', }}>
 							<TextTicker
-								style={{ fontSize: layout.width * 0.98, paddingLeft: width * 0.02, paddingRight: width * 0.02, color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text }}
+								style={{ fontSize: layout.width * 0.95, paddingLeft: width * 0.02, paddingRight: width * 0.02, color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text }}
 								scrollSpeed={50}
 								bounce={false}
 								marqueeDelay={5000}

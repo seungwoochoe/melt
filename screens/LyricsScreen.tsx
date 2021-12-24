@@ -189,6 +189,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 						fadingEdgeLength={10}
 						style={{ paddingHorizontal: hasNotch ? width * 0.1 : width * 0.08, paddingTop: width * 0.06, }}
 						showsVerticalScrollIndicator={true}
+						scrollIndicatorInsets={{top: layout.height, left: 0, bottom: layout.height, right: 0 }}
 						ref={scrollView}
 					>
 

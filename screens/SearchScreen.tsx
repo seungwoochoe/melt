@@ -66,7 +66,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 
 	function search({ title, artist }: { title: string, artist: string }, query: string) {
 		const condition = new RegExp(`^${query}| ${query}|\\(${query}`);
-		if (title.toLowerCase().match(condition) || artist.toLowerCase().match(condition)) {
+		if (title.replaceAll('.', ' ').toLowerCase().match(condition) || artist.replaceAll('.', ' ').toLowerCase().match(condition)) {
 			return true;
 		}
 		return false;

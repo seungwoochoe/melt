@@ -231,7 +231,7 @@ export async function getStoredMusicSelection() {
 		const targetIndex = Player.musicList.findIndex(element => element.id === music.id);
 
 		if (targetIndex !== -1) {
-			prunedMusicSelection.push(music);
+			prunedMusicSelection.push(Player.musicList[targetIndex]);
 		}
 	}
 
@@ -253,7 +253,7 @@ export async function getStoredLikedSongs() {
 		const targetIndex = Player.musicList.findIndex(element => element.id === song.id);
 
 		if (targetIndex !== -1) {
-			prunedLikedSongs.push(song);
+			prunedLikedSongs.push(Player.musicList[targetIndex]);
 		}
 	}
 

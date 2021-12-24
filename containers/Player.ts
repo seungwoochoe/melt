@@ -21,7 +21,6 @@ export default class Player {
 	static musicSelection: Music[] = [];
 	static likedSongs: Music[] = [];
 	static mostPlayedSongs: Music[] = [];
-	static libraryItemsListSize = Math.min(20, Math.max(12, Math.floor(Player.musicList.length / 10)));
 
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";
@@ -137,11 +136,6 @@ export default class Player {
 		if (!!Player.tracks[Player.currentIndex].isTrigger) {
 			await Player.appendMoreTracks();
 		}
-
-		// console.log("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️");
-		// for (const [i, track] of Player.tracks.entries()) {
-		// 	console.log(i, track.isPlayed, track.title);
-		// }
 	}
 
 
@@ -207,8 +201,8 @@ export default class Player {
 			// console.log(e);
 		}
 
-		let playedRatio = secPlayed / Player.currentDuration;
-		if (Math.abs(secPlayed - Player.currentDuration) < 7) {
+		let playedRatio = Player.currentDuration === 0 ? 0 : (secPlayed / Player.currentDuration);
+		if (playedRatio !== 0 && Math.abs(secPlayed - Player.currentDuration) < 7) {
 			playedRatio = 1;
 		}
 
@@ -242,7 +236,7 @@ export default class Player {
 	// For Search srceen.
 
 	static async updateMusicSelection(music: Music) {
-		while (Player.musicSelection.length > Player.libraryItemsListSize) {
+		while (Player.musicSelection.length > Math.min(20, Math.max(12, Math.floor(Player.musicList.length / 10)))) {
 			Player.musicSelection.pop();
 		}
 
@@ -273,7 +267,7 @@ export default class Player {
 
 		const aWeekEarlier = Date.now() - 7 * 24 * 60 * 60 * 1000;
 		historyList = historyList.filter(element => element.endTime > aWeekEarlier)
-		// console.table( historyList.map(element => ({title: element.title, secPlayed: element.secPlayed, duration: element.duration, reasonStart: element.reasonStart, reasonEnd: element.reasonEnd})).slice(-5));
+		console.table( historyList.map(element => ({title: element.title, secPlayed: element.secPlayed, duration: element.duration, reasonStart: element.reasonStart, reasonEnd: element.reasonEnd, playedRatio: element.playedRatio})).slice(-5));
 		historyList.reverse(); // In order to dispaly recently songs first if there are songs with same playedAmount.
 
 		for (const history of historyList) {
@@ -291,9 +285,9 @@ export default class Player {
 		}
 
 		const sortedStats = stats.sort((a, b) => b.playedAmount - a.playedAmount);
-		// console.table(sortedStats);
+		console.table(sortedStats);
 
-		for (let i = 0; i < Math.min(sortedStats.length, Player.libraryItemsListSize); i++) {
+		for (let i = 0; i < Math.min(sortedStats.length, Math.min(20, Math.max(12, Math.floor(Player.musicList.length / 10)))); i++) {
 			const targetMusic = Player.musicList.find((element) => element.id === sortedStats[i].id);
 
 			if (targetMusic != null) {

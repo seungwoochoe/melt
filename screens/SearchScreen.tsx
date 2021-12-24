@@ -99,7 +99,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 								marginBottom: layout.height * 0.6,
 								color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text,
 							}}>
-								Your recent selections
+								Your recent picks
 							</Text>
 						)
 					}

@@ -10,6 +10,7 @@ import RenderTitle from '../components/Title';
 import RenderSong from '../components/Song';
 import { useIsFocused } from '@react-navigation/native';
 import RenderSeparator from '../components/Separator';
+import { Music } from '../types';
 
 
 const { width, height } = Dimensions.get('screen');
@@ -65,6 +66,7 @@ export default function AllSongsScreen({ navigation, route }: any) {
     )
   }
 
+  const renderItem = ({item}: {item: Music}) =>( <RenderSong item={item} colorScheme={colorScheme} />);
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
@@ -83,11 +85,7 @@ export default function AllSongsScreen({ navigation, route }: any) {
           }
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderBottomMargin}
-          renderItem={({ item }) => {
-            return (
-              <RenderSong item={item} colorScheme={colorScheme} />
-            );
-          }}
+          renderItem={renderItem}
           onScroll={(event) => {
             const scrollOffset = event.nativeEvent.contentOffset.y;
 
@@ -102,10 +100,10 @@ export default function AllSongsScreen({ navigation, route }: any) {
             }
           }}
           showsVerticalScrollIndicator={true}
-          scrollIndicatorInsets={{ top: layout.ratio * 2.9 * useWindowDimensions().fontScale, left: 0, bottom: layout.bottomBarHeight, right: 0 }}
+          scrollIndicatorInsets={{ top: layout.ratio * 2.9 * useWindowDimensions().fontScale, bottom: layout.bottomBarHeight, }}
           keyExtractor={keyExtractor}
           getItemLayout={(data, index) => (
-            { length: listHeight + 1, offset: (listHeight + 1) * index, index }
+            { length: listHeight * 1.092 , offset: (listHeight * 1.092) * index + layout.bottomBarHeight, index }
           )}
         />
       </View>

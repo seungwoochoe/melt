@@ -185,7 +185,8 @@ export default function RenderBottomBar() {
 							isRepeat: isRepeat.current,
 						})
 					}}
-					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}>
+					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
+					activeOpacity={0.35}>
 					<View style={{
 						width: listHeight,
 						shadowColor: 'black',
@@ -209,7 +210,7 @@ export default function RenderBottomBar() {
 
 
 					<MaskedView
-						maskElement={<LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['transparent', 'black', 'black', 'transparent']} style={{ flex: 1 }} locations={[0.02, 0.06, 0.94, 1]} />}
+						maskElement={<LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['transparent', 'black', 'black', 'transparent']} style={{ flex: 1 }} locations={[0.015, 0.05, 0.94, 1]} />}
 					>
 						<View style={{ width: width - listHeight * 2 - width * 0.18, backgroundColor: 'transparent', }}>
 							<TextTicker

@@ -38,6 +38,7 @@ export default function RenderSong({ item, colorScheme }: { item: Music, colorSc
 
 			}}
 			style={{ height: listHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
+			activeOpacity={0.35}
 		>
 			<View>
 				<FastImage

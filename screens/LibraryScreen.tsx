@@ -36,6 +36,7 @@ export default function LibraryScreen({ navigation }: any) {
       <TouchableOpacity
         onPress={() => { navigation.navigate(item.destination, item.data) }}
         style={{ width: width - layout.marginHorizontal, height: width / 7, marginLeft: width * 0.05 }}
+        activeOpacity={0.35}
       >
         <View style={{
           flex: 1,
@@ -139,7 +140,9 @@ export default function LibraryScreen({ navigation }: any) {
                 style={{
                   marginTop: layout.width * 0.5,
                   paddingBottom: layout.width,
-                }}>
+                }}
+                activeOpacity={0.34}
+                >
                 <View
                   style={{
                     alignSelf: 'center',

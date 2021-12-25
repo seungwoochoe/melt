@@ -183,6 +183,7 @@ export default function RenderBottomBar() {
 							id: currentMusic.id,
 							isPlaying: isPlaying,
 							isRepeat: isRepeat.current,
+							progress: position / duration,
 						})
 					}}
 					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}

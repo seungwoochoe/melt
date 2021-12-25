@@ -43,7 +43,7 @@ const hasNotch = (height / width) > 2 ? true : false;
 const defaultArtwork = require('../assets/images/blank.png');
 
 
-export default function LyricsScreen({ route, navigation }: { route: { params: { id: string, isPlaying: boolean } }, navigation: any }) {
+export default function LyricsScreen({ route, navigation }: { route: { params: { id: string, isPlaying: boolean, progress: number } }, navigation: any }) {
 	const [currentMusic, setCurrentMusic] = useState<Music>(Player.musicList.find(elemnet => elemnet.id === route.params.id) ?? Player.defaultMusic);
 	const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
 	const { position, duration } = useProgress();
@@ -238,7 +238,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 					<View style={{ justifyContent: 'center', alignItems: 'center' }}>
 						<Slider
 							style={styles.progressContainer}
-							value={isSliding === true ? slidingValue.current : (duration === 0 ? 0 : (position / duration))}
+							value={isSliding === true ? slidingValue.current : (duration === 0 ? route.params.progress : (position / duration))}
 							minimumValue={0}
 							maximumValue={1}
 							thumbTintColor='#d2d2d2'

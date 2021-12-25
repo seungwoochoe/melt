@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { View, Text } from '../components/Themed';
@@ -23,6 +23,8 @@ export default function LibraryScreen({ navigation }: any) {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const colorScheme = useColorScheme();
+
+  const listHeight = layout.listHeightWithoutScale * useWindowDimensions().fontScale;
 
   const playbackState = usePlaybackState();
   const isFocused = useIsFocused();
@@ -141,7 +143,7 @@ export default function LibraryScreen({ navigation }: any) {
                   marginTop: layout.width * 0.5,
                   paddingBottom: layout.width,
                 }}
-                activeOpacity={0.34}
+                activeOpacity={0.45}
                 >
                 <View
                   style={{
@@ -225,6 +227,10 @@ export default function LibraryScreen({ navigation }: any) {
                 ListFooterComponent={RenderBottomMargin}
 
                 keyExtractor={keyExtractorForTheMostPlayedSongs}
+
+                getItemLayout={(data, index) => (
+                  { length: listHeight * 1.092 , offset: (listHeight * 1.092) * index + layout.bottomBarHeight, index }
+                )}
               />
             )
           }}

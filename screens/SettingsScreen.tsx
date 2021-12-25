@@ -89,7 +89,8 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
       <View
         style={{ width: width, height: itemHeight * 1.2, marginTop: itemHeight / 2, marginBottom: itemHeight / 3, backgroundColor: 'transparent' }}
       >
-        <TouchableOpacity style={{
+        <TouchableOpacity 
+        style={{
           flex: 1,
           flexDirection: 'row',
           marginHorizontal: marginHorizontal,
@@ -97,6 +98,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
           backgroundColor: colorScheme === 'light' ? '#fff' : '#1e1e22',
           borderRadius: borderRadius,
         }}
+        activeOpacity={0.45}
         >
           <View style={{
             width: itemHeightWithoutScale * 0.65,
@@ -166,6 +168,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
             borderBottomLeftRadius: item.position === 'bottom' ? borderRadius : 0,
             borderBottomRightRadius: item.position === 'bottom' ? borderRadius : 0,
           }}
+          activeOpacity={0.45}
         >
           <View style={{
             width: itemHeightWithoutScale * 0.65,

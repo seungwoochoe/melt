@@ -151,6 +151,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 		)
 	};
 
+  const renderItem = ({item}: {item: Music}) =>( <RenderSong item={item} colorScheme={colorScheme} />);
 
 	return (
 		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
@@ -233,11 +234,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 					}}
 
 					data={filteredMusicList}
-					renderItem={({ item }) => {
-						return (
-							<RenderSong item={item} colorScheme={colorScheme} />
-						)
-					}}
+					renderItem={renderItem}
 					ItemSeparatorComponent={RenderSeparator}
 					ListFooterComponent={() => {
 						if (filteredMusicList.length !== 0) {
@@ -259,9 +256,9 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 					keyboardShouldPersistTaps='handled'
 					scrollEnabled={!(filteredMusicList.length === 0 && Player.musicSelection.length === 0)}
 					keyExtractor={keyExtractor}
-					getItemLayout={(data, index) => (
-						{ length: listHeight + 1, offset: (listHeight + 1) * index, index }
-					)}
+          getItemLayout={(data, index) => (
+            { length: listHeight * 1.092 , offset: (listHeight * 1.092) * index + layout.bottomBarHeight, index }
+          )}
 				/>
 			</View>
 

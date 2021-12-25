@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import { ColorSchemeName, Dimensions } from 'react-native';
+import { ColorSchemeName, Dimensions, } from 'react-native';
 
 import layout from '../constants/layout';
 import Colors from '../constants/Colors';

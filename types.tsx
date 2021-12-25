@@ -58,13 +58,7 @@ export type Track = Music & {
 
 export type History = {
   endTime: number,
-  url: string,
-  title: string,
-  artist: string,
-  miniArt: string,
-  isLiked: boolean,
   id: string,
-
   reasonStart: "normal" | "selected" | "returned",
   reasonEnd: "normal" | "skipped",
   playedRatio: number,

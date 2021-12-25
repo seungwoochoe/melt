@@ -10,7 +10,7 @@ const defaultMiniArt = require('../assets/images/blank.png');
 export default class Player {
 	static isSetup = false;
 
-	static defaultMusic: Music = {url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, lyrics: "", isLiked: false, id: 'blankTrack'}
+	static defaultMusic: Music = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, lyrics: "", isLiked: false, id: 'blankTrack' }
 	static musicList: Music[] = [];
 	static weightedMusicList: WeightedMusic[] = [];
 
@@ -20,7 +20,7 @@ export default class Player {
 	static historyList: History[] = [];
 	static musicSelection: Music[] = [];
 	static likedSongs: Music[] = [];
-	static mostPlayedSongs: Music[] = [];
+	static topSongs: Music[] = [];
 
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
 	static currentReasonEnd: "normal" | "skipped";
@@ -208,11 +208,6 @@ export default class Player {
 
 		Player.historyList.push({
 			endTime: Date.now(),
-			url: Player.tracks[Player.currentIndex].url,
-			title: Player.tracks[Player.currentIndex].title,
-			artist: Player.tracks[Player.currentIndex].artist,
-			miniArt: Player.tracks[Player.currentIndex].miniArt,
-			isLiked: Player.tracks[Player.currentIndex].isLiked,
 			id: Player.tracks[Player.currentIndex].id,
 			reasonStart: Player.currentReasonStart,
 			reasonEnd: Player.currentReasonEnd,
@@ -260,14 +255,19 @@ export default class Player {
 
 	// -------------------------------------------------------------------------
 	// For Libraray screen
-	static updateMostPlayedMusic() {
-		const mostPlayedSongs: Music[] = [];
+	static updateTopMusic() {
+		const topSongs: Music[] = [];
 		const stats: { id: string, playedAmount: number }[] = [];
-		let historyList = [...Player.historyList];  // 🤦 Deep vs shallow copy!! I spent 1-2 hours because of this..
-
+		
 		const aWeekEarlier = Date.now() - 7 * 24 * 60 * 60 * 1000;
-		historyList = historyList.filter(element => element.endTime > aWeekEarlier)
-		console.table( historyList.map(element => ({title: element.title, secPlayed: element.secPlayed, duration: element.duration, reasonStart: element.reasonStart, reasonEnd: element.reasonEnd, playedRatio: element.playedRatio})).slice(-5));
+		const aMonthEarlier = Date.now() - 30 * 24 * 60 * 60 * 1000;
+		
+		let historyList = [...Player.historyList].filter(element => element.endTime > aWeekEarlier); // 🤦 Deep vs shallow copy!! I spent 1-2 hours because of this..
+
+		if (historyList.length < 30) {
+			historyList = [...Player.historyList].filter(element => element.endTime > aMonthEarlier);
+		}
+		
 		historyList.reverse(); // In order to dispaly recently songs first if there are songs with same playedAmount.
 
 		for (const history of historyList) {
@@ -285,16 +285,15 @@ export default class Player {
 		}
 
 		const sortedStats = stats.sort((a, b) => b.playedAmount - a.playedAmount);
-		console.table(sortedStats);
 
 		for (let i = 0; i < Math.min(sortedStats.length, Math.min(20, Math.max(12, Math.floor(Player.musicList.length / 10)))); i++) {
 			const targetMusic = Player.musicList.find((element) => element.id === sortedStats[i].id);
 
 			if (targetMusic != null) {
-				mostPlayedSongs.push(targetMusic);
+				topSongs.push(targetMusic);
 			}
 		}
 
-		Player.mostPlayedSongs = mostPlayedSongs;
+		Player.topSongs = topSongs;
 	}
 }

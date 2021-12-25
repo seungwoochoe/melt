@@ -26,12 +26,11 @@ export default function LibraryScreen({ navigation }: any) {
 
   const listHeight = layout.listHeightWithoutScale * useWindowDimensions().fontScale;
 
-  const playbackState = usePlaybackState();
   const isFocused = useIsFocused();
 
   
   const keyExtractor = useCallback((item) => item.title, []);
-  const keyExtractorForTheMostPlayedSongs = useCallback((item) => item.id, []);
+  const keyExtractorForTheTopSongs = useCallback((item) => item.id, []);
 
   const RenderTopLists = ({ item }: { item: { title: string, iconName: string, iconScale: number, destination: string, data: Music[] } }) => {
     return (
@@ -94,7 +93,7 @@ export default function LibraryScreen({ navigation }: any) {
   }
 
   const RenderBottomMargin = () => {
-    if (Player.mostPlayedSongs.length !== 0) {
+    if (Player.topSongs.length !== 0) {
       return (
         <>
           <RenderSeparator />
@@ -110,7 +109,7 @@ export default function LibraryScreen({ navigation }: any) {
 
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
+    <View style={styles.container}>
 
       <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' : 'light-content'} animated={true} />
 
@@ -159,7 +158,7 @@ export default function LibraryScreen({ navigation }: any) {
                   }}>
                   <Ionicons name="search-outline" size={layout.width * 1.2} color={colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor} />
                   <Text style={{
-                    marginLeft: width * 0.02,
+                    marginLeft: width * 0.015,
                     fontSize: layout.width * 1.1,
                     color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2,
                   }}>
@@ -192,30 +191,37 @@ export default function LibraryScreen({ navigation }: any) {
                       <RenderTopSeparator />
 
                       <Text style={{
-                        width: width * 0.94,
-                        fontSize: layout.width * 1.28,
+                        width: width * 0.935,
+                        fontSize: layout.width * 1.37,
                         fontWeight: 'bold',
-                        marginLeft: width * 0.06,
+                        marginLeft: width * 0.065,
                         marginTop: layout.height * 1.5,
                         marginBottom: layout.height * 0.6,
                         color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text,
                       }}>
-                        Recent most played songs
+                        Your top songs
                       </Text>
                     </>
                   )
                 }}
                 ListEmptyComponent={() => {
+                  let messageText = "";
+                  if (Player.historyList.length > 0) {
+                    messageText = "Welcome back!\n\nPlay the songs you love."
+                  } else {
+                    messageText = "Play the songs you love."
+                  }
+
                   return (
                     <View style={{ height: height * 0.26, width: width, flexDirection: 'row', alignItems: 'center' }}>
                       <Text style={{ flex: 1, textAlign: 'center', fontSize: layout.width * 1.1, fontWeight: '400', color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
-                        Play the songs you love.
+                        {messageText}
                       </Text>
                     </View>
                   )
                 }}
 
-                data={Player.mostPlayedSongs}
+                data={Player.topSongs}
                 renderItem={({ item }) => {
                   return (
                     <RenderSong item={item} colorScheme={colorScheme} />
@@ -226,7 +232,7 @@ export default function LibraryScreen({ navigation }: any) {
 
                 ListFooterComponent={RenderBottomMargin}
 
-                keyExtractor={keyExtractorForTheMostPlayedSongs}
+                keyExtractor={keyExtractorForTheTopSongs}
 
                 getItemLayout={(data, index) => (
                   { length: listHeight * 1.092 , offset: (listHeight * 1.092) * index + layout.bottomBarHeight, index }
@@ -258,7 +264,7 @@ export default function LibraryScreen({ navigation }: any) {
 
       <RenderHeader title='Library' blur={isScrolled} />
 
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 

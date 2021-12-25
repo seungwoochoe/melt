@@ -121,7 +121,7 @@ export default function RenderBottomBar() {
 			Player.currentDuration = duration;
 			setCurrentMusic(Player.musicList.find(element => element.id === Player.tracks[Player.currentIndex].id) ?? Player.defaultMusic);
 			await Player.storeTracksStatus();
-			Player.updateMostPlayedMusic();
+			Player.updateTopMusic();
 		}
 
 		handlePlayNext();

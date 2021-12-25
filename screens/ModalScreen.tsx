@@ -189,7 +189,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
           </MaskedView>
 
           <TouchableOpacity
-            style={{ width: width * 0.2, alignItems: 'center', marginRight: width * 0.035, padding: Player.musicList.find(element => element.id === currentMusic.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3, }}
+            style={{ width: width * 0.11, alignItems: 'center', marginRight: width * 0.09, padding: Player.musicList.find(element => element.id === currentMusic.id)?.isLiked ? bottomIconsSize * 0.34 : bottomIconsSize * 0.3, }}
             onPress={async () => {
 
               const targetIndex = Player.musicList.findIndex(element => element.id === currentMusic.id);

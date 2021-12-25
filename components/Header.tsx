@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { withTiming } from 'react-native-reanimated';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';

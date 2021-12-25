@@ -6,32 +6,10 @@ const SKIP_WEIGHT_MODIFIER = 0.85;
 const BOOST_WEIGHT_MODIFIER = 0.2;
 
 
-// function weightMusicList(musicList, userActionList) {
-// 	const initializedMusicList = initializeWeights(musicList);
-// 	return applyUserActionEffects(initializedMusicList, userActionList);
-// }
+export function weightMusicList(musicList: Music[], historyList: History[]) {
+	const weightedMusicList = musicList.map
+}
 
-
-
-// function applyUserActionEffects(initializedMusicList, userActionList) {
-// 	userActionList.skip.forEach(element => {
-// 		let targetMusic = initializedMusicList.find(music => music.title === element);
-
-// 		if (targetMusic != null) {
-// 			targetMusic.weight = targetMusic.weight * SKIP_WEIGHT_MODIFIER;
-// 		}
-// 	});
-
-// 	userActionList.boost.forEach(element => {
-// 		let targetMusic = initializedMusicList.find(music => music.title === element);
-
-// 		if (targetMusic != null) {
-// 			targetMusic.weight = targetMusic.weight + BOOST_WEIGHT_MODIFIER;
-// 		}
-// 	})
-
-// 	return initializedMusicList;
-// };
 
 export function initializeWeights(musicList: Music[]) {
 	const weightedMusicList: WeightedMusic[] = [];

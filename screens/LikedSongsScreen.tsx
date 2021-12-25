@@ -11,6 +11,7 @@ import RenderTitle from '../components/Title';
 import RenderSong from '../components/Song';
 import { useIsFocused } from '@react-navigation/native';
 import RenderSeparator from '../components/Separator';
+import { Music } from '../types';
 
 
 const { width, height } = Dimensions.get('screen');
@@ -34,7 +35,8 @@ export default function LikedSongsScreen({ navigation, route }: any) {
     return (
       <View style={{ height: height * 0.55, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
         <Text style={{textAlign: 'center', lineHeight: layout.width * 1.5, fontSize: layout.width * 1.1, color: colorScheme === 'light' ? Colors.light.text2 : Colors.dark.text2 }}>
-          Songs that you marked{'\n'}with heart will appear here.
+          Songs that you marked{'\n'}
+          with heart will appear here.
         </Text>
       </View>
     )
@@ -65,6 +67,7 @@ export default function LikedSongsScreen({ navigation, route }: any) {
     )
   }
 
+  const renderItem = ({item}: {item: Music}) =>( <RenderSong item={item} colorScheme={colorScheme} />);
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
@@ -83,11 +86,7 @@ export default function LikedSongsScreen({ navigation, route }: any) {
           }
           ItemSeparatorComponent={RenderSeparator}
           ListFooterComponent={RenderBottomMargin}
-          renderItem={({ item }) => {
-            return (
-              <RenderSong item={item} colorScheme={colorScheme} />
-            );
-          }}
+          renderItem={renderItem}
           onScroll={(event) => {
             const scrollOffset = event.nativeEvent.contentOffset.y;
 
@@ -105,7 +104,7 @@ export default function LikedSongsScreen({ navigation, route }: any) {
           scrollIndicatorInsets={{ top: layout.ratio * 2.9 * useWindowDimensions().fontScale, left: 0, bottom: layout.bottomBarHeight, right: 0 }}
           keyExtractor={keyExtractor}
           getItemLayout={(data, index) => (
-            { length: listHeight + 1, offset: (listHeight + 1) * index, index }
+            { length: listHeight * 1.092 , offset: (listHeight * 1.092) * index + layout.bottomBarHeight, index }
           )}
         />
       </View>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { StyleSheet, Dimensions, StatusBar, Platform, TextInput, KeyboardAvoidingView, Keyboard, FlatList, useWindowDimensions, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import filter from 'lodash.filter';
@@ -23,6 +23,8 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 
 	const colorScheme = useColorScheme();
 	const listHeight = layout.listHeightWithoutScale * useWindowDimensions().fontScale;
+
+	const isCancelClicked = useRef(false);
 
 	const keyExtractor = useCallback((item) => item.id, []);
 
@@ -196,7 +198,12 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
 						/>
 					</View>
 					<TouchableOpacity
-						onPress={() => { navigation.goBack(); }}
+						onPress={() => {
+							if (!isCancelClicked.current) {
+								navigation.goBack();
+							}
+							isCancelClicked.current = true;
+						}}
 						style={{ height: layout.width * 2.15, width: width * 0.21, flexDirection: 'row', alignItems: 'center' }}
 					>
 						<Text style={{ flex: 1, fontSize: layout.width, textAlign: 'center' }}>

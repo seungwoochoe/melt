@@ -1,13 +1,47 @@
 import { Music, Track, History } from '../types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const TRACK_LENGTH = 20;
-const SKIP_WEIGHT_MODIFIER = 0.85;
+const TRACK_LENGTH = 4;
+const SKIP_WEIGHT_MODIFIER = 0.15;
+const BOOST_WEIGHT_MODIFIER = 1.2;
 
 
-export function weightMusicList(musicList: Music[], historyList: History[]) {
-	for (const history of historyList) {
-		
+export async function weightMusicList(musicList: Music[], historyList: History[]) {
+	let appliedHistoryTime = 0;
+
+	try {
+		const jsonValue = await AsyncStorage.getItem('appliedHistoryTime');
+		appliedHistoryTime = jsonValue != null ? JSON.parse(jsonValue) : 0;
+	} catch (e) {
+		// console.log(e);
 	}
+
+	historyList = historyList.filter(element => element.endTime > appliedHistoryTime);
+	console.log("filtered history list length", historyList.length);
+
+	for (const history of historyList) {
+		const targetIndex = musicList.findIndex(element => element.id === history.id);
+
+		if (history.reasonStart === 'selected' && history.playedRatio >= 1) {
+			musicList[targetIndex].weight *= BOOST_WEIGHT_MODIFIER * history.playedRatio;
+		}
+		else if (history.reasonStart === 'normal' && history.reasonEnd === 'skipped') {
+			musicList[targetIndex].weight = musicList[targetIndex].weight * (1 - SKIP_WEIGHT_MODIFIER * Math.max(0, (1 - history.playedRatio)));
+		}
+	}
+
+	if (historyList.length !== 0) {
+		appliedHistoryTime = historyList[historyList.length - 1].endTime;
+		try {
+			const jsonValue = JSON.stringify(appliedHistoryTime);
+			await AsyncStorage.setItem('appliedHistoryTime', jsonValue);
+		} catch (e) {
+			// console.log(e);
+		}
+	}
+	console.log("appliedHistoryTime", appliedHistoryTime);
+
+	return musicList;
 }
 
 
@@ -45,19 +79,47 @@ function drawMusic(drawingAmount: number, priorTrack: Track | undefined, musicLi
 
 		if (k === 0) {
 			if (priorTrack == null) {
-				tracks.push({ ...musicList[index - 1], isPlayed: false, isTrigger: false });
-			} else {
+				tracks.push({
+					url: musicList[index - 1].url,
+					title: musicList[index - 1].title,
+					artist: musicList[index - 1].artist,
+					artwork: musicList[index - 1].artwork,
+					id: musicList[index - 1].id,
+					isPlayed: false,
+					isTrigger: false,
+				});
+			}
+			else {
 				if (priorTrack.id !== musicList[index - 1].id) {
-					tracks.push({ ...musicList[index - 1], isPlayed: false, isTrigger: false });
-				} else {
+					tracks.push({
+						url: musicList[index - 1].url,
+						title: musicList[index - 1].title,
+						artist: musicList[index - 1].artist,
+						artwork: musicList[index - 1].artwork,
+						id: musicList[index - 1].id,
+						isPlayed: false,
+						isTrigger: false,
+					});
+				}
+				else {
 					k--;
 				}
 			}
-		} else {
+		}
+		else {
 			if (tracks[k - 1].id === musicList[index - 1].id) {
 				k--;
-			} else {
-				tracks.push({ ...musicList[index - 1], isPlayed: false, isTrigger: false });
+			}
+			else {
+				tracks.push({
+					url: musicList[index - 1].url,
+					title: musicList[index - 1].title,
+					artist: musicList[index - 1].artist,
+					artwork: musicList[index - 1].artwork,
+					id: musicList[index - 1].id,
+					isPlayed: false,
+					isTrigger: false,
+				});
 			}
 		}
 	}

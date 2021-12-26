@@ -157,6 +157,7 @@ export default function SettingsScreen({ navigation }:{navigation: any}) {
                 await AsyncStorage.removeItem('secPlayed');
                 await AsyncStorage.removeItem('likedSongs');
                 await AsyncStorage.removeItem('isRepeat');
+                await AsyncStorage.removeItem('appliedHistoryTime');
                 Alert.alert("Success!");
               } catch (e) {
                 Alert.alert("Failed to delete historyList");

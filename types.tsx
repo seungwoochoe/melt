@@ -48,7 +48,12 @@ export type Music = {
   weight: number,
 }
 
-export type Track = Music & {
+export type Track = {
+  url: string,
+  title: string,
+  artist: string,
+  artwork: string,
+  id: string,
   isPlayed: boolean,
   isTrigger: boolean,
 }

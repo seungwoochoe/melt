@@ -111,7 +111,6 @@ export default class Player {
 		Player.currentReasonStart = "normal";
 
 		if (!!Player.tracks[Player.currentIndex].isTrigger) {
-			console.log("aoeuaoeuaoeuaoe");
 			await Player.appendMoreTracks();
 		}
 	}

@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import Player from '../containers/Player';
 import { readMusicFiles, pruneStoredTracks, getStoredHistoryList, getStoredMusicSelection, getStoredLikedSongs } from '../containers/Reader';
-import { complementTracks } from '../containers/Creater';
+import { complementTracks, weightMusicList } from '../containers/Creater';
 
 
 export default function useCachedResources() {
@@ -23,10 +23,11 @@ export default function useCachedResources() {
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         });
 
-        Player.musicList = await readMusicFiles();
+        const updatedMusicList = await readMusicFiles();
         Player.historyList = await getStoredHistoryList();
         Player.musicSelection = await getStoredMusicSelection();
         Player.likedSongs = await getStoredLikedSongs();
+        Player.musicList = await weightMusicList(updatedMusicList, Player.historyList);
 
         if (Player.musicList.length === 0) {
           // No music!
@@ -46,7 +47,15 @@ export default function useCachedResources() {
 
             if (isAllSongsFromTracksExist) {
               if (storedTracks.length === 0) {
-                Player.tracks = complementTracks([{ ...Player.musicList[0], isPlayed: false, isTrigger: false }], Player.musicList);
+                Player.tracks = complementTracks([{
+                  url: Player.musicList[0].url,
+                  title: Player.musicList[0].title,
+                  artist: Player.musicList[0].artist,
+                  artwork: Player.musicList[0].artwork,
+                  id: Player.musicList[0].id,
+                  isPlayed: false,
+                  isTrigger: false,
+                }], Player.musicList);
               }
               else {
                 Player.tracks = complementTracks(storedTracks, Player.musicList);
@@ -57,9 +66,19 @@ export default function useCachedResources() {
             }
           }
           else {
-            Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: false }];
+            Player.tracks = [{
+              url: Player.musicList[0].url,
+              title: Player.musicList[0].title,
+              artist: Player.musicList[0].artist,
+              artwork: Player.musicList[0].artwork,
+              id: Player.musicList[0].id,
+              isPlayed: false,
+              isTrigger: false,
+            }];
           }
 
+          Player.tracks = Player.tracks.slice(0, 4);
+          console.log(Player.tracks);
           await Player.setupPlayer();
         }
 

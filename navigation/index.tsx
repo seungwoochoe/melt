@@ -24,6 +24,7 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../typ
 import LinkingConfiguration from './LinkingConfiguration';
 import SearchScreen from '../screens/SearchScreen';
 import LyricsScreen from '../screens/LyricsScreen';
+import ManageDataScreen from '../screens/ManageDataScreen';
 
 const { height } = Dimensions.get('screen');
 
@@ -125,7 +126,7 @@ function BottomTabNavigator() {
         />
         <BottomTab.Screen
           name="Settings"
-          component={SettingsScreen}
+          component={SettingsScreenNavigator}
           options={{
             title: 'Settings',
             tabBarLabelStyle: {
@@ -156,6 +157,17 @@ function LibraryScreenNavigator() {
         component={SearchScreen}
         options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid, gestureEnabled: false }}
       />
+    </Stack.Navigator >
+  );
+}
+
+
+function SettingsScreenNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: true }}>
+      <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{headerShown: false}} />
+      <Stack.Screen name="ManageDataScreen" component={ManageDataScreen} options={{headerTitle: 'Manage Data'}} />
     </Stack.Navigator >
   );
 }

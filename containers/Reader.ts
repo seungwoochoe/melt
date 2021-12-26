@@ -18,16 +18,26 @@ const documentDirectory = RNFS.DocumentDirectoryPath;
 
 
 export async function readMusicFiles() {
-	let isThereAnyChangeOnMusicList = false;
-	let storedMusicList: Music[] | null = null;
+	let storedMusicList: Music[] = [];
 
 	try {
 		const jsonValue = await AsyncStorage.getItem('musicList');
-		storedMusicList = jsonValue != null ? JSON.parse(jsonValue) : null;
+		storedMusicList = jsonValue != null ? JSON.parse(jsonValue) : [];
 	} catch (e) {
 		// console.log(e);
 	}
 
+	let averageWeight = 1;
+
+	if (storedMusicList.length !== 0) {
+		let totalWeight = 0;
+
+		for (const music of storedMusicList) {
+			totalWeight += music.weight;
+		}
+		averageWeight = totalWeight / storedMusicList.length;
+		console.log("average:", averageWeight);
+	}
 
 	const musicList: Music[] = [];
 	const files = await RNFS.readDir(documentDirectory);
@@ -63,6 +73,7 @@ export async function readMusicFiles() {
 							lyrics: "",
 							isLiked: false,
 							id: id ?? file.path,
+							weight: averageWeight,
 						});
 					}
 					else {
@@ -75,6 +86,7 @@ export async function readMusicFiles() {
 							lyrics: metadata.tags.lyrics?.lyrics ?? "",
 							isLiked: false,
 							id: id ?? file.path,
+							weight: averageWeight,
 						});
 					}
 				}
@@ -97,6 +109,7 @@ export async function readMusicFiles() {
 						lyrics: "",
 						isLiked: false,
 						id: id ?? file.path,
+						weight: averageWeight,
 					});
 				}
 				else {
@@ -109,22 +122,23 @@ export async function readMusicFiles() {
 						lyrics: metadata.tags.lyrics?.lyrics ?? "",
 						isLiked: false,
 						id: id ?? file.path,
+						weight: averageWeight,
 					});
 				}
 			}
 		}
 	};
 
-	const sortedMusiclist = musicList.sort((a, b) => (a.title.toLowerCase() >= b.title.toLowerCase()) ? 1 : -1);
+	const sortedMusicList = musicList.sort((a, b) => (a.title.toLowerCase() >= b.title.toLowerCase()) ? 1 : -1);
 
 	try {
-		const jsonValue = JSON.stringify(sortedMusiclist);
+		const jsonValue = JSON.stringify(sortedMusicList);
 		await AsyncStorage.setItem('musicList', jsonValue);
 	} catch (e) {
 		// console.log(e);
 	}
 
-	return sortedMusiclist;
+	return sortedMusicList;
 }
 
 
@@ -142,6 +156,7 @@ function readMetadata(path: string) {
 	});
 }
 
+
 async function generateImageData(metadata: any, imageSize: number) {
 	const data = metadata.tags.picture.data;
 	let base64String = "";
@@ -153,6 +168,7 @@ async function generateImageData(metadata: any, imageSize: number) {
 	const compressedImage = await compressPicture(`data:${data.format};base64,${base64.encode(base64String)}`, imageSize);
 	return compressedImage;
 }
+
 
 function compressPicture(source: string, imageSize: number) {
 	return new Promise((resolve) => {
@@ -180,21 +196,18 @@ function compressPicture(source: string, imageSize: number) {
 
 // Returns pruned stored tracks.
 export async function pruneStoredTracks() {
-	let tracks: Track[] | null = null;
+	let tracks: Track[] = [];
 
 	try {
 		const jsonValue = await AsyncStorage.getItem('tracks');
-		tracks = jsonValue != null ? JSON.parse(jsonValue) : null;
+		tracks = jsonValue != null ? JSON.parse(jsonValue) : [];
 	} catch (e) {
 		// console.log(e);
 	}
 
-	if (tracks == null) {
-		return [];
-	}
-
 	return pruneTracks(tracks);
 }
+
 
 function pruneTracks(tracks: Track[]) {
 	const isNotPlayed = (track: Track) => track.isPlayed === false;
@@ -234,9 +247,9 @@ export async function getStoredMusicSelection() {
 			prunedMusicSelection.push(Player.musicList[targetIndex]);
 		}
 	}
-
 	return prunedMusicSelection;
 }
+
 
 export async function getStoredLikedSongs() {
 	let likedSongs: Music[] = [];
@@ -256,7 +269,6 @@ export async function getStoredLikedSongs() {
 			prunedLikedSongs.push(Player.musicList[targetIndex]);
 		}
 	}
-
 	return prunedLikedSongs;
 }
 
@@ -289,6 +301,7 @@ export async function getMetadata(music: Music) {
 				lyrics: metadata.tags.lyrics?.lyrics ?? "",
 				isLiked: music.isLiked,
 				id: music.id,
+				weight: music.weight,
 			}
 		)
 	}

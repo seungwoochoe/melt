@@ -43,7 +43,7 @@ else {
 
 
 export default function RenderBottomBar() {
-	const [currentMusic, setCurrentMusic] = useState<Music>(Player.tracks[0]);
+	const [currentMusic, setCurrentMusic] = useState<Music>(Player.defaultMusic);
 	const [isPlaying, setIsPlaying] = useState(false);
 
 	const storedPosition = useRef(0);
@@ -54,7 +54,6 @@ export default function RenderBottomBar() {
 	const playbackState = usePlaybackState();
 	const { position, duration } = useProgress();
 	const navigation = useNavigation<any>();
-
 
 	useEffect(() => {
 		async function getStoredPlaybackStatus() {
@@ -124,7 +123,9 @@ export default function RenderBottomBar() {
 			Player.updateTopMusic();
 		}
 
-		handlePlayNext();
+		if (Player.musicList.length !== 0) {
+			handlePlayNext();
+		}
 	}, [duration]);
 
 
@@ -177,16 +178,18 @@ export default function RenderBottomBar() {
 			<View style={{ width: width * 0.69, backgroundColor: 'transparent' }}>
 				<TouchableOpacity
 					onPress={async () => {
-						const repeatMode = await TrackPlayer.getRepeatMode();
-						isRepeat.current = repeatMode === RepeatMode.Track;
-						navigation.navigate("Modal", {
-							id: currentMusic.id,
-							isPlaying: isPlaying,
-							isRepeat: isRepeat.current,
-							progress: (position / duration),
-							position: position,
-							duration: duration,
-						});
+						if (Player.musicList.length !== 0) {
+							const repeatMode = await TrackPlayer.getRepeatMode();
+							isRepeat.current = repeatMode === RepeatMode.Track;
+							navigation.navigate("Modal", {
+								id: currentMusic.id,
+								isPlaying: isPlaying,
+								isRepeat: isRepeat.current,
+								progress: (position / duration),
+								position: position,
+								duration: duration,
+							});
+						}
 					}}
 					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 					activeOpacity={0.35}>

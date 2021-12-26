@@ -12,7 +12,6 @@ import Player from '../containers/Player';
 import RenderSong from '../components/Song';
 import { Music } from '../types';
 import RenderSeparator from '../components/Separator';
-import { usePlaybackState } from 'react-native-track-player';
 import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('screen');
@@ -206,7 +205,7 @@ export default function LibraryScreen({ navigation }: any) {
                 }}
                 ListEmptyComponent={() => {
                   let messageText = "";
-                  if (Player.historyList.length > 0) {
+                  if (Player.historyList.length > 0 && Player.musicList.length !== 0) {
                     messageText = "Welcome back!\n\nPlay the songs you love."
                   } else {
                     messageText = "Play the songs you love."

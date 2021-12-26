@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TrackPlayer, { Capability, RepeatMode } from 'react-native-track-player';
 
-import { Music, WeightedMusic, Track, History } from "../types";
+import { Music, Track, History } from "../types";
 import { complementTracks, getMoreTracks } from './Creater';
 
 const defaultMiniArt = require('../assets/images/blank.png');
@@ -10,9 +10,8 @@ const defaultMiniArt = require('../assets/images/blank.png');
 export default class Player {
 	static isSetup = false;
 
-	static defaultMusic: Music = { url: 'loading', title: 'processing files...', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, lyrics: "", isLiked: false, id: 'blankTrack' }
+	static defaultMusic: Music = { url: 'loading', title: 'No songs found.', artist: '', artwork: defaultMiniArt, miniArt: defaultMiniArt, lyrics: "", isLiked: false, id: 'blankTrack', weight: 1 }
 	static musicList: Music[] = [];
-	static weightedMusicList: WeightedMusic[] = [];
 
 	static tracks: Track[] = [];
 	static currentIndex = 0;
@@ -60,17 +59,17 @@ export default class Player {
 		Player.currentReasonEnd = "skipped";
 		await Player.storeHistory();
 
-		if (Player.weightedMusicList.length === 1) {
-			Player.tracks = [{ ...Player.weightedMusicList[0], isPlayed: false, isTrigger: true }];
+		if (Player.musicList.length === 1) {
+			Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: true }];
 			Player.currentReasonStart = "normal";
 		}
 		else {
 			if (item == null) {
-				Player.tracks = complementTracks([], Player.weightedMusicList);
+				Player.tracks = complementTracks([], Player.musicList);
 				Player.currentReasonStart = "normal";
 			}
 			else {
-				Player.tracks = complementTracks([{ ...item, isPlayed: false, isTrigger: false }], Player.weightedMusicList);
+				Player.tracks = complementTracks([{ ...item, isPlayed: false, isTrigger: false }], Player.musicList);
 				Player.currentReasonStart = "selected";
 			}
 		}
@@ -82,12 +81,10 @@ export default class Player {
 
 
 	static async appendMoreTracks() {
-		const tracksToBeAppended = getMoreTracks(Player.tracks, Player.weightedMusicList);
+		const tracksToBeAppended = getMoreTracks(Player.tracks, Player.musicList);
 		Player.tracks = [...Player.tracks, ...tracksToBeAppended];
 		await TrackPlayer.add(tracksToBeAppended);
 		Player.tracks[Player.currentIndex].isTrigger = false;
-
-
 	}
 
 
@@ -114,6 +111,7 @@ export default class Player {
 		Player.currentReasonStart = "normal";
 
 		if (!!Player.tracks[Player.currentIndex].isTrigger) {
+			console.log("aoeuaoeuaoeuaoe");
 			await Player.appendMoreTracks();
 		}
 	}

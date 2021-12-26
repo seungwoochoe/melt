@@ -2,11 +2,10 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
-import { Dimensions } from 'react-native';
 
 import Player from '../containers/Player';
 import { readMusicFiles, pruneStoredTracks, getStoredHistoryList, getStoredMusicSelection, getStoredLikedSongs } from '../containers/Reader';
-import { initializeWeights, complementTracks } from '../containers/Creater';
+import { complementTracks } from '../containers/Creater';
 
 
 export default function useCachedResources() {
@@ -28,7 +27,6 @@ export default function useCachedResources() {
         Player.historyList = await getStoredHistoryList();
         Player.musicSelection = await getStoredMusicSelection();
         Player.likedSongs = await getStoredLikedSongs();
-        Player.weightedMusicList = initializeWeights(Player.musicList);
 
         if (Player.musicList.length === 0) {
           // No music!
@@ -36,9 +34,30 @@ export default function useCachedResources() {
         else {
           if (Player.musicList.length > 1) {
             const storedTracks = await pruneStoredTracks();
-            Player.tracks = complementTracks(storedTracks, Player.weightedMusicList);
-          } else {
-            Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: true }];
+
+            let isAllSongsFromTracksExist = true;
+
+            for (const track of storedTracks) {
+              if (Player.musicList.findIndex(element => element.id === track.id) === -1) {
+                isAllSongsFromTracksExist = false;
+                break;
+              }
+            }
+
+            if (isAllSongsFromTracksExist) {
+              if (storedTracks.length === 0) {
+                Player.tracks = complementTracks([{ ...Player.musicList[0], isPlayed: false, isTrigger: false }], Player.musicList);
+              }
+              else {
+                Player.tracks = complementTracks(storedTracks, Player.musicList);
+              }
+            }
+            else {
+              Player.tracks = complementTracks([], Player.musicList);
+            }
+          }
+          else {
+            Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: false }];
           }
 
           await Player.setupPlayer();

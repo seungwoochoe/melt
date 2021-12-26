@@ -45,9 +45,6 @@ export type Music = {
   lyrics: string,
   isLiked: boolean,
   id: string,
-}
-
-export type WeightedMusic = Music & {
   weight: number,
 }
 

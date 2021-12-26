@@ -20,7 +20,7 @@ const marginBetweenIconAndText = itemHeightWithoutScale * 0.3;
 const marginHorizontal = width * 0.05;
 const borderRadius = 11;
 
-export default function SettingsScreen({ navigation }:{navigation: any}) {
+export default function ManageDataScreen({ navigation }:{navigation: any}) {
   const colorScheme = useColorScheme();
   const itemHeight = itemHeightWithoutScale * useWindowDimensions().fontScale;
 
@@ -139,35 +139,7 @@ export default function SettingsScreen({ navigation }:{navigation: any}) {
       >
         <TouchableOpacity
           onPress={async () => {
-            if (item.title === "Delete image data") {
-              try {
-                await AsyncStorage.removeItem('musicList');
-                await RNFS.unlink(RNFS.DocumentDirectoryPath + '/assets');
-                Alert.alert("Success!");
-              } catch (e) {
-                Alert.alert("Failed to remove the folder");
-              }
-            }
-            else if (item.title === "Delete history") {
-              try {
-                await AsyncStorage.removeItem('historyList');
-                await AsyncStorage.removeItem('tracks');
-                await AsyncStorage.removeItem('musicSelection');
-                await AsyncStorage.removeItem('storedPosition');
-                await AsyncStorage.removeItem('secPlayed');
-                await AsyncStorage.removeItem('likedSongs');
-                await AsyncStorage.removeItem('isRepeat');
-                Alert.alert("Success!");
-              } catch (e) {
-                Alert.alert("Failed to delete historyList");
-              }
-            }
-            else if (item.title === "About") {
-              console.log(RNFS.DocumentDirectoryPath);
-            }
-            else if (item.title === 'Appearance') {
             navigation.navigate(item.destination);
-            }
           }}
           style={{
             flex: 1,
@@ -260,7 +232,6 @@ export default function SettingsScreen({ navigation }:{navigation: any}) {
         ListHeaderComponent={() => {
           return (
             <>
-              <RenderTitle title='Settings' />
               <RenderSubscriptionStatus />
             </>
           )
@@ -270,8 +241,6 @@ export default function SettingsScreen({ navigation }:{navigation: any}) {
         SectionSeparatorComponent={() => { return (<View style={{ height: itemHeightWithoutScale / 2.7, backgroundColor: 'transparent' }} />) }}
         showsVerticalScrollIndicator={false}
       />
-
-      <RenderDarkHeader title='Settings' blur={false} />
     </View>
   );
 };

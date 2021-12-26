@@ -1,4 +1,4 @@
-import TrackPlayer, { Event, State, useProgress } from 'react-native-track-player';
+import TrackPlayer, { Event, State } from 'react-native-track-player';
 import Player from './Player';
 
 let wasPausedByDuck = false;
@@ -16,8 +16,9 @@ module.exports = async function setup() {
 		Player.skipToNext();
 	});
 
-	TrackPlayer.addEventListener(Event.RemotePrevious, () => {
-		Player.skipToPrevious(0);
+	TrackPlayer.addEventListener(Event.RemotePrevious, async () => {
+		const currentPosition = await TrackPlayer.getPosition();
+		Player.skipToPrevious(currentPosition);
 	});
 
 	TrackPlayer.addEventListener(Event.RemoteSeek, e => {

@@ -108,9 +108,7 @@ export default function RenderBottomBar() {
 			const trackPlayerIndex = await TrackPlayer.getCurrentTrack();
 
 			if (trackPlayerIndex > Player.currentIndex) {
-				// if (Player.historyList.length === 0 || Player.historyList[Player.historyList.length - 1].id !== trackInfo.id) {
 				await Player.handlePlayNext();
-				// }
 			}
 
 			if (currentMusic.id !== Player.tracks[trackPlayerIndex].id) { // Duration value set as 0 at first and then changes to the actual value.

@@ -131,13 +131,6 @@ export async function readMusicFiles() {
 
 	const sortedMusicList = musicList.sort((a, b) => (a.title.toLowerCase() >= b.title.toLowerCase()) ? 1 : -1);
 
-	try {
-		const jsonValue = JSON.stringify(sortedMusicList);
-		await AsyncStorage.setItem('musicList', jsonValue);
-	} catch (e) {
-		// console.log(e);
-	}
-
 	return sortedMusicList;
 }
 

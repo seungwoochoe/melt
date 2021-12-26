@@ -2,6 +2,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
+import cloneDeep from 'lodash.clonedeep';
 
 import Player from '../containers/Player';
 import { readMusicFiles, pruneStoredTracks, getStoredHistoryList, getStoredMusicSelection, getStoredLikedSongs } from '../containers/Reader';
@@ -27,7 +28,7 @@ export default function useCachedResources() {
         Player.historyList = await getStoredHistoryList();
         Player.musicSelection = await getStoredMusicSelection();
         Player.likedSongs = await getStoredLikedSongs();
-        Player.musicList = await weightMusicList(updatedMusicList, Player.historyList);
+        Player.musicList = await weightMusicList(updatedMusicList, [...Player.historyList]);
 
         if (Player.musicList.length === 0) {
           // No music!
@@ -47,7 +48,7 @@ export default function useCachedResources() {
 
             if (isAllSongsFromTracksExist) {
               if (storedTracks.length === 0) {
-                Player.tracks = complementTracks([{
+                Player.tracks = await complementTracks([{
                   url: Player.musicList[0].url,
                   title: Player.musicList[0].title,
                   artist: Player.musicList[0].artist,
@@ -55,14 +56,14 @@ export default function useCachedResources() {
                   id: Player.musicList[0].id,
                   isPlayed: false,
                   isTrigger: false,
-                }], Player.musicList);
+                }], cloneDeep(Player.musicList));
               }
               else {
-                Player.tracks = complementTracks(storedTracks, Player.musicList);
+                Player.tracks = await complementTracks(storedTracks, cloneDeep(Player.musicList));
               }
             }
             else {
-              Player.tracks = complementTracks([], Player.musicList);
+              Player.tracks = await complementTracks([], cloneDeep(Player.musicList));
             }
           }
           else {

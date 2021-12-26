@@ -11,6 +11,7 @@ import TextTicker from 'react-native-text-ticker';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Easing } from 'react-native-reanimated';
 import FastImage from 'react-native-fast-image';
+import cloneDeep from 'lodash.clonedeep';
 
 import Player from '../containers/Player';
 import layout from '../constants/layout';
@@ -206,7 +207,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 										Player.musicList.splice(targetIndex, 1, newMetadata);
 										setCurrentMusic(Player.musicList[targetIndex])
 
-										const newMusicList = [...Player.musicList];
+										const newMusicList = cloneDeep(Player.musicList);
 										try {
 											const jsonValue = JSON.stringify(newMusicList);
 											await AsyncStorage.setItem('musicList', jsonValue);

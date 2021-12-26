@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import TrackPlayer, { Capability, RepeatMode } from 'react-native-track-player';
 
 import { Music, Track, History } from "../types";
-import { complementTracks, getMoreTracks } from './Creater';
+import { complementTracks, getMoreTracks, weightMusicList } from './Creater';
+import cloneDeep from 'lodash.clonedeep';
 
 const defaultMiniArt = require('../assets/images/blank.png');
 
@@ -65,11 +66,11 @@ export default class Player {
 		}
 		else {
 			if (item == null) {
-				Player.tracks = complementTracks([], Player.musicList);
+				Player.tracks = await complementTracks([], cloneDeep(Player.musicList));
 				Player.currentReasonStart = "normal";
 			}
 			else {
-				Player.tracks = complementTracks([{ ...item, isPlayed: false, isTrigger: false }], Player.musicList);
+				Player.tracks = await complementTracks([{ ...item, isPlayed: false, isTrigger: false }], cloneDeep(Player.musicList));
 				Player.currentReasonStart = "selected";
 			}
 		}
@@ -81,7 +82,8 @@ export default class Player {
 
 
 	static async appendMoreTracks() {
-		const tracksToBeAppended = getMoreTracks(Player.tracks, Player.musicList);
+		Player.musicList = await weightMusicList(cloneDeep(Player.musicList), cloneDeep(Player.historyList));
+		const tracksToBeAppended = await getMoreTracks(cloneDeep(Player.tracks), cloneDeep(Player.musicList));
 		Player.tracks = [...Player.tracks, ...tracksToBeAppended];
 		await TrackPlayer.add(tracksToBeAppended);
 		Player.tracks[Player.currentIndex].isTrigger = false;
@@ -255,16 +257,16 @@ export default class Player {
 	static updateTopMusic() {
 		const topSongs: Music[] = [];
 		const stats: { id: string, playedAmount: number }[] = [];
-		
+
 		const aWeekEarlier = Date.now() - 7 * 24 * 60 * 60 * 1000;
 		const aMonthEarlier = Date.now() - 30 * 24 * 60 * 60 * 1000;
-		
+
 		let historyList = [...Player.historyList].filter(element => element.endTime > aWeekEarlier); // 🤦 Deep vs shallow copy!! I spent 1-2 hours because of this..
 
 		if (historyList.length < 30) {
 			historyList = [...Player.historyList].filter(element => element.endTime > aMonthEarlier);
 		}
-		
+
 		historyList.reverse(); // In order to dispaly recently songs first if there are songs with same playedAmount.
 
 		for (const history of historyList) {

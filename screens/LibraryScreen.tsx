@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform, KeyboardAvoidingView, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import cloneDeep from 'lodash.clonedeep';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -106,6 +107,7 @@ export default function LibraryScreen({ navigation }: any) {
   }
 
 
+  const renderItem = ({item}: {item: Music}) =>( <RenderSong item={item} colorScheme={colorScheme} />);
 
   return (
     <View style={styles.container}>
@@ -120,7 +122,7 @@ export default function LibraryScreen({ navigation }: any) {
               iconName: 'musical-note',
               iconScale: 1.6,
               destination: 'AllSongsScreen',
-              data: Player.musicList,
+              data: cloneDeep(Player.musicList),
             },
             {
               title: "Liked songs",
@@ -221,11 +223,7 @@ export default function LibraryScreen({ navigation }: any) {
                 }}
 
                 data={Player.topSongs}
-                renderItem={({ item }) => {
-                  return (
-                    <RenderSong item={item} colorScheme={colorScheme} />
-                  )
-                }}
+                renderItem={renderItem}
                 ItemSeparatorComponent={RenderSeparator}
                 initialNumToRender={20}
 

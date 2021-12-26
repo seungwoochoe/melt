@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const TRACK_LENGTH = 4;
 const SKIP_WEIGHT_MODIFIER = 0.15;
 const BOOST_WEIGHT_MODIFIER = 1.2;
+const LIKED_WEIGHT_MODIFIER = 3;
 
 
 export async function weightMusicList(musicList: Music[], historyList: History[]) {
@@ -17,7 +18,6 @@ export async function weightMusicList(musicList: Music[], historyList: History[]
 	}
 
 	historyList = historyList.filter(element => element.endTime > appliedHistoryTime);
-	console.log("filtered history list length", historyList.length);
 
 	for (const history of historyList) {
 		const targetIndex = musicList.findIndex(element => element.id === history.id);
@@ -39,7 +39,13 @@ export async function weightMusicList(musicList: Music[], historyList: History[]
 			// console.log(e);
 		}
 	}
-	console.log("appliedHistoryTime", appliedHistoryTime);
+
+	try {
+		const jsonValue = JSON.stringify(musicList);
+		await AsyncStorage.setItem('musicList', jsonValue);
+	} catch (e) {
+		// console.log(e);
+	}
 
 	return musicList;
 }
@@ -48,22 +54,18 @@ export async function weightMusicList(musicList: Music[], historyList: History[]
 
 
 // If there is no or only one music in storage, "createPlaylist" function should not be called.
-export function complementTracks(currentTracks: Track[], musicList: Music[]) {
-	const tracksToBeAdded = drawMusic(TRACK_LENGTH - currentTracks.length, currentTracks[currentTracks.length - 1], musicList);
+export async function complementTracks(currentTracks: Track[], musicList: Music[]) {
+	const tracksToBeAdded = await drawMusic(TRACK_LENGTH - currentTracks.length, currentTracks[currentTracks.length - 1], musicList);
 	const tracks = [...currentTracks, ...tracksToBeAdded];
 	return markIsTrigger(tracks);
 }
 
-export function getMoreTracks(currentTracks: Track[], musicList: Music[]) {
-	if (musicList.length === 1) {
-		return [{ ...musicList[0], isPlayed: false, isTrigger: true }];
-	}
-
-	const tracks = drawMusic(TRACK_LENGTH / 2, currentTracks[currentTracks.length - 1], musicList);
+export async function getMoreTracks(currentTracks: Track[], musicList: Music[]) {
+	const tracks = await drawMusic(TRACK_LENGTH / 2, currentTracks[currentTracks.length - 1], musicList);
 	return markIsTrigger(tracks);
 }
 
-function drawMusic(drawingAmount: number, priorTrack: Track | undefined, musicList: Music[]) {
+async function drawMusic(drawingAmount: number, priorTrack: Track | undefined, musicList: Music[]) {
 	const totalWeight = getTotalWeight(musicList);
 	const tracks: Track[] = [];
 

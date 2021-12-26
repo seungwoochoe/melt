@@ -46,7 +46,7 @@ const hapticOptions = {
 };
 
 
-export default function ModalScreen({ route, navigation }: { route: { params: { id: string, isPlaying: boolean, isRepeat: boolean, progress: number } }, navigation: any }) {
+export default function ModalScreen({ route, navigation }: { route: { params: { id: string, isPlaying: boolean, isRepeat: boolean, progress: number, position: number, duration: number } }, navigation: any }) {
   const [currentMusic, setCurrentMusic] = useState<Music>(Player.musicList.find(elemnet => elemnet.id === route.params.id) ?? Player.defaultMusic);
   const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
   const { position, duration } = useProgress();
@@ -251,10 +251,12 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
             />
             <View style={styles.progressLabelContainer}>
               <Text style={{ color: dullTheme, fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
-                {position > 0 ? Math.floor(position / 60).toString() : '0'}:{position > 0 ? Math.floor(position % 60).toString().padStart(2, '0') : '00'}
+                {position > 0 ? Math.floor(position / 60).toString() : Math.floor(route.params.position / 60).toString()}
+                :{position > 0 ? Math.floor(position % 60).toString().padStart(2, '0') : Math.floor(route.params.position % 60).toString().padStart(2, '0')}
               </Text>
               <Text style={{ color: dullTheme, fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
-                -{Math.floor((duration - position) / 60).toString()}:{Math.floor((duration - position) % 60).toString().padStart(2, '0')}
+                -{position > 0 ? Math.floor((duration - position) / 60).toString() : Math.floor((route.params.duration - route.params.position) / 60).toString()}
+                :{position > 0 ? Math.floor((duration - position) % 60).toString().padStart(2, '0') : Math.floor((route.params.duration - route.params.position) % 60).toString().padStart(2, '0')}
               </Text>
             </View>
           </View>
@@ -316,7 +318,14 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-                  navigation.navigate('LyricsScreen', { id: currentMusic.id, isPlaying: isPlaying, progress: (position / duration) });
+                  navigation.navigate('LyricsScreen', {
+                    id: currentMusic.id,
+                    isPlaying: isPlaying,
+                    isRepeat: isRepeat.current,
+                    progress: (position / duration),
+                    position: position,
+                    duration: duration,
+                  });
                 }}
                 style={{ width: width * 0.3 }}
               >

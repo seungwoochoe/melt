@@ -183,8 +183,10 @@ export default function RenderBottomBar() {
 							id: currentMusic.id,
 							isPlaying: isPlaying,
 							isRepeat: isRepeat.current,
-							progress: position / duration,
-						})
+							progress: (position / duration),
+							position: position,
+							duration: duration,
+						});
 					}}
 					style={{ height: bottomBarHeight, width: width, paddingHorizontal: width * 0.045, flexDirection: 'row', alignItems: 'center' }}
 					activeOpacity={0.35}>

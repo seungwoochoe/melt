@@ -43,7 +43,7 @@ const hasNotch = (height / width) > 2 ? true : false;
 const defaultArtwork = require('../assets/images/blank.png');
 
 
-export default function LyricsScreen({ route, navigation }: { route: { params: { id: string, isPlaying: boolean, progress: number } }, navigation: any }) {
+export default function LyricsScreen({ route, navigation }: { route: { params: { id: string, isPlaying: boolean, progress: number, position: number, duration: number } }, navigation: any }) {
 	const [currentMusic, setCurrentMusic] = useState<Music>(Player.musicList.find(elemnet => elemnet.id === route.params.id) ?? Player.defaultMusic);
 	const [isPlaying, setIsPlaying] = useState(route.params.isPlaying);
 	const { position, duration } = useProgress();
@@ -252,12 +252,14 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 							}}
 						/>
 						<View style={styles.progressLabelContainer}>
-							<Text style={{ color: dullTheme, fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
-								{position > 0 ? Math.floor(position / 60).toString() : '0'}:{position > 0 ? Math.floor(position % 60).toString().padStart(2, '0') : '00'}
-							</Text>
-							<Text style={{ color: dullTheme, fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
-								-{Math.floor((duration - position) / 60).toString()}:{Math.floor((duration - position) % 60).toString().padStart(2, '0')}
-							</Text>
+						<Text style={{ color: dullTheme, fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
+                {position > 0 ? Math.floor(position / 60).toString() : Math.floor(route.params.position / 60).toString()}
+                :{position > 0 ? Math.floor(position % 60).toString().padStart(2, '0') : Math.floor(route.params.position % 60).toString().padStart(2, '0')}
+              </Text>
+              <Text style={{ color: dullTheme, fontSize: layout.width * 0.75, fontVariant: ['tabular-nums'] }}>
+                -{position > 0 ? Math.floor((duration - position) / 60).toString() : Math.floor((route.params.duration - route.params.position) / 60).toString()}
+                :{position > 0 ? Math.floor((duration - position) % 60).toString().padStart(2, '0') : Math.floor((route.params.duration - route.params.position) % 60).toString().padStart(2, '0')}
+              </Text>
 						</View>
 					</View>
 				</View>

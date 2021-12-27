@@ -45,11 +45,11 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
         // console.warn(e);
       }
 
-      if (Date.now() - lastHomeUpdateTime > UPDATE_INTERVAL) {
+      if ((Date.now() - lastHomeUpdateTime) > UPDATE_INTERVAL) {
         try {
           Player.updateSongsForHomeScreen();
 
-					const jsonValue = JSON.stringify(lastHomeUpdateTime);
+					const jsonValue = JSON.stringify(Date.now());
 					await AsyncStorage.setItem('lastHomeUpdateTime', jsonValue);
 				} catch (e) {
 					// console.warn(e);

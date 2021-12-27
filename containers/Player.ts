@@ -264,56 +264,56 @@ export default class Player {
 		const portionOfLikedSong = 0.3;
 		const portionOfLightestSongs = 0.1;
 
-		let top = 0;
-		let liked = 0;
-		let lightest = 0;
-		let ect = 0;
+		// let top = 0;
+		// let liked = 0;
+		// let lightest = 0;
+		// let ect = 0;
 
-		let one = 0;
-		let two = 0;
-		let three = 0;
-		let four = 0;
+		// let one = 0;
+		// let two = 0;
+		// let three = 0;
+		// let four = 0;
 
 		while (homeSongs.length < listLength) {
 			const randNumber = Math.random();
 
 			if (0 <= randNumber && randNumber < portionOfTopSongs && Player.topSongs.length > 0) {
-				one++;
+				// one++;
 				const randIndex = Math.floor(Math.random() * Player.topSongs.length);
 				if (homeSongs.findIndex(element => element.id === Player.topSongs[randIndex].id) === -1) {
 					homeSongs.push(Player.topSongs[randIndex]);
-					top++;
+					// top++;
 				}
 			}
 			else if (portionOfTopSongs <= randNumber && randNumber < (portionOfTopSongs + portionOfLikedSong) && Player.likedSongs.length > 0) {
-				two++;
+				// two++;
 				const randIndex = Math.floor(Math.random() * Player.likedSongs.length);
 				if (homeSongs.findIndex(element => element.id === Player.likedSongs[randIndex].id) === -1) {
 					homeSongs.push(Player.likedSongs[randIndex]);
-					liked++;
+					// liked++;
 				}
 			}
 			else if ((portionOfTopSongs + portionOfLikedSong) <= randNumber && randNumber < (portionOfTopSongs + portionOfLikedSong + portionOfLightestSongs)) {
-				three++;
+				// three++;
 				const lightestSongs = cloneDeep(Player.musicList).sort((a, b) => a.weight - b.weight).slice(0, Math.floor(Player.musicList.length / 10));
 
 				const randIndex = Math.floor(Math.random() * lightestSongs.length);
 				if (homeSongs.findIndex(element => element.id === lightestSongs[randIndex].id) === -1) {
 					homeSongs.push(lightestSongs[randIndex]);
-					lightest++;
+					// lightest++;
 				}
 			}
 			else {
-				four++;
+				// four++;
 				const randIndex = Math.floor(Math.random() * Player.musicList.length);
 				if (homeSongs.findIndex(element => element.id === Player.musicList[randIndex].id) === -1) {
 					homeSongs.push(Player.musicList[randIndex]);
-					ect++;
+					// ect++;
 				}
 			}
 		}
-		console.log("chance", one, two, three, four);
-		console.log("top", top, "liked", liked, "lightest", lightest, "ect.", ect);
+		// console.log("chance", one, two, three, four);
+		// console.log("top", top, "liked", liked, "lightest", lightest, "ect.", ect);
 
 		Player.homeSongs = Player.shuffleArray(cloneDeep(homeSongs));
 	}

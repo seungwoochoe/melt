@@ -18,6 +18,8 @@ export default class Player {
 	static currentIndex = 0;
 
 	static historyList: History[] = [];
+
+	static homeSongs: Music[] = [];
 	static musicSelection: Music[] = [];
 	static likedSongs: Music[] = [];
 	static topSongs: Music[] = [];
@@ -84,7 +86,7 @@ export default class Player {
 
 
 	static async appendMoreTracks() {
-		Player.musicList = await weightMusicList(cloneDeep(Player.musicList), cloneDeep(Player.historyList));
+		Player.musicList = await weightMusicList(cloneDeep(Player.musicList), Player.historyList);
 		const tracksToBeAppended = await getMoreTracks(cloneDeep(Player.tracks), cloneDeep(Player.musicList));
 		Player.tracks = [...Player.tracks, ...tracksToBeAppended];
 		await TrackPlayer.add(tracksToBeAppended);
@@ -103,7 +105,7 @@ export default class Player {
 
 	static async pause() {
 		await TrackPlayer.pause();
-		console.table(Player.historyList);
+		// console.table(Player.musicList.map(element => ({title: element.title, weight: element.weight})));
 	}
 
 
@@ -255,8 +257,77 @@ export default class Player {
 
 	// -------------------------------------------------------------------------
 	// For Home screen
-	static getSongsForHomeScreen() {
+	static updateSongsForHomeScreen() {
+		const listLength = Math.min(Player.musicList.length, Math.min(20, Math.max(12, Math.floor(Player.musicList.length / 10))));
+		const homeSongs: Music[] = [];
+		const portionOfTopSongs = 0.3;
+		const portionOfLikedSong = 0.3;
+		const portionOfLightestSongs = 0.1;
 
+		let top = 0;
+		let liked = 0;
+		let lightest = 0;
+		let ect = 0;
+
+		let one = 0;
+		let two = 0;
+		let three = 0;
+		let four = 0;
+
+		while (homeSongs.length < listLength) {
+			const randNumber = Math.random();
+
+			if (0 <= randNumber && randNumber < portionOfTopSongs && Player.topSongs.length > 0) {
+				one++;
+				const randIndex = Math.floor(Math.random() * Player.topSongs.length);
+				if (homeSongs.findIndex(element => element.id === Player.topSongs[randIndex].id) === -1) {
+					homeSongs.push(Player.topSongs[randIndex]);
+					top++;
+				}
+			}
+			else if (portionOfTopSongs <= randNumber && randNumber < (portionOfTopSongs + portionOfLikedSong) && Player.likedSongs.length > 0) {
+				two++;
+				const randIndex = Math.floor(Math.random() * Player.likedSongs.length);
+				if (homeSongs.findIndex(element => element.id === Player.likedSongs[randIndex].id) === -1) {
+					homeSongs.push(Player.likedSongs[randIndex]);
+					liked++;
+				}
+			}
+			else if ((portionOfTopSongs + portionOfLikedSong) <= randNumber && randNumber < (portionOfTopSongs + portionOfLikedSong + portionOfLightestSongs)) {
+				three++;
+				const lightestSongs = cloneDeep(Player.musicList).sort((a, b) => a.weight - b.weight).slice(0, Math.floor(Player.musicList.length / 10));
+
+				const randIndex = Math.floor(Math.random() * lightestSongs.length);
+				if (homeSongs.findIndex(element => element.id === lightestSongs[randIndex].id) === -1) {
+					homeSongs.push(lightestSongs[randIndex]);
+					lightest++;
+				}
+			}
+			else {
+				four++;
+				const randIndex = Math.floor(Math.random() * Player.musicList.length);
+				if (homeSongs.findIndex(element => element.id === Player.musicList[randIndex].id) === -1) {
+					homeSongs.push(Player.musicList[randIndex]);
+					ect++;
+				}
+			}
+		}
+		console.log("chance", one, two, three, four);
+		console.log("top", top, "liked", liked, "lightest", lightest, "ect.", ect);
+
+		Player.homeSongs = Player.shuffleArray(cloneDeep(homeSongs));
+	}
+
+	/* Randomize array in-place using Durstenfeld shuffle algorithm */
+	static shuffleArray(array: any[]) {
+		for (var i = array.length - 1; i > 0; i--) {
+			var j = Math.floor(Math.random() * (i + 1));
+			var temp = array[i];
+			array[i] = array[j];
+			array[j] = temp;
+		}
+
+		return array;
 	}
 
 
@@ -271,7 +342,7 @@ export default class Player {
 		const aWeekEarlier = Date.now() - 7 * 24 * 60 * 60 * 1000;
 		const aMonthEarlier = Date.now() - 30 * 24 * 60 * 60 * 1000;
 
-		let historyList = [...Player.historyList].filter(element => element.endTime > aWeekEarlier); // 🤦 Deep vs shallow copy!! I spent 1-2 hours because of this..
+		let historyList = [...Player.historyList].filter(element => element.endTime > aWeekEarlier); // 🤦 Copying vs Referencing!! I spent 1-2 hours because of this..
 
 		if (historyList.length < 30) {
 			historyList = [...Player.historyList].filter(element => element.endTime > aMonthEarlier);
@@ -295,7 +366,7 @@ export default class Player {
 
 		const sortedStats = stats.sort((a, b) => b.playedAmount - a.playedAmount);
 
-		for (let i = 0; i < Math.min(sortedStats.length, Math.min(20, Math.max(12, Math.floor(Player.musicList.length / 10)))); i++) {
+		for (let i = 0; i < Math.min(sortedStats.length, Math.min(20, Math.max(12, Math.floor(Player.musicList.length / 12)))); i++) {
 			const targetMusic = Player.musicList.find((element) => element.id === sortedStats[i].id);
 
 			if (targetMusic != null) {

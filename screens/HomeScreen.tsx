@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { TouchableOpacity, Dimensions, StatusBar, Animated, FlatList, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
@@ -29,7 +30,36 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
   const isFocused = useIsFocused();
 
 
-  const data = Player.likedSongs;
+  const data = Player.homeSongs;
+
+  
+  useEffect(() => {
+    async function updateHomeMusicIfEnoughTimeHasPassed() {
+      const UPDATE_INTERVAL = 30 * 60 * 1000;
+
+      let lastHomeUpdateTime = 0;
+      try {
+        const jsonValue = await AsyncStorage.getItem('lastHomeUpdateTime');
+        lastHomeUpdateTime = jsonValue != null ? JSON.parse(jsonValue) : 0;
+      } catch (e) {
+        // console.warn(e);
+      }
+
+      if (Date.now() - lastHomeUpdateTime > UPDATE_INTERVAL) {
+        try {
+          Player.updateSongsForHomeScreen();
+
+					const jsonValue = JSON.stringify(lastHomeUpdateTime);
+					await AsyncStorage.setItem('lastHomeUpdateTime', jsonValue);
+				} catch (e) {
+					// console.warn(e);
+				}
+      }
+    }
+    updateHomeMusicIfEnoughTimeHasPassed();
+  }, [isFocused]);
+
+  
 
   const keyExtractor = useCallback((item) => item.id, []);
 
@@ -49,7 +79,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
           backgroundColor: colorScheme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor,
           borderRadius: 10,
           marginTop: 20,
-          marginBottom: 20,
+          marginBottom: 16,
           shadowColor: 'black',
           shadowOpacity: .2,
           shadowRadius: layout.width * 0.4,
@@ -65,20 +95,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
       </TouchableOpacity>
 
     );
-  }
-
-  const RenderTopSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          marginLeft: width * 0.05,
-          width: width * 0.95,
-        }}
-        lightColor='#dfdfdf'
-        darkColor='#343434'
-      />
-    )
   }
 
   const RenderBottomMargin = () => {
@@ -139,7 +155,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
           }}
 
           renderItem={renderItem}
-          ItemSeparatorComponent={RenderTopSeparator}
+          ItemSeparatorComponent={RenderSeparator}
 
           ListFooterComponent={<RenderBottomMargin />}
 

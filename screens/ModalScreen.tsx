@@ -197,7 +197,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
               if (Player.musicList[targetIndex].isLiked === false) {
                 ReactNativeHapticFeedback.trigger("notificationSuccess", hapticOptions);
                 Player.musicList[targetIndex].isLiked = true;
-                Player.likedSongs.unshift(Player.musicList[targetIndex]);
+                Player.likedSongs.unshift({...Player.musicList[targetIndex]});
               } else {
                 ReactNativeHapticFeedback.trigger("rigid", hapticOptions);
                 Player.musicList[targetIndex].isLiked = false;

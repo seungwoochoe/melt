@@ -10,7 +10,7 @@ import Player from '../containers/Player';
 import TrackPlayer from 'react-native-track-player';
 
 const { width } = Dimensions.get('screen');
-const marginBetweenAlbumartAndText = width * 0.029;
+const marginBetweenAlbumartAndText = width * 0.025;
 const listHeightWithoutScale = width * 0.16;
 const marginHorizontal = width * 0.05;
 const defaultMiniArt = require('../assets/images/blank.png');

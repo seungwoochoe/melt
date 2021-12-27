@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const TRACK_LENGTH = 4;
 const SKIP_WEIGHT_MODIFIER = 0.15;
 const BOOST_WEIGHT_MODIFIER = 1.2;
-const LIKED_WEIGHT_MODIFIER = 3;
 
 
 export async function weightMusicList(musicList: Music[], historyList: History[]) {
@@ -30,7 +29,7 @@ export async function weightMusicList(musicList: Music[], historyList: History[]
 		}
 	}
 
-	if (historyList.length !== 0) {
+	if (historyList.length > 0) {
 		appliedHistoryTime = historyList[historyList.length - 1].endTime;
 		try {
 			const jsonValue = JSON.stringify(appliedHistoryTime);

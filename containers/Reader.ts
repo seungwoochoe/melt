@@ -24,7 +24,7 @@ export async function readMusicFiles() {
 		const jsonValue = await AsyncStorage.getItem('musicList');
 		storedMusicList = jsonValue != null ? JSON.parse(jsonValue) : [];
 	} catch (e) {
-		// console.log(e);
+		// console.warn(e);
 	}
 
 	let averageWeight = 1;
@@ -36,7 +36,6 @@ export async function readMusicFiles() {
 			totalWeight += music.weight;
 		}
 		averageWeight = totalWeight / storedMusicList.length;
-		console.log("average:", averageWeight);
 	}
 
 	const musicList: Music[] = [];
@@ -180,7 +179,7 @@ function compressPicture(source: string, imageSize: number) {
 				resolve(resizedImage.path);
 			})
 			.catch(e => {
-				// console.log(e);
+				// console.warn(e);
 			})
 	})
 }
@@ -195,7 +194,7 @@ export async function pruneStoredTracks() {
 		const jsonValue = await AsyncStorage.getItem('tracks');
 		tracks = jsonValue != null ? JSON.parse(jsonValue) : [];
 	} catch (e) {
-		// console.log(e);
+		// console.warn(e);
 	}
 
 	return pruneTracks(tracks);
@@ -216,7 +215,7 @@ export async function getStoredHistoryList() {
 		const jsonValue = await AsyncStorage.getItem('historyList');
 		historyList = jsonValue != null ? JSON.parse(jsonValue) : [];
 	} catch (e) {
-		// console.log(e);
+		// console.warn(e);
 	}
 	return historyList;
 }
@@ -230,7 +229,7 @@ export async function getStoredMusicSelection() {
 		const jsonValue = await AsyncStorage.getItem('musicSelection');
 		musicSelection = jsonValue != null ? JSON.parse(jsonValue) : [];
 	} catch (e) {
-		// console.log(e);
+		// console.warn(e);
 	}
 
 	for (const music of musicSelection) {
@@ -252,7 +251,7 @@ export async function getStoredLikedSongs() {
 		const jsonValue = await AsyncStorage.getItem('likedSongs');
 		likedSongs = jsonValue != null ? JSON.parse(jsonValue) : [];
 	} catch (e) {
-		// console.log(e);
+		// console.warn(e);
 	}
 
 	for (const song of likedSongs) {
@@ -262,11 +261,9 @@ export async function getStoredLikedSongs() {
 			prunedLikedSongs.push(Player.musicList[targetIndex]);
 		}
 	}
+
 	return prunedLikedSongs;
 }
-
-
-
 
 
 export async function getMetadata(music: Music) {

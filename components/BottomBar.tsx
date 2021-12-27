@@ -66,7 +66,7 @@ export default function RenderBottomBar() {
 				const jsonValue = await AsyncStorage.getItem('storedPosition');
 				storedPosition.current = jsonValue != null ? Number(JSON.parse(jsonValue)) : 0;
 			} catch (e) {
-				// console.log(e);
+				// console.warn(e);
 			}
 			await TrackPlayer.seekTo(storedPosition.current);
 		}
@@ -75,7 +75,7 @@ export default function RenderBottomBar() {
 				const jsonValue = await AsyncStorage.getItem('secPlayed');
 				secPlayed.current = jsonValue != null ? Number(JSON.parse(jsonValue)) : 0;
 			} catch (e) {
-				// console.log(e);
+				// console.warn(e);
 			}
 		}
 		async function getAndSetIsRepeat() {
@@ -83,7 +83,7 @@ export default function RenderBottomBar() {
 				const jsonValue = await AsyncStorage.getItem('isRepeat');
 				isRepeat.current = jsonValue != null ? JSON.parse(jsonValue) : false;
 			} catch (e) {
-				// console.log(e);
+				// console.warn(e);
 			}
 			if (isRepeat.current) {
 				await TrackPlayer.setRepeatMode(RepeatMode.Track);
@@ -139,7 +139,7 @@ export default function RenderBottomBar() {
 					const jsonValue = JSON.stringify(secPlayed.current);
 					await AsyncStorage.setItem('secPlayed', jsonValue);
 				} catch (e) {
-					// console.log(e);
+					// console.warn(e);
 				}
 			}
 		}
@@ -149,7 +149,7 @@ export default function RenderBottomBar() {
 				const jsonValue = JSON.stringify(storedPosition.current);
 				await AsyncStorage.setItem('storedPosition', jsonValue);
 			} catch (e) {
-				// console.log(e);
+				// console.warn(e);
 			}
 		}
 		storeSecPlayedAndPosition();

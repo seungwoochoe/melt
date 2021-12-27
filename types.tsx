@@ -62,7 +62,7 @@ export type History = {
   endTime: number,
   id: string,
   reasonStart: "normal" | "selected" | "returned",
-  reasonEnd: "normal" | "skipped",
+  reasonEnd: "normal" | "skipped" | "interrupted",
   playedRatio: number,
   secPlayed: number,
   duration: number,

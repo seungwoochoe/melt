@@ -14,7 +14,7 @@ export async function weightMusicList(musicList: Music[], historyList: History[]
 		const jsonValue = await AsyncStorage.getItem('appliedHistoryTime');
 		appliedHistoryTime = jsonValue != null ? JSON.parse(jsonValue) : 0;
 	} catch (e) {
-		// console.log(e);
+		// console.warn(e);
 	}
 
 	historyList = historyList.filter(element => element.endTime > appliedHistoryTime);
@@ -26,7 +26,7 @@ export async function weightMusicList(musicList: Music[], historyList: History[]
 			musicList[targetIndex].weight *= BOOST_WEIGHT_MODIFIER * history.playedRatio;
 		}
 		else if (history.reasonStart === 'normal' && history.reasonEnd === 'skipped') {
-			musicList[targetIndex].weight = musicList[targetIndex].weight * (1 - SKIP_WEIGHT_MODIFIER * Math.max(0, (1 - history.playedRatio)));
+			musicList[targetIndex].weight = musicList[targetIndex].weight * (1 - SKIP_WEIGHT_MODIFIER * Math.max(0, (1 - Math.sqrt(history.playedRatio))));
 		}
 	}
 
@@ -36,7 +36,7 @@ export async function weightMusicList(musicList: Music[], historyList: History[]
 			const jsonValue = JSON.stringify(appliedHistoryTime);
 			await AsyncStorage.setItem('appliedHistoryTime', jsonValue);
 		} catch (e) {
-			// console.log(e);
+			// console.warn(e);
 		}
 	}
 
@@ -44,7 +44,7 @@ export async function weightMusicList(musicList: Music[], historyList: History[]
 		const jsonValue = JSON.stringify(musicList);
 		await AsyncStorage.setItem('musicList', jsonValue);
 	} catch (e) {
-		// console.log(e);
+		// console.warn(e);
 	}
 
 	return musicList;

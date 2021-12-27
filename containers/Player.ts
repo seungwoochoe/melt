@@ -23,7 +23,7 @@ export default class Player {
 	static topSongs: Music[] = [];
 
 	static currentReasonStart: "normal" | "selected" | "returned" = "normal";
-	static currentReasonEnd: "normal" | "skipped";
+	static currentReasonEnd: "normal" | "skipped" | "interrupted";
 	static currentDuration = 0;
 
 
@@ -57,7 +57,7 @@ export default class Player {
 
 
 	static async createNewTracks(item?: Music) {
-		Player.currentReasonEnd = "skipped";
+		Player.currentReasonEnd = "interrupted";
 		await Player.storeHistory();
 
 		if (Player.musicList.length === 1) {
@@ -101,6 +101,7 @@ export default class Player {
 
 	static async pause() {
 		await TrackPlayer.pause();
+		console.table(Player.historyList);
 	}
 
 
@@ -153,7 +154,7 @@ export default class Player {
 						const jsonValue = JSON.stringify(Player.historyList);
 						await AsyncStorage.setItem('historyList', jsonValue);
 					} catch (e) {
-						// console.log(e);
+						// console.warn(e);
 					}
 				}
 
@@ -186,7 +187,7 @@ export default class Player {
 			const jsonValue = JSON.stringify(Player.tracks);
 			await AsyncStorage.setItem('tracks', jsonValue);
 		} catch (e) {
-			// console.log(e);
+			// console.warn(e);
 		}
 	}
 
@@ -197,7 +198,7 @@ export default class Player {
 			const jsonValue = await AsyncStorage.getItem('secPlayed');
 			secPlayed = jsonValue != null ? (Number(JSON.parse(jsonValue))) : 0;
 		} catch (e) {
-			// console.log(e);
+			// console.warn(e);
 		}
 
 		let playedRatio = Player.currentDuration === 0 ? 0 : (secPlayed / Player.currentDuration);
@@ -219,7 +220,7 @@ export default class Player {
 			const jsonValue = JSON.stringify(Player.historyList);
 			await AsyncStorage.setItem('historyList', jsonValue);
 		} catch (e) {
-			// console.log(e);
+			// console.warn(e);
 		}
 	}
 
@@ -245,8 +246,15 @@ export default class Player {
 			const jsonValue = JSON.stringify(Player.musicSelection);
 			await AsyncStorage.setItem('musicSelection', jsonValue);
 		} catch (e) {
-			// console.log(e);
+			// console.warn(e);
 		}
+	}
+
+
+	// -------------------------------------------------------------------------
+	// For Home screen
+	static getSongsForHomeScreen() {
+
 	}
 
 

@@ -106,7 +106,7 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
       const jsonValue = JSON.stringify(isRepeat.current);
       await AsyncStorage.setItem('isRepeat', jsonValue);
     } catch (e) {
-      // console.log(e);
+      // console.warn(e);
     }
   }
 
@@ -212,14 +212,14 @@ export default function ModalScreen({ route, navigation }: { route: { params: { 
                 const jsonValue = JSON.stringify(Player.musicList);
                 await AsyncStorage.setItem('musicList', jsonValue);
               } catch (e) {
-                // console.log(e);
+                // console.warn(e);
               }
 
               try {
                 const jsonValue = JSON.stringify(Player.likedSongs);
                 await AsyncStorage.setItem('likedSongs', jsonValue);
               } catch (e) {
-                // console.log(e);
+                // console.warn(e);
               }
             }}
           >

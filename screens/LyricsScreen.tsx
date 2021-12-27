@@ -212,7 +212,7 @@ export default function LyricsScreen({ route, navigation }: { route: { params: {
 											const jsonValue = JSON.stringify(newMusicList);
 											await AsyncStorage.setItem('musicList', jsonValue);
 										} catch (e) {
-											// console.log(e);
+											// console.warn(e);
 										}
 
 									}}

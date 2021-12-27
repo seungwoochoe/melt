@@ -26,9 +26,9 @@ export default function useCachedResources() {
 
         const updatedMusicList = await readMusicFiles();
         Player.historyList = await getStoredHistoryList();
+        Player.musicList = await weightMusicList(updatedMusicList, cloneDeep(Player.historyList));
         Player.musicSelection = await getStoredMusicSelection();
         Player.likedSongs = await getStoredLikedSongs();
-        Player.musicList = await weightMusicList(updatedMusicList, [...Player.historyList]);
 
         if (Player.musicList.length === 0) {
           // No music!
@@ -79,7 +79,6 @@ export default function useCachedResources() {
           }
 
           Player.tracks = Player.tracks.slice(0, 4);
-          console.log(Player.tracks);
           await Player.setupPlayer();
         }
 

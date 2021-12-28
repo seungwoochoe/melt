@@ -20,9 +20,9 @@ const linking: LinkingOptions<RootStackParamList> = {
               HomeScreen: 'one',
             },
           },
-          Songs: {
+          Library: {
             screens: {
-              SongsScreen: 'two',
+              LibraryScreen: 'two',
             },
           },
           Settings: {

@@ -1,12 +1,20 @@
-const tintColorLight = '#ea4e3d';
-const tintColorDark = '#5555ce';
+const tintColorLight = '#145da0';
+const tintColorDark = '#145da0';
 
 export default {
   light: {
     text: 'rgba(0, 0, 0, 0.77)',
     text2: 'rgba(0, 0, 0, 0.5)',
-    text3: 'rgba(0, 0, 0, 0.35)',
-    text4: 'rgba(0, 0, 0, 0.05)',
+    red: 'rgb(255, 59, 48)',
+    orange: 'rgb(255, 149, 0)',
+    blue: 'rgb(0, 122, 255)',
+    mint: 'rgb(0, 199, 190)',
+    teal: 'rgb(48, 176, 199)',
+    purple: 'rgb(175, 82, 222)',
+    brown: 'rgb(162, 132, 94)',
+    borderColor: 'rgba(0, 0, 0, 0.35)',
+    borderLightColor: 'rgba(0, 0, 0, 0.09)',
+    searchbarBackground: 'rgba(0, 0, 0, 0.05)',
     background: '#fff',
     tint: tintColorLight,
     tabIconDefault: '#ccc',
@@ -14,11 +22,19 @@ export default {
     headerBackground: '#f8f8f8',
   },
   dark: {
-    text: 'rgba(255, 255, 255, 0.77)',
+    text: 'rgba(255, 255, 255, 0.85)',
     text2: 'rgba(255, 255, 255, 0.5)',
-    text3: 'rgba(255, 255, 255, 0.35)',
-    text4: 'rgba(255, 255, 255, 0.08)',
-    background: '#0c0c0c',
+    red: 'rgb(255, 69, 58)',
+    orange: 'rgb(255, 159, 10)',
+    blue: 'rgb(10, 132, 255)',
+    mint: 'rgb(102, 212, 207)',
+    teal: 'rgb(64, 200, 224)',
+    purple: 'rgb(191, 90, 242)',
+    brown: 'rgb(172, 142, 104)',
+    borderColor: 'rgba(255, 255, 255, 0.35)',
+    borderLightColor: 'rgba(255, 255, 255, 0.11)',
+    searchbarBackground: 'rgba(255, 255, 255, 0.08)',
+    background: '#121212',
     tint: tintColorDark,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,

@@ -2,11 +2,12 @@ import * as React from 'react';
 import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { withTiming } from 'react-native-reanimated';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
-import scale from '../constants/scale';
+import layout from '../constants/layout';
 
 const headerHeight = 44 + getStatusBarHeight();
 
@@ -33,7 +34,7 @@ export default function RenderHeader({ title, blur }: { title: string, blur: boo
 	const RenderTitle = () => {
 		return (
 			<View style={{ flex: 1, alignSelf: 'center', flexDirection: 'row', alignItems: 'flex-end', backgroundColor: 'transparent' }}>
-				<Text style={{ fontSize: scale.width * 1, fontWeight: '600', marginBottom: 10 }}>
+				<Text style={{ fontSize: layout.width * 1, fontWeight: '600', marginBottom: 10 }}>
 					{title}
 				</Text>
 			</View>

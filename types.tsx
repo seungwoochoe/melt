@@ -5,7 +5,7 @@
 
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 
 declare global {
   namespace ReactNavigation {
@@ -17,55 +17,59 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Modal: undefined;
   NotFound: undefined;
+  SongsByTitleScreen: undefined;
 };
 
-export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
+export type RootStackScreenProps<Screen extends keyof RootStackParamList> = StackScreenProps<
   RootStackParamList,
   Screen
 >;
 
 export type RootTabParamList = {
   Home: undefined;
-  Songs: undefined;
+  Library: undefined;
   Settings: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
   BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
+  StackScreenProps<RootStackParamList>
 >;
 
 export type Music = {
   url: string,
   title: string,
   artist: string,
-  artwork: number,
-  weight?: number,
-  id: string, // Will be title + artist.
+  artwork: string,
+  miniArt: string,
+  lyrics: string,
+  isLiked: boolean,
+  id: string,
+  weight: number,
 }
 
 export type Track = {
   url: string,
   title: string,
   artist: string,
-  duration?: number,
-  artwork: number,
-}
-
-export type Action = {
-  time: number,
-  title: string,
-  artist: string,
+  artwork: string,
   id: string,
-  action: string,
+  isPlayed: boolean,
+  isTrigger: boolean,
 }
 
 export type History = {
   endTime: number,
-  title: string,
-  artist: string,
-  duration: number,
-  artwork: number,
   id: string,
+  reasonStart: "normal" | "selected" | "returned",
+  reasonEnd: "normal" | "skipped" | "interrupted",
+  playedRatio: number,
   secPlayed: number,
+  duration: number,
+}
+
+export type LibraryItem = {
+  title: string,
+  icon: string,
+  linkTo: string,
 }

@@ -1,29 +1,30 @@
 import * as React from 'react';
-import { TouchableOpacity, StyleSheet, Dimensions, StatusBar, SectionList, useWindowDimensions } from 'react-native';
+import { TouchableOpacity, Dimensions, StatusBar, SectionList, useWindowDimensions, Alert, Appearance } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as RNFS from 'react-native-fs';
 
 import { View, Text } from '../components/Themed';
 import useColorScheme from '../hooks/useColorScheme';
+import layout from '../constants/layout';
 import Colors from '../constants/Colors';
-import scale from '../constants/scale';
 import RenderDarkHeader from '../components/DarkHeader';
 import RenderTitle from '../components/Title';
+import Player from '../containers/Player';
 
 import { RootTabScreenProps } from '../types';
-import RenderBottomBar from '../components/BottomBar';
 
-const { width, height } = Dimensions.get("screen");
-const itemHeightWithoutScale = width * 0.1224;
+const { width } = Dimensions.get("screen");
+const itemHeightWithoutScale = width * 0.117;
 const marginBetweenIconAndText = itemHeightWithoutScale * 0.3;
 const marginHorizontal = width * 0.05;
-const borderRadius = 12;
+const borderRadius = 11;
 
-export default function SettingsScreen({ navigation }: RootTabScreenProps<'Settings'>) {
-
+export default function SettingsScreen({ navigation }:{navigation: any}) {
   const colorScheme = useColorScheme();
   const itemHeight = itemHeightWithoutScale * useWindowDimensions().fontScale;
 
-  const settings: { section: string, data: { title: string, iconName: string, iconBackgroundColor: string, position: string }[] }[] = [
+  const settings: { section: string, data: { title: string, iconName: string, iconBackgroundColor: string, position: string, destination?: string }[] }[] = [
     {
       section: '1',
       data: [
@@ -65,17 +66,24 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
         {
           title: 'About',
           iconName: 'information',
-          iconBackgroundColor: '#ff9b36',
+          iconBackgroundColor: '#ffb908',
           position: '',
         },
         {
-          title: 'Privacy',
+          title: 'Manage data',
+          iconName: 'file-tray-full-outline',
+          iconBackgroundColor: Colors.light.brown,
+          position: '',
+          destination: 'ManageDataScreen',
+        },
+        {
+          title: 'Delete history',
           iconName: 'lock-closed',
           iconBackgroundColor: '#63c065',
           position: '',
         },
         {
-          title: 'Export',
+          title: 'Delete image data',
           iconName: 'download',
           iconBackgroundColor: 'grey',
           position: 'bottom',
@@ -90,7 +98,8 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
       <View
         style={{ width: width, height: itemHeight * 1.2, marginTop: itemHeight / 2, marginBottom: itemHeight / 3, backgroundColor: 'transparent' }}
       >
-        <TouchableOpacity style={{
+        <TouchableOpacity 
+        style={{
           flex: 1,
           flexDirection: 'row',
           marginHorizontal: marginHorizontal,
@@ -98,6 +107,7 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
           backgroundColor: colorScheme === 'light' ? '#fff' : '#1e1e22',
           borderRadius: borderRadius,
         }}
+        activeOpacity={0.45}
         >
           <View style={{
             width: itemHeightWithoutScale * 0.65,
@@ -106,15 +116,15 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
             marginLeft: itemHeightWithoutScale * 0.35,
             marginRight: marginBetweenIconAndText,
             borderRadius: itemHeightWithoutScale * 0.15,
-            backgroundColor: 'orange',
+            backgroundColor: '#ffb908',
             flexDirection: 'row',
             alignItems: 'center',
           }}>
             <View style={{ flex: 1, alignItems: 'center', backgroundColor: 'transparent', marginLeft: itemHeightWithoutScale * 0.016 }}>
-              <Ionicons name='star' size={scale.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
+              <Ionicons name='star' size={layout.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
             </View>
           </View>
-          <Text style={{ fontSize: scale.width * 1.02, }}>
+          <Text style={{ fontSize: layout.width * 1.05, }}>
             You're a star!
           </Text>
         </TouchableOpacity>
@@ -122,22 +132,57 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
     )
   }
 
-  const RenderItem = ({ item }: { item: { title: string, iconName: string, iconBackgroundColor: string, position: string } }) => {
+  const RenderItem = ({ item }: { item: { title: string, iconName: string, iconBackgroundColor: string, position: string, destination?: string } }) => {
     return (
       <View
         style={{ width: width, height: itemHeight, backgroundColor: 'transparent' }}
       >
-        <TouchableOpacity style={{
-          flex: 1,
-          flexDirection: 'row',
-          marginHorizontal: marginHorizontal,
-          alignItems: 'center',
-          backgroundColor: colorScheme === 'light' ? '#fff' : '#1a1a1c',
-          borderTopLeftRadius: item.position === 'top' ? borderRadius : 0,
-          borderTopRightRadius: item.position === 'top' ? borderRadius : 0,
-          borderBottomLeftRadius: item.position === 'bottom' ? borderRadius : 0,
-          borderBottomRightRadius: item.position === 'bottom' ? borderRadius : 0,
-        }}
+        <TouchableOpacity
+          onPress={async () => {
+            if (item.title === "Delete image data") {
+              try {
+                await AsyncStorage.removeItem('musicList');
+                await RNFS.unlink(RNFS.DocumentDirectoryPath + '/assets');
+                Alert.alert("Success!");
+              } catch (e) {
+                Alert.alert("Failed to remove the folder");
+              }
+            }
+            else if (item.title === "Delete history") {
+              try {
+                await AsyncStorage.removeItem('historyList');
+                await AsyncStorage.removeItem('tracks');
+                await AsyncStorage.removeItem('musicSelection');
+                await AsyncStorage.removeItem('storedPosition');
+                await AsyncStorage.removeItem('secPlayed');
+                await AsyncStorage.removeItem('likedSongs');
+                await AsyncStorage.removeItem('isRepeat');
+                await AsyncStorage.removeItem('appliedHistoryTime');
+                await AsyncStorage.removeItem('lastHomeUpdateTime');
+                Alert.alert("Success!");
+              } catch (e) {
+                Alert.alert("Failed to delete historyList");
+              }
+            }
+            else if (item.title === "About") {
+              console.log(RNFS.DocumentDirectoryPath);
+            }
+            else if (item.title === 'Appearance') {
+            navigation.navigate(item.destination);
+            }
+          }}
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            marginHorizontal: marginHorizontal,
+            alignItems: 'center',
+            backgroundColor: colorScheme === 'light' ? '#fff' : '#1a1a1c',
+            borderTopLeftRadius: item.position === 'top' ? borderRadius : 0,
+            borderTopRightRadius: item.position === 'top' ? borderRadius : 0,
+            borderBottomLeftRadius: item.position === 'bottom' ? borderRadius : 0,
+            borderBottomRightRadius: item.position === 'bottom' ? borderRadius : 0,
+          }}
+          activeOpacity={0.45}
         >
           <View style={{
             width: itemHeightWithoutScale * 0.65,
@@ -162,14 +207,14 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
                   ? itemHeightWithoutScale * 0.03 : itemHeightWithoutScale * 0.016,
             }}
             >
-              <Ionicons name={item.iconName} size={scale.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
+              <Ionicons name={item.iconName} size={layout.width * 1.18} color={colorScheme === 'light' ? '#fff' : '#e0e0e0'} />
             </View>
           </View>
-          <Text style={{ fontSize: scale.width * .95, }}>
+          <Text style={{ fontSize: layout.width * .97, }}>
             {item.title}
           </Text>
           <View style={{ flex: 1, backgroundColor: 'transparent', alignItems: 'flex-end', marginRight: width * 0.03 }}>
-            <Ionicons name='chevron-forward-outline' size={scale.width * 1.25} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
+            <Ionicons name='chevron-forward-outline' size={layout.width * 1.25} color={colorScheme === 'light' ? '#d0d0d0' : '#555'} />
           </View>
         </TouchableOpacity>
       </View>
@@ -180,14 +225,16 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
     return (
       <View style={{ backgroundColor: 'transparent', flexDirection: 'row' }}>
         <View style={{
-          height: .55,
+          height: .52,
           marginLeft: marginHorizontal,
           width: itemHeightWithoutScale * 0.95 + marginBetweenIconAndText,
-          backgroundColor: colorScheme === 'light' ? '#fff' : '#1e1e22',
-        }} />
+        }}
+          lightColor='#fff'
+          darkColor='#1e1e22'
+        />
         <View
           style={{
-            height: .55,
+            height: .51,
             width: width - (itemHeightWithoutScale * 0.95 + marginBetweenIconAndText * 0.9 + marginHorizontal * 2),
           }}
           lightColor='#ccc'
@@ -227,9 +274,6 @@ export default function SettingsScreen({ navigation }: RootTabScreenProps<'Setti
       />
 
       <RenderDarkHeader title='Settings' blur={false} />
-
-      <RenderBottomBar />
-
     </View>
   );
 };

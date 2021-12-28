@@ -3,6 +3,7 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
 import cloneDeep from 'lodash.clonedeep';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Player from '../containers/Player';
 import { readMusicFiles, pruneStoredTracks, getStoredHistoryList, getStoredMusicSelection, getStoredLikedSongs } from '../containers/Reader';
@@ -30,7 +31,14 @@ export default function useCachedResources() {
         Player.musicSelection = await getStoredMusicSelection();
         Player.likedSongs = await getStoredLikedSongs();
         Player.updateTopMusic();
-        Player.updateSongsForHomeScreen();
+        try {
+          Player.updateSongsForHomeScreen();
+
+					const jsonValue = JSON.stringify(Date.now());
+					await AsyncStorage.setItem('lastHomeUpdateTime', jsonValue);
+				} catch (e) {
+					// console.warn(e);
+				}
 
         if (Player.musicList.length === 0) {
           // No music!

@@ -23,6 +23,7 @@ const { width, height } = Dimensions.get("screen");
 export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
 
   const [isScrolled, setIsScrolled] = useState(false);
+  const [count, setCount] = useState(0);
   const colorScheme = useColorScheme();
 
   const listHeight = layout.listHeightWithoutScale * useWindowDimensions().fontScale;
@@ -51,6 +52,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
 
 					const jsonValue = JSON.stringify(Date.now());
 					await AsyncStorage.setItem('lastHomeUpdateTime', jsonValue);
+          setCount(c => c + 1);
 				} catch (e) {
 					// console.warn(e);
 				}

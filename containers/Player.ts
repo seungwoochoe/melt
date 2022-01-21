@@ -61,23 +61,24 @@ export default class Player {
 	static async createNewTracks(item?: Music) {
 		if (Player.musicList.length === 1) {
 			Player.currentReasonEnd = "normal";
+			await Player.storeHistory();
 			Player.tracks = [{ ...Player.musicList[0], isPlayed: false, isTrigger: true }];
 			Player.currentReasonStart = "normal";
 		}
 		else {
 			if (item == null) {
 				Player.currentReasonEnd = "skipped";
+				await Player.storeHistory();
 				Player.tracks = await complementTracks([], cloneDeep(Player.musicList));
 				Player.currentReasonStart = "normal";
 			}
 			else {
 				Player.currentReasonEnd = "interrupted";
+				await Player.storeHistory();
 				Player.tracks = await complementTracks([{ ...item, isPlayed: false, isTrigger: false }], cloneDeep(Player.musicList));
 				Player.currentReasonStart = "selected";
 			}
 		}
-
-		await Player.storeHistory();
 
 		Player.currentIndex = 0;
 		await TrackPlayer.reset();
@@ -106,6 +107,7 @@ export default class Player {
 	static async pause() {
 		await TrackPlayer.pause();
 		// console.table(Player.musicList.map(element => ({title: element.title, weight: element.weight})));
+		console.table(Player.historyList);
 	}
 
 
